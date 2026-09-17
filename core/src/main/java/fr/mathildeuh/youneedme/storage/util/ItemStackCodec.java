@@ -3,7 +3,10 @@ package fr.mathildeuh.youneedme.storage.util;
 import java.util.Base64;
 import org.bukkit.inventory.ItemStack;
 
-/** Base64 (de)serialization for the one place an {@link ItemStack} needs to be persisted as text: auction listings. */
+/**
+ * Base64 (de)serialization for the one place an {@link ItemStack} needs to be persisted as text:
+ * auction listings.
+ */
 public final class ItemStackCodec {
 
     private ItemStackCodec() {}

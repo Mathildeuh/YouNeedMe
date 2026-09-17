@@ -4,11 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.Nullable;
 
-/** Parses ban/mute-style durations like {@code 1d2h30m}, {@code 45m}, or {@code perm}/{@code permanent}. */
+/**
+ * Parses ban/mute-style durations like {@code 1d2h30m}, {@code 45m}, or {@code perm}/{@code
+ * permanent}.
+ */
 public final class TimeParser {
 
     private static final Pattern SEGMENT = Pattern.compile("(\\d+)([smhdwMy])");
-    private static final Pattern PERMANENT = Pattern.compile("perm(anent)?|-1", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PERMANENT =
+            Pattern.compile("perm(anent)?|-1", Pattern.CASE_INSENSITIVE);
 
     private TimeParser() {}
 

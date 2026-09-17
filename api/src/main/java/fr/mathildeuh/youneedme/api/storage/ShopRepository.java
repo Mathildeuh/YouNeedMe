@@ -9,6 +9,9 @@ public interface ShopRepository {
 
     CompletableFuture<Void> setStock(String categoryId, String itemId, int stock);
 
-    /** Atomically adjusts stock by {@code delta} (negative on buy, positive on sell-back) and returns the new value. */
+    /**
+     * Atomically adjusts stock by {@code delta} (negative on buy, positive on sell-back) and
+     * returns the new value.
+     */
     CompletableFuture<Integer> adjustStock(String categoryId, String itemId, int delta);
 }

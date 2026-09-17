@@ -6,8 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A kit definition. Kits are configuration, not player data (see {@code modules/kits.yml}), but
- * still modeled here so expansions can register additional kits programmatically (a "new kit
- * type", e.g. one generated from a template) without touching YAML.
+ * still modeled here so expansions can register additional kits programmatically (a "new kit type",
+ * e.g. one generated from a template) without touching YAML.
  */
 public record Kit(
         String id,

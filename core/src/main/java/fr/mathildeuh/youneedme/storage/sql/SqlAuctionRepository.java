@@ -22,114 +22,137 @@ public final class SqlAuctionRepository implements AuctionRepository {
 
     @Override
     public CompletableFuture<AuctionListing> save(AuctionListing listing) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    INSERT INTO ynm_auctions (seller, seller_username, item, price, listed_at, expires_at, status, buyer)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    Statement.RETURN_GENERATED_KEYS)) {
-                bindWithoutId(ps, listing);
-                ps.executeUpdate();
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    keys.next();
-                    long id = keys.getLong(1);
-                    return new AuctionListing(
-                            id,
-                            listing.seller(),
-                            listing.sellerLastKnownUsername(),
-                            listing.item(),
-                            listing.price(),
-                            listing.listedAt(),
-                            listing.expiresAt(),
-                            listing.status(),
-                            listing.buyer());
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    INSERT INTO ynm_auctions (seller, seller_username, item, price, listed_at, expires_at, status, buyer)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                    """,
+                                    Statement.RETURN_GENERATED_KEYS)) {
+                        bindWithoutId(ps, listing);
+                        ps.executeUpdate();
+                        try (ResultSet keys = ps.getGeneratedKeys()) {
+                            keys.next();
+                            long id = keys.getLong(1);
+                            return new AuctionListing(
+                                    id,
+                                    listing.seller(),
+                                    listing.sellerLastKnownUsername(),
+                                    listing.item(),
+                                    listing.price(),
+                                    listing.listedAt(),
+                                    listing.expiresAt(),
+                                    listing.status(),
+                                    listing.buyer());
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Void> update(AuctionListing listing) {
-        return sql.run(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    UPDATE ynm_auctions SET seller = ?, seller_username = ?, item = ?, price = ?, listed_at = ?,
-                        expires_at = ?, status = ?, buyer = ? WHERE id = ?
-                    """)) {
-                int i = bindWithoutId(ps, listing);
-                ps.setLong(i, listing.id());
-                ps.executeUpdate();
-            }
-        });
+        return sql.run(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    UPDATE ynm_auctions SET seller = ?, seller_username = ?, item = ?, price = ?, listed_at = ?,
+                                        expires_at = ?, status = ?, buyer = ? WHERE id = ?
+                                    """)) {
+                        int i = bindWithoutId(ps, listing);
+                        ps.setLong(i, listing.id());
+                        ps.executeUpdate();
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Optional<AuctionListing>> find(long id) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM ynm_auctions WHERE id = ?")) {
-                ps.setLong(1, id);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(mapRow(rs)) : Optional.<AuctionListing>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_auctions WHERE id = ?")) {
+                        ps.setLong(1, id);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(mapRow(rs))
+                                    : Optional.<AuctionListing>empty();
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<List<AuctionListing>> findActive(int offset, int limit) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM ynm_auctions WHERE status = 'ACTIVE' ORDER BY listed_at DESC LIMIT ? OFFSET ?")) {
-                ps.setInt(1, limit);
-                ps.setInt(2, offset);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_auctions WHERE status = 'ACTIVE' ORDER BY"
+                                            + " listed_at DESC LIMIT ? OFFSET ?")) {
+                        ps.setInt(1, limit);
+                        ps.setInt(2, offset);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<List<AuctionListing>> findBySeller(UUID seller, boolean activeOnly) {
-        return sql.submit(connection -> {
-            String query = activeOnly
-                    ? "SELECT * FROM ynm_auctions WHERE seller = ? AND status = 'ACTIVE' ORDER BY listed_at DESC"
-                    : "SELECT * FROM ynm_auctions WHERE seller = ? ORDER BY listed_at DESC";
-            try (PreparedStatement ps = connection.prepareStatement(query)) {
-                ps.setString(1, seller.toString());
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    String query =
+                            activeOnly
+                                    ? "SELECT * FROM ynm_auctions WHERE seller = ? AND status ="
+                                            + " 'ACTIVE' ORDER BY listed_at DESC"
+                                    : "SELECT * FROM ynm_auctions WHERE seller = ? ORDER BY"
+                                            + " listed_at DESC";
+                    try (PreparedStatement ps = connection.prepareStatement(query)) {
+                        ps.setString(1, seller.toString());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM ynm_auctions WHERE seller = ? AND status = 'EXPIRED' ORDER BY expires_at DESC")) {
-                ps.setString(1, seller.toString());
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_auctions WHERE seller = ? AND status ="
+                                            + " 'EXPIRED' ORDER BY expires_at DESC")) {
+                        ps.setString(1, seller.toString());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Integer> expireOverdue() {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "UPDATE ynm_auctions SET status = 'EXPIRED' WHERE status = 'ACTIVE' AND expires_at <= ?")) {
-                ps.setLong(1, System.currentTimeMillis());
-                return ps.executeUpdate();
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "UPDATE ynm_auctions SET status = 'EXPIRED' WHERE status ="
+                                            + " 'ACTIVE' AND expires_at <= ?")) {
+                        ps.setLong(1, System.currentTimeMillis());
+                        return ps.executeUpdate();
+                    }
+                });
     }
 
-    private static int bindWithoutId(PreparedStatement ps, AuctionListing listing) throws java.sql.SQLException {
+    private static int bindWithoutId(PreparedStatement ps, AuctionListing listing)
+            throws java.sql.SQLException {
         int i = 1;
         ps.setString(i++, listing.seller().toString());
         ps.setString(i++, listing.sellerLastKnownUsername());

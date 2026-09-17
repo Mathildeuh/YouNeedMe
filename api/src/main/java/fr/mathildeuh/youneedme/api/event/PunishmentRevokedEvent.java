@@ -5,7 +5,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/** Fired after an unban/unmute is persisted (informational only - not cancellable, it already happened). */
+/**
+ * Fired after an unban/unmute is persisted (informational only - not cancellable, it already
+ * happened).
+ */
 public class PunishmentRevokedEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();

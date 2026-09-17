@@ -17,6 +17,9 @@ public interface ScoreboardService {
 
     void reload();
 
-    /** Whether YouNeedMe is actively rendering its own scoreboard right now (false while TAB owns the display). */
+    /**
+     * Whether YouNeedMe is actively rendering its own scoreboard right now (false while TAB owns
+     * the display).
+     */
     boolean isActive();
 }

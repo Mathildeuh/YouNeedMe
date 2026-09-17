@@ -13,7 +13,10 @@ public interface HomeService {
 
     CompletableFuture<Home> get(UUID owner, String name);
 
-    /** Effective max number of homes for this player, from their highest {@code youneedme.homes.limit.<n>} node. */
+    /**
+     * Effective max number of homes for this player, from their highest {@code
+     * youneedme.homes.limit.<n>} node.
+     */
     int limitFor(UUID owner);
 
     /**

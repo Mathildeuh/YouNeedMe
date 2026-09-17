@@ -4,7 +4,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** In-memory, per-player cooldown tracker keyed by an arbitrary string (kit id, warp name, "rtp", ...). */
+/**
+ * In-memory, per-player cooldown tracker keyed by an arbitrary string (kit id, warp name, "rtp",
+ * ...).
+ */
 public final class Cooldowns {
 
     private final Map<UUID, Map<String, Long>> expiryByPlayer = new ConcurrentHashMap<>();

@@ -5,8 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A single punishment record, active or historical. {@code target} and {@code targetIp} are
- * independent so an IP-ban can outlive knowledge of which account triggered it, and so a
- * name-ban's history stays queryable even for a player who never had an IP recorded.
+ * independent so an IP-ban can outlive knowledge of which account triggered it, and so a name-ban's
+ * history stays queryable even for a player who never had an IP recorded.
  */
 public record Punishment(
         long id,
@@ -31,6 +31,16 @@ public record Punishment(
 
     public Punishment revoked(@Nullable UUID by) {
         return new Punishment(
-                id, target, targetIp, type, reason, issuedBy, issuedAt, expiresAt, false, by, System.currentTimeMillis());
+                id,
+                target,
+                targetIp,
+                type,
+                reason,
+                issuedBy,
+                issuedAt,
+                expiresAt,
+                false,
+                by,
+                System.currentTimeMillis());
     }
 }

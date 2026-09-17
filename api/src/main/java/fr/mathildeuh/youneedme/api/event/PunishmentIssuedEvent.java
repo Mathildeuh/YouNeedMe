@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired before a ban/mute/warn/kick is persisted and enforced. {@code punishment.id()} is not
- * yet assigned at this point (it is still {@code 0}); cancelling stops the punishment entirely.
+ * Fired before a ban/mute/warn/kick is persisted and enforced. {@code punishment.id()} is not yet
+ * assigned at this point (it is still {@code 0}); cancelling stops the punishment entirely.
  */
 public class PunishmentIssuedEvent extends Event implements Cancellable {
 

@@ -49,49 +49,59 @@ public final class SqlStorage implements DataStorage {
 
     @Override
     public CompletableFuture<Void> connect() {
-        return CompletableFuture.runAsync(() -> {
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(buildJdbcUrl());
-            hikariConfig.setDriverClassName(dialect.jdbcDriver());
-            if (dialect != SqlDialect.SQLITE) {
-                hikariConfig.setUsername(config.username());
-                hikariConfig.setPassword(config.password());
-            }
-            hikariConfig.setMaximumPoolSize(dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize()));
-            hikariConfig.setPoolName("YouNeedMe-" + dialect.name());
-            hikariConfig.setMinimumIdle(1);
+        return CompletableFuture.runAsync(
+                () -> {
+                    HikariConfig hikariConfig = new HikariConfig();
+                    hikariConfig.setJdbcUrl(buildJdbcUrl());
+                    hikariConfig.setDriverClassName(dialect.jdbcDriver());
+                    if (dialect != SqlDialect.SQLITE) {
+                        hikariConfig.setUsername(config.username());
+                        hikariConfig.setPassword(config.password());
+                    }
+                    hikariConfig.setMaximumPoolSize(
+                            dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize()));
+                    hikariConfig.setPoolName("YouNeedMe-" + dialect.name());
+                    hikariConfig.setMinimumIdle(1);
 
-            this.dataSource = new HikariDataSource(hikariConfig);
-            int threads = dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize());
-            AtomicInteger counter = new AtomicInteger();
-            this.executor = Executors.newFixedThreadPool(threads, runnable -> {
-                Thread thread = new Thread(runnable, "YouNeedMe-SQL-" + counter.incrementAndGet());
-                thread.setDaemon(true);
-                return thread;
-            });
-            this.sql = new SqlExecutor(dataSource, executor);
+                    this.dataSource = new HikariDataSource(hikariConfig);
+                    int threads = dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize());
+                    AtomicInteger counter = new AtomicInteger();
+                    this.executor =
+                            Executors.newFixedThreadPool(
+                                    threads,
+                                    runnable -> {
+                                        Thread thread =
+                                                new Thread(
+                                                        runnable,
+                                                        "YouNeedMe-SQL-"
+                                                                + counter.incrementAndGet());
+                                        thread.setDaemon(true);
+                                        return thread;
+                                    });
+                    this.sql = new SqlExecutor(dataSource, executor);
 
-            this.playerProfiles = new SqlPlayerProfileRepository(sql, dialect);
-            this.homes = new SqlHomeRepository(sql, dialect);
-            this.warps = new SqlWarpRepository(sql, dialect);
-            this.economy = new SqlEconomyRepository(sql, dialect);
-            this.kits = new SqlKitRepository(sql, dialect);
-            this.punishments = new SqlPunishmentRepository(sql);
-            this.auctions = new SqlAuctionRepository(sql);
-            this.shop = new SqlShopRepository(sql, dialect);
-        });
+                    this.playerProfiles = new SqlPlayerProfileRepository(sql, dialect);
+                    this.homes = new SqlHomeRepository(sql, dialect);
+                    this.warps = new SqlWarpRepository(sql, dialect);
+                    this.economy = new SqlEconomyRepository(sql, dialect);
+                    this.kits = new SqlKitRepository(sql, dialect);
+                    this.punishments = new SqlPunishmentRepository(sql);
+                    this.auctions = new SqlAuctionRepository(sql);
+                    this.shop = new SqlShopRepository(sql, dialect);
+                });
     }
 
     @Override
     public CompletableFuture<Void> disconnect() {
-        return CompletableFuture.runAsync(() -> {
-            if (executor != null) {
-                executor.shutdown();
-            }
-            if (dataSource != null) {
-                dataSource.close();
-            }
-        });
+        return CompletableFuture.runAsync(
+                () -> {
+                    if (executor != null) {
+                        executor.shutdown();
+                    }
+                    if (dataSource != null) {
+                        dataSource.close();
+                    }
+                });
     }
 
     @Override
@@ -101,22 +111,33 @@ public final class SqlStorage implements DataStorage {
 
     @Override
     public CompletableFuture<Void> migrate() {
-        return sql.run(connection -> {
-            try (Statement statement = connection.createStatement()) {
-                for (String ddl : SqlSchema.statements(dialect)) {
-                    statement.execute(ddl);
-                }
-            }
-        });
+        return sql.run(
+                connection -> {
+                    try (Statement statement = connection.createStatement()) {
+                        for (String ddl : SqlSchema.statements(dialect)) {
+                            statement.execute(ddl);
+                        }
+                    }
+                });
     }
 
     private String buildJdbcUrl() {
         return switch (dialect) {
             case SQLITE -> "jdbc:sqlite:" + config.sqliteFile();
-            case MYSQL, MARIADB -> "jdbc:mariadb://%s:%d/%s?%s"
-                    .formatted(config.host(), config.port(), config.database(), config.extraParameters());
-            case POSTGRESQL -> "jdbc:postgresql://%s:%d/%s?%s"
-                    .formatted(config.host(), config.port(), config.database(), config.extraParameters());
+            case MYSQL, MARIADB ->
+                    "jdbc:mariadb://%s:%d/%s?%s"
+                            .formatted(
+                                    config.host(),
+                                    config.port(),
+                                    config.database(),
+                                    config.extraParameters());
+            case POSTGRESQL ->
+                    "jdbc:postgresql://%s:%d/%s?%s"
+                            .formatted(
+                                    config.host(),
+                                    config.port(),
+                                    config.database(),
+                                    config.extraParameters());
         };
     }
 
@@ -174,6 +195,8 @@ public final class SqlStorage implements DataStorage {
     }
 
     public int threadsAwaitingConnection() {
-        return dataSource == null ? 0 : dataSource.getHikariPoolMXBean().getThreadsAwaitingConnection();
+        return dataSource == null
+                ? 0
+                : dataSource.getHikariPoolMXBean().getThreadsAwaitingConnection();
     }
 }

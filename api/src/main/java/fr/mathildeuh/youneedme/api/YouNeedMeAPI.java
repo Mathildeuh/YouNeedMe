@@ -31,11 +31,12 @@ public final class YouNeedMeAPI {
      * Looks up a YouNeedMe service on the Bukkit {@link org.bukkit.plugin.ServicesManager}.
      *
      * @param type the service interface to resolve
-     * @return the registered provider, or empty if YouNeedMe (or the module backing that
-     *     service) isn't loaded
+     * @return the registered provider, or empty if YouNeedMe (or the module backing that service)
+     *     isn't loaded
      */
     public static <T> Optional<T> service(Class<T> type) {
-        RegisteredServiceProvider<T> registration = Bukkit.getServicesManager().getRegistration(type);
+        RegisteredServiceProvider<T> registration =
+                Bukkit.getServicesManager().getRegistration(type);
         return registration == null ? Optional.empty() : Optional.of(registration.getProvider());
     }
 

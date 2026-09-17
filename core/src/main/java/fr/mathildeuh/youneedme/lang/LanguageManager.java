@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Loads {@code lang/<locale>.json} (MiniMessage-formatted, {@code <placeholder>}-style templates)
- * and renders them per player: a player with no stored language preference gets their client's
- * own locale if a matching file exists, otherwise the server's configured default, and any key
- * missing from a non-default locale silently falls back to the default before finally rendering
- * {@code error.missing_key}.
+ * and renders them per player: a player with no stored language preference gets their client's own
+ * locale if a matching file exists, otherwise the server's configured default, and any key missing
+ * from a non-default locale silently falls back to the default before finally rendering {@code
+ * error.missing_key}.
  */
 public final class LanguageManager {
 
@@ -52,13 +52,18 @@ public final class LanguageManager {
         try (var files = Files.list(langResourceDir)) {
             files.filter(p -> p.getFileName().toString().endsWith(".json")).forEach(this::loadFile);
         } catch (IOException e) {
-            logger.severe("Could not list language files in " + langResourceDir + ": " + e.getMessage());
+            logger.severe(
+                    "Could not list language files in " + langResourceDir + ": " + e.getMessage());
         }
         if (!messages.containsKey(defaultLocale)) {
-            logger.warning("Default locale '" + defaultLocale + "' has no matching lang file - falling back to en_US.");
+            logger.warning(
+                    "Default locale '"
+                            + defaultLocale
+                            + "' has no matching lang file - falling back to en_US.");
             this.defaultLocale = "en_US";
         }
-        logger.info("Loaded " + messages.size() + " languages (default: " + this.defaultLocale + ").");
+        logger.info(
+                "Loaded " + messages.size() + " languages (default: " + this.defaultLocale + ").");
     }
 
     private void loadFile(Path path) {
@@ -97,11 +102,15 @@ public final class LanguageManager {
         playerLocaleOverrides.remove(player);
     }
 
-    @Nullable public String playerLocaleOverride(UUID player) {
+    @Nullable
+    public String playerLocaleOverride(UUID player) {
         return playerLocaleOverrides.get(player);
     }
 
-    /** The effective locale for a sender: explicit override, else their client locale if we have it, else the default. */
+    /**
+     * The effective locale for a sender: explicit override, else their client locale if we have it,
+     * else the default.
+     */
     public String resolveLocale(CommandSender sender) {
         if (sender instanceof Player player) {
             String override = playerLocaleOverrides.get(player.getUniqueId());
@@ -139,12 +148,21 @@ public final class LanguageManager {
         try {
             return MINI_MESSAGE.deserialize(template, placeholders);
         } catch (RuntimeException e) {
-            logger.warning("Malformed MiniMessage template for key '" + key + "' (" + localeCode + "): " + e.getMessage());
+            logger.warning(
+                    "Malformed MiniMessage template for key '"
+                            + key
+                            + "' ("
+                            + localeCode
+                            + "): "
+                            + e.getMessage());
             return Component.text(template);
         }
     }
 
-    /** Plain-text render (no MiniMessage parsing), for places that need a raw string - e.g. a webhook payload. */
+    /**
+     * Plain-text render (no MiniMessage parsing), for places that need a raw string - e.g. a
+     * webhook payload.
+     */
     public String renderPlain(String localeCode, String key, TagResolver... placeholders) {
         return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
                 .serialize(render(localeCode, key, placeholders));

@@ -7,7 +7,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import javax.sql.DataSource;
 
-/** Runs JDBC work off-thread and translates {@link SQLException} into an unchecked {@link StorageException}. */
+/**
+ * Runs JDBC work off-thread and translates {@link SQLException} into an unchecked {@link
+ * StorageException}.
+ */
 public final class SqlExecutor {
 
     private final DataSource dataSource;
@@ -31,10 +34,11 @@ public final class SqlExecutor {
     }
 
     public CompletableFuture<Void> run(SqlAction action) {
-        return submit(connection -> {
-            action.run(connection);
-            return null;
-        });
+        return submit(
+                connection -> {
+                    action.run(connection);
+                    return null;
+                });
     }
 
     @FunctionalInterface

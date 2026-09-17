@@ -11,15 +11,25 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Owns {@code config.yml} plus every {@code modules/*.yml} file, so each feature stays in its
- * own readable file instead of one giant config. All of them reload together on {@code /ynm
- * reload}.
+ * Owns {@code config.yml} plus every {@code modules/*.yml} file, so each feature stays in its own
+ * readable file instead of one giant config. All of them reload together on {@code /ynm reload}.
  */
 public final class ConfigManager {
 
     private static final String[] MODULE_FILES = {
-        "economy", "shop", "auctionhouse", "homes", "warps", "rtp", "tpa", "moderation",
-        "scoreboard", "nickname", "kits", "discord", "migration"
+        "economy",
+        "shop",
+        "auctionhouse",
+        "homes",
+        "warps",
+        "rtp",
+        "tpa",
+        "moderation",
+        "scoreboard",
+        "nickname",
+        "kits",
+        "discord",
+        "migration"
     };
 
     private final Plugin plugin;
@@ -37,7 +47,8 @@ public final class ConfigManager {
     public void load() {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
-        mainConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
+        mainConfig =
+                YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
 
         Path modulesDir = dataFolder.resolve("modules");
         ResourceExtractor.extractFolder(plugin.getClass(), "modules", modulesDir, logger);
@@ -87,7 +98,9 @@ public final class ConfigManager {
 
     public void saveModule(String name) {
         try {
-            moduleConfigs.get(name).save(dataFolder.resolve("modules").resolve(name + ".yml").toFile());
+            moduleConfigs
+                    .get(name)
+                    .save(dataFolder.resolve("modules").resolve(name + ".yml").toFile());
         } catch (IOException e) {
             logger.warning("Failed to save modules/" + name + ".yml: " + e.getMessage());
         }

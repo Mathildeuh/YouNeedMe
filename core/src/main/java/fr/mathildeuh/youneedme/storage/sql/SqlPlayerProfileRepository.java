@@ -22,67 +22,94 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
 
     @Override
     public CompletableFuture<PlayerProfile> findOrCreate(UUID uuid, String currentUsername) {
-        return find(uuid).thenCompose(existing -> {
-            if (existing.isPresent()) {
-                PlayerProfile profile = existing.get();
-                if (profile.lastKnownUsername().equals(currentUsername)) {
-                    return CompletableFuture.completedFuture(profile);
-                }
-                PlayerProfile renamed = new PlayerProfile(
-                        uuid,
-                        currentUsername,
-                        profile.nickname(),
-                        profile.languageCode(),
-                        profile.firstJoinedAt(),
-                        profile.lastSeenAt(),
-                        profile.playtimeSeconds(),
-                        profile.lastLocation(),
-                        profile.lastDeathLocation());
-                return save(renamed).thenApply(v -> renamed);
-            }
-            long now = System.currentTimeMillis();
-            PlayerProfile created = new PlayerProfile(uuid, currentUsername, null, null, now, now, 0, null, null);
-            return save(created).thenApply(v -> created);
-        });
+        return find(uuid)
+                .thenCompose(
+                        existing -> {
+                            if (existing.isPresent()) {
+                                PlayerProfile profile = existing.get();
+                                if (profile.lastKnownUsername().equals(currentUsername)) {
+                                    return CompletableFuture.completedFuture(profile);
+                                }
+                                PlayerProfile renamed =
+                                        new PlayerProfile(
+                                                uuid,
+                                                currentUsername,
+                                                profile.nickname(),
+                                                profile.languageCode(),
+                                                profile.firstJoinedAt(),
+                                                profile.lastSeenAt(),
+                                                profile.playtimeSeconds(),
+                                                profile.lastLocation(),
+                                                profile.lastDeathLocation());
+                                return save(renamed).thenApply(v -> renamed);
+                            }
+                            long now = System.currentTimeMillis();
+                            PlayerProfile created =
+                                    new PlayerProfile(
+                                            uuid,
+                                            currentUsername,
+                                            null,
+                                            null,
+                                            now,
+                                            now,
+                                            0,
+                                            null,
+                                            null);
+                            return save(created).thenApply(v -> created);
+                        });
     }
 
     @Override
     public CompletableFuture<Optional<PlayerProfile>> find(UUID uuid) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps =
-                    connection.prepareStatement("SELECT * FROM ynm_player_profiles WHERE uuid = ?")) {
-                ps.setString(1, uuid.toString());
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(mapRow(rs)) : Optional.<PlayerProfile>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_player_profiles WHERE uuid = ?")) {
+                        ps.setString(1, uuid.toString());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(mapRow(rs))
+                                    : Optional.<PlayerProfile>empty();
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Optional<UUID>> findUuidByUsername(String username) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT uuid FROM ynm_player_profiles WHERE LOWER(last_username) = LOWER(?)")) {
-                ps.setString(1, username);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(UUID.fromString(rs.getString(1))) : Optional.<UUID>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT uuid FROM ynm_player_profiles WHERE"
+                                            + " LOWER(last_username) = LOWER(?)")) {
+                        ps.setString(1, username);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(UUID.fromString(rs.getString(1)))
+                                    : Optional.<UUID>empty();
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Optional<UUID>> findUuidByNickname(String nickname) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT uuid FROM ynm_player_profiles WHERE LOWER(nickname) = LOWER(?)")) {
-                ps.setString(1, nickname);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(UUID.fromString(rs.getString(1))) : Optional.<UUID>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT uuid FROM ynm_player_profiles WHERE LOWER(nickname) ="
+                                            + " LOWER(?)")) {
+                        ps.setString(1, nickname);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(UUID.fromString(rs.getString(1)))
+                                    : Optional.<UUID>empty();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -109,26 +136,30 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
             "death_pitch"
         };
         String[] updateColumns = java.util.Arrays.copyOfRange(columns, 1, columns.length);
-        String upsert = dialect.upsert("ynm_player_profiles", columns, new String[] {"uuid"}, updateColumns);
+        String upsert =
+                dialect.upsert(
+                        "ynm_player_profiles", columns, new String[] {"uuid"}, updateColumns);
 
-        return sql.run(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(upsert)) {
-                int i = 1;
-                ps.setString(i++, profile.uuid().toString());
-                ps.setString(i++, profile.lastKnownUsername());
-                ps.setString(i++, profile.nickname());
-                ps.setString(i++, profile.languageCode());
-                ps.setLong(i++, profile.firstJoinedAt());
-                ps.setLong(i++, profile.lastSeenAt());
-                ps.setLong(i++, profile.playtimeSeconds());
-                i = setPosition(ps, i, profile.lastLocation());
-                setPosition(ps, i, profile.lastDeathLocation());
-                ps.executeUpdate();
-            }
-        });
+        return sql.run(
+                connection -> {
+                    try (PreparedStatement ps = connection.prepareStatement(upsert)) {
+                        int i = 1;
+                        ps.setString(i++, profile.uuid().toString());
+                        ps.setString(i++, profile.lastKnownUsername());
+                        ps.setString(i++, profile.nickname());
+                        ps.setString(i++, profile.languageCode());
+                        ps.setLong(i++, profile.firstJoinedAt());
+                        ps.setLong(i++, profile.lastSeenAt());
+                        ps.setLong(i++, profile.playtimeSeconds());
+                        i = setPosition(ps, i, profile.lastLocation());
+                        setPosition(ps, i, profile.lastDeathLocation());
+                        ps.executeUpdate();
+                    }
+                });
     }
 
-    private static int setPosition(PreparedStatement ps, int i, @Nullable Position position) throws java.sql.SQLException {
+    private static int setPosition(PreparedStatement ps, int i, @Nullable Position position)
+            throws java.sql.SQLException {
         if (position == null) {
             ps.setNull(i++, java.sql.Types.VARCHAR);
             ps.setNull(i++, java.sql.Types.DOUBLE);
@@ -147,7 +178,8 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
         return i;
     }
 
-    private static @Nullable Position readPosition(ResultSet rs, String prefix) throws java.sql.SQLException {
+    private static @Nullable Position readPosition(ResultSet rs, String prefix)
+            throws java.sql.SQLException {
         String world = rs.getString(prefix + "_world");
         if (world == null) {
             return null;

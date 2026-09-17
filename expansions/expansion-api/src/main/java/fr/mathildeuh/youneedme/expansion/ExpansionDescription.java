@@ -3,8 +3,8 @@ package fr.mathildeuh.youneedme.expansion;
 import java.util.List;
 
 /**
- * Metadata read from an expansion jar's {@code expansion.yml} (the expansion equivalent of
- * {@code plugin.yml}):
+ * Metadata read from an expansion jar's {@code expansion.yml} (the expansion equivalent of {@code
+ * plugin.yml}):
  *
  * <pre>{@code
  * id: my-expansion
@@ -16,4 +16,9 @@ import java.util.List;
  * }</pre>
  */
 public record ExpansionDescription(
-        String id, String version, String main, String apiVersion, List<String> authors, String description) {}
+        String id,
+        String version,
+        String main,
+        String apiVersion,
+        List<String> authors,
+        String description) {}

@@ -29,7 +29,9 @@ public class AuctionListEvent extends YnmPlayerEvent implements Cancellable {
         return price;
     }
 
-    /** Listeners may adjust the final listing price (e.g. to apply a tax or a discount permission). */
+    /**
+     * Listeners may adjust the final listing price (e.g. to apply a tax or a discount permission).
+     */
     public void setPrice(double price) {
         this.price = price;
     }

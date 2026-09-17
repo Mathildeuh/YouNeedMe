@@ -12,7 +12,9 @@ public interface WarpService {
 
     CompletableFuture<List<Warp>> list();
 
-    /** Warps visible to a specific viewer (respects {@link Warp#hidden()} and per-warp permission). */
+    /**
+     * Warps visible to a specific viewer (respects {@link Warp#hidden()} and per-warp permission).
+     */
     CompletableFuture<List<Warp>> listVisibleTo(UUID viewer);
 
     CompletableFuture<@Nullable Warp> get(String name);

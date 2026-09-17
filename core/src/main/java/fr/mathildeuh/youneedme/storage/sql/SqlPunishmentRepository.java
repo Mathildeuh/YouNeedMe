@@ -22,140 +22,169 @@ public final class SqlPunishmentRepository implements PunishmentRepository {
 
     @Override
     public CompletableFuture<Punishment> save(Punishment punishment) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    INSERT INTO ynm_punishments
-                        (target, target_ip, type, reason, issued_by, issued_at, expires_at, active, revoked_by, revoked_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    Statement.RETURN_GENERATED_KEYS)) {
-                bindWithoutId(ps, punishment);
-                ps.executeUpdate();
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    keys.next();
-                    long id = keys.getLong(1);
-                    return new Punishment(
-                            id,
-                            punishment.target(),
-                            punishment.targetIp(),
-                            punishment.type(),
-                            punishment.reason(),
-                            punishment.issuedBy(),
-                            punishment.issuedAt(),
-                            punishment.expiresAt(),
-                            punishment.active(),
-                            punishment.revokedBy(),
-                            punishment.revokedAt());
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    INSERT INTO ynm_punishments
+                                        (target, target_ip, type, reason, issued_by, issued_at, expires_at, active, revoked_by, revoked_at)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    """,
+                                    Statement.RETURN_GENERATED_KEYS)) {
+                        bindWithoutId(ps, punishment);
+                        ps.executeUpdate();
+                        try (ResultSet keys = ps.getGeneratedKeys()) {
+                            keys.next();
+                            long id = keys.getLong(1);
+                            return new Punishment(
+                                    id,
+                                    punishment.target(),
+                                    punishment.targetIp(),
+                                    punishment.type(),
+                                    punishment.reason(),
+                                    punishment.issuedBy(),
+                                    punishment.issuedAt(),
+                                    punishment.expiresAt(),
+                                    punishment.active(),
+                                    punishment.revokedBy(),
+                                    punishment.revokedAt());
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Void> update(Punishment punishment) {
-        return sql.run(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    UPDATE ynm_punishments SET target = ?, target_ip = ?, type = ?, reason = ?, issued_by = ?,
-                        issued_at = ?, expires_at = ?, active = ?, revoked_by = ?, revoked_at = ? WHERE id = ?
-                    """)) {
-                int i = bindWithoutId(ps, punishment);
-                ps.setLong(i, punishment.id());
-                ps.executeUpdate();
-            }
-        });
+        return sql.run(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    UPDATE ynm_punishments SET target = ?, target_ip = ?, type = ?, reason = ?, issued_by = ?,
+                                        issued_at = ?, expires_at = ?, active = ?, revoked_by = ?, revoked_at = ? WHERE id = ?
+                                    """)) {
+                        int i = bindWithoutId(ps, punishment);
+                        ps.setLong(i, punishment.id());
+                        ps.executeUpdate();
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<List<Punishment>> findByTarget(UUID target) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM ynm_punishments WHERE target = ? ORDER BY issued_at DESC")) {
-                ps.setString(1, target.toString());
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_punishments WHERE target = ? ORDER BY"
+                                            + " issued_at DESC")) {
+                        ps.setString(1, target.toString());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<List<Punishment>> findByIp(String ip) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM ynm_punishments WHERE target_ip = ? ORDER BY issued_at DESC")) {
-                ps.setString(1, ip);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    "SELECT * FROM ynm_punishments WHERE target_ip = ? ORDER BY"
+                                            + " issued_at DESC")) {
+                        ps.setString(1, ip);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Optional<Punishment>> findActive(UUID target, PunishmentType type) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    SELECT * FROM ynm_punishments
-                    WHERE target = ? AND type = ? AND active = %s
-                    ORDER BY issued_at DESC LIMIT 1
-                    """
-                            .formatted(trueLiteral(connection)))) {
-                ps.setString(1, target.toString());
-                ps.setString(2, type.name());
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(mapRow(rs)) : Optional.<Punishment>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    SELECT * FROM ynm_punishments
+                                    WHERE target = ? AND type = ? AND active = %s
+                                    ORDER BY issued_at DESC LIMIT 1
+                                    """
+                                            .formatted(trueLiteral(connection)))) {
+                        ps.setString(1, target.toString());
+                        ps.setString(2, type.name());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(mapRow(rs))
+                                    : Optional.<Punishment>empty();
+                        }
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Optional<Punishment>> findActiveIpBan(String ip) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    SELECT * FROM ynm_punishments
-                    WHERE target_ip = ? AND type = 'IP_BAN' AND active = %s
-                    ORDER BY issued_at DESC LIMIT 1
-                    """
-                            .formatted(trueLiteral(connection)))) {
-                ps.setString(1, ip);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next() ? Optional.of(mapRow(rs)) : Optional.<Punishment>empty();
-                }
-            }
-        });
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    SELECT * FROM ynm_punishments
+                                    WHERE target_ip = ? AND type = 'IP_BAN' AND active = %s
+                                    ORDER BY issued_at DESC LIMIT 1
+                                    """
+                                            .formatted(trueLiteral(connection)))) {
+                        ps.setString(1, ip);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return rs.next()
+                                    ? Optional.of(mapRow(rs))
+                                    : Optional.<Punishment>empty();
+                        }
+                    }
+                });
     }
 
     @Override
-    public CompletableFuture<List<Punishment>> findActiveOfType(PunishmentType type, int offset, int limit) {
-        return sql.submit(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(
-                    """
-                    SELECT * FROM ynm_punishments WHERE type = ? AND active = %s
-                    ORDER BY issued_at DESC LIMIT ? OFFSET ?
-                    """
-                            .formatted(trueLiteral(connection)))) {
-                ps.setString(1, type.name());
-                ps.setInt(2, limit);
-                ps.setInt(3, offset);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapAll(rs);
-                }
-            }
-        });
+    public CompletableFuture<List<Punishment>> findActiveOfType(
+            PunishmentType type, int offset, int limit) {
+        return sql.submit(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(
+                                    """
+                                    SELECT * FROM ynm_punishments WHERE type = ? AND active = %s
+                                    ORDER BY issued_at DESC LIMIT ? OFFSET ?
+                                    """
+                                            .formatted(trueLiteral(connection)))) {
+                        ps.setString(1, type.name());
+                        ps.setInt(2, limit);
+                        ps.setInt(3, offset);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
+                    }
+                });
     }
 
-    /** SQLite has no real boolean literal keyword in all drivers; {@code 1}/{@code TRUE} both parse fine everywhere else. */
+    /**
+     * SQLite has no real boolean literal keyword in all drivers; {@code 1}/{@code TRUE} both parse
+     * fine everywhere else.
+     */
     private static String trueLiteral(java.sql.Connection connection) throws java.sql.SQLException {
-        String product = connection.getMetaData().getDatabaseProductName().toLowerCase(java.util.Locale.ROOT);
+        String product =
+                connection
+                        .getMetaData()
+                        .getDatabaseProductName()
+                        .toLowerCase(java.util.Locale.ROOT);
         return product.contains("sqlite") ? "1" : "TRUE";
     }
 
-    private static int bindWithoutId(PreparedStatement ps, Punishment punishment) throws java.sql.SQLException {
+    private static int bindWithoutId(PreparedStatement ps, Punishment punishment)
+            throws java.sql.SQLException {
         int i = 1;
         ps.setString(i++, punishment.target() == null ? null : punishment.target().toString());
         ps.setString(i++, punishment.targetIp());
@@ -169,7 +198,8 @@ public final class SqlPunishmentRepository implements PunishmentRepository {
             ps.setLong(i++, punishment.expiresAt());
         }
         ps.setBoolean(i++, punishment.active());
-        ps.setString(i++, punishment.revokedBy() == null ? null : punishment.revokedBy().toString());
+        ps.setString(
+                i++, punishment.revokedBy() == null ? null : punishment.revokedBy().toString());
         if (punishment.revokedAt() == null) {
             ps.setNull(i++, java.sql.Types.BIGINT);
         } else {

@@ -20,6 +20,9 @@ public interface AuctionRepository {
 
     CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller);
 
-    /** Flips every active listing whose {@code expiresAt} has passed to {@code EXPIRED}; returns how many. */
+    /**
+     * Flips every active listing whose {@code expiresAt} has passed to {@code EXPIRED}; returns how
+     * many.
+     */
     CompletableFuture<Integer> expireOverdue();
 }

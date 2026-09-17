@@ -31,7 +31,10 @@ public class HomeSetEvent extends YnmPlayerEvent implements Cancellable {
         return position;
     }
 
-    /** {@code true} if this call replaces an existing home of the same name rather than creating a new one. */
+    /**
+     * {@code true} if this call replaces an existing home of the same name rather than creating a
+     * new one.
+     */
     public boolean isOverwrite() {
         return overwrite;
     }

@@ -11,7 +11,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-/** {@link SchedulerAdapter} backed by the classic {@code BukkitScheduler} - used on Paper, Spigot and Purpur. */
+/**
+ * {@link SchedulerAdapter} backed by the classic {@code BukkitScheduler} - used on Paper, Spigot
+ * and Purpur.
+ */
 public final class BukkitSchedulerAdapter implements SchedulerAdapter {
 
     private final Plugin plugin;
@@ -53,12 +56,14 @@ public final class BukkitSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public ScheduledTask runAtLocationTimer(Location location, Runnable task, long delayTicks, long periodTicks) {
+    public ScheduledTask runAtLocationTimer(
+            Location location, Runnable task, long delayTicks, long periodTicks) {
         return runGlobalTimer(task, delayTicks, periodTicks);
     }
 
     @Override
-    public ScheduledTask runForEntity(Entity entity, Consumer<Entity> task, Runnable retired, long delayTicks) {
+    public ScheduledTask runForEntity(
+            Entity entity, Consumer<Entity> task, Runnable retired, long delayTicks) {
         return runGlobalDelayed(
                 () -> {
                     if (entity.isValid()) {
@@ -82,7 +87,9 @@ public final class BukkitSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public ScheduledTask runAsyncTimer(Runnable task, long delayTicks, long periodTicks) {
-        return wrap(Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task, delayTicks, periodTicks));
+        return wrap(
+                Bukkit.getScheduler()
+                        .runTaskTimerAsynchronously(plugin, task, delayTicks, periodTicks));
     }
 
     @Override
@@ -102,7 +109,8 @@ public final class BukkitSchedulerAdapter implements SchedulerAdapter {
                 int id = task.getTaskId();
                 // Bukkit has no direct isCancelled(taskId); "neither queued nor running" is the
                 // closest equivalent and also covers a one-shot task that already completed.
-                return !Bukkit.getScheduler().isQueued(id) && !Bukkit.getScheduler().isCurrentlyRunning(id);
+                return !Bukkit.getScheduler().isQueued(id)
+                        && !Bukkit.getScheduler().isCurrentlyRunning(id);
             }
         };
     }

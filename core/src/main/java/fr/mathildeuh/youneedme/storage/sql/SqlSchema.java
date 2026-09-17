@@ -2,7 +2,9 @@ package fr.mathildeuh.youneedme.storage.sql;
 
 import java.util.List;
 
-/** Table definitions shared by every JDBC backend, parametrized only where the dialect forces it. */
+/**
+ * Table definitions shared by every JDBC backend, parametrized only where the dialect forces it.
+ */
 final class SqlSchema {
 
     private SqlSchema() {}
@@ -34,8 +36,10 @@ final class SqlSchema {
                     death_pitch REAL
                 )
                 """,
-                "CREATE INDEX IF NOT EXISTS idx_ynm_profiles_username ON ynm_player_profiles (last_username)",
-                "CREATE INDEX IF NOT EXISTS idx_ynm_profiles_nickname ON ynm_player_profiles (nickname)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_profiles_username ON ynm_player_profiles"
+                        + " (last_username)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_profiles_nickname ON ynm_player_profiles"
+                        + " (nickname)",
                 """
                 CREATE TABLE IF NOT EXISTS ynm_homes (
                     owner VARCHAR(36) NOT NULL,
@@ -78,7 +82,8 @@ final class SqlSchema {
                     PRIMARY KEY (player, currency_id)
                 )
                 """,
-                "CREATE INDEX IF NOT EXISTS idx_ynm_balances_currency ON ynm_balances (currency_id, balance)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_balances_currency ON ynm_balances (currency_id,"
+                        + " balance)",
                 """
                 CREATE TABLE IF NOT EXISTS ynm_economy_log (
                     id %s,
@@ -92,7 +97,8 @@ final class SqlSchema {
                 )
                 """
                         .formatted(id),
-                "CREATE INDEX IF NOT EXISTS idx_ynm_economy_log_player ON ynm_economy_log (player, ts)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_economy_log_player ON ynm_economy_log (player,"
+                        + " ts)",
                 """
                 CREATE TABLE IF NOT EXISTS ynm_kit_claims (
                     player VARCHAR(36) NOT NULL,
@@ -118,8 +124,10 @@ final class SqlSchema {
                 )
                 """
                         .formatted(id, bool, dialect.isMySqlFamily() ? "1" : "TRUE"),
-                "CREATE INDEX IF NOT EXISTS idx_ynm_punishments_target ON ynm_punishments (target, type, active)",
-                "CREATE INDEX IF NOT EXISTS idx_ynm_punishments_ip ON ynm_punishments (target_ip, active)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_punishments_target ON ynm_punishments (target,"
+                        + " type, active)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_punishments_ip ON ynm_punishments (target_ip,"
+                        + " active)",
                 """
                 CREATE TABLE IF NOT EXISTS ynm_auctions (
                     id %s,
@@ -134,8 +142,10 @@ final class SqlSchema {
                 )
                 """
                         .formatted(id),
-                "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_status ON ynm_auctions (status, expires_at)",
-                "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_seller ON ynm_auctions (seller, status)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_status ON ynm_auctions (status,"
+                        + " expires_at)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_seller ON ynm_auctions (seller,"
+                        + " status)",
                 """
                 CREATE TABLE IF NOT EXISTS ynm_shop_stock (
                     category_id VARCHAR(32) NOT NULL,

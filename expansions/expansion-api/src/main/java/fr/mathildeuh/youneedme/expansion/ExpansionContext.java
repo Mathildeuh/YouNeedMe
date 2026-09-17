@@ -20,6 +20,9 @@ public interface ExpansionContext {
 
     Logger logger();
 
-    /** The YouNeedMe plugin instance, for APIs (event/command registration, schedulers) that need a {@link Plugin}. */
+    /**
+     * The YouNeedMe plugin instance, for APIs (event/command registration, schedulers) that need a
+     * {@link Plugin}.
+     */
     Plugin hostPlugin();
 }

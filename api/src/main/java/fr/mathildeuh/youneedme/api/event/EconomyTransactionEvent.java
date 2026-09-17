@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Fired before any balance change is persisted - deposit, withdraw, set, or one leg of a
- * {@code /pay} transfer (which fires twice: once per account). The account involved may be
- * offline, so this carries a {@link UUID} rather than a {@link org.bukkit.entity.Player}.
+ * Fired before any balance change is persisted - deposit, withdraw, set, or one leg of a {@code
+ * /pay} transfer (which fires twice: once per account). The account involved may be offline, so
+ * this carries a {@link UUID} rather than a {@link org.bukkit.entity.Player}.
  */
 public class EconomyTransactionEvent extends Event implements Cancellable {
 
@@ -31,7 +31,12 @@ public class EconomyTransactionEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public EconomyTransactionEvent(
-            UUID account, String currencyId, Type type, double amount, String reason, @Nullable UUID relatedAccount) {
+            UUID account,
+            String currencyId,
+            Type type,
+            double amount,
+            String reason,
+            @Nullable UUID relatedAccount) {
         this.account = account;
         this.currencyId = currencyId;
         this.type = type;

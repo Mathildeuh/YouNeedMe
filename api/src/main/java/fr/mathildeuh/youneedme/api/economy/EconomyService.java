@@ -5,14 +5,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * YouNeedMe's internal economy. This is also exposed to the rest of the server through a
- * {@code net.milkbowl.vault.economy.Economy} provider (see {@code core}'s Vault integration), so
- * any other plugin can transact against it without knowing YouNeedMe exists - use this interface
- * directly only when you need YouNeedMe-specific features Vault's API doesn't have, such as
- * multi-currency support or {@link #transferAtomic}.
+ * YouNeedMe's internal economy. This is also exposed to the rest of the server through a {@code
+ * net.milkbowl.vault.economy.Economy} provider (see {@code core}'s Vault integration), so any other
+ * plugin can transact against it without knowing YouNeedMe exists - use this interface directly
+ * only when you need YouNeedMe-specific features Vault's API doesn't have, such as multi-currency
+ * support or {@link #transferAtomic}.
  *
- * <p>Every mutating call is serialized per-player internally (a spam of {@code /pay} cannot cause
- * a double-spend), and every method is safe to call from any thread.
+ * <p>Every mutating call is serialized per-player internally (a spam of {@code /pay} cannot cause a
+ * double-spend), and every method is safe to call from any thread.
  */
 public interface EconomyService {
 
@@ -46,10 +46,11 @@ public interface EconomyService {
 
     /**
      * Withdraws from {@code from} and deposits to {@code to} as a single atomic unit: on
-     * insufficient funds neither balance changes. This is what {@code /pay} uses, and is the
-     * right primitive for any plugin-to-plugin transfer.
+     * insufficient funds neither balance changes. This is what {@code /pay} uses, and is the right
+     * primitive for any plugin-to-plugin transfer.
      */
-    CompletableFuture<EconomyResult> transferAtomic(UUID from, UUID to, String currencyId, double amount);
+    CompletableFuture<EconomyResult> transferAtomic(
+            UUID from, UUID to, String currencyId, double amount);
 
     default CompletableFuture<EconomyResult> transferAtomic(UUID from, UUID to, double amount) {
         return transferAtomic(from, to, DEFAULT_CURRENCY, amount);

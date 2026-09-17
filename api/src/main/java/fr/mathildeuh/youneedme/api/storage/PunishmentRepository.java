@@ -22,5 +22,6 @@ public interface PunishmentRepository {
 
     CompletableFuture<Optional<Punishment>> findActiveIpBan(String ip);
 
-    CompletableFuture<List<Punishment>> findActiveOfType(PunishmentType type, int offset, int limit);
+    CompletableFuture<List<Punishment>> findActiveOfType(
+            PunishmentType type, int offset, int limit);
 }

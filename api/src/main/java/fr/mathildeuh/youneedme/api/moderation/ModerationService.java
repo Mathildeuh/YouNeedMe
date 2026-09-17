@@ -6,9 +6,9 @@ import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Bans, mutes, kicks and their shared history. Every mutating method fires the matching
- * cancellable event (see {@code fr.mathildeuh.youneedme.api.event}) synchronously on the calling
- * thread before doing any I/O, so listeners can veto a punishment before it is persisted.
+ * Bans, mutes, kicks and their shared history. Every mutating method fires the matching cancellable
+ * event (see {@code fr.mathildeuh.youneedme.api.event}) synchronously on the calling thread before
+ * doing any I/O, so listeners can veto a punishment before it is persisted.
  */
 public interface ModerationService {
 
@@ -46,5 +46,6 @@ public interface ModerationService {
     CompletableFuture<List<Punishment>> history(UUID target);
 
     /** All currently-active bans/mutes, for {@code /banlist}. */
-    CompletableFuture<List<Punishment>> activePunishments(PunishmentType type, int page, int pageSize);
+    CompletableFuture<List<Punishment>> activePunishments(
+            PunishmentType type, int page, int pageSize);
 }

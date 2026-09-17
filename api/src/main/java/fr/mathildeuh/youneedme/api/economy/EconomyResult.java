@@ -2,7 +2,9 @@ package fr.mathildeuh.youneedme.api.economy;
 
 import org.jetbrains.annotations.Nullable;
 
-/** Outcome of a single economy operation, mirroring Vault's own success/failure-with-reason shape. */
+/**
+ * Outcome of a single economy operation, mirroring Vault's own success/failure-with-reason shape.
+ */
 public record EconomyResult(Status status, double balanceAfter, @Nullable String message) {
 
     public enum Status {

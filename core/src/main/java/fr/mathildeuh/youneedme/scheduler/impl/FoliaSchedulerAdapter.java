@@ -26,7 +26,8 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
 
     public FoliaSchedulerAdapter(Plugin plugin) {
         this.plugin = plugin;
-        this.asyncExecutor = task -> Bukkit.getAsyncScheduler().runNow(plugin, ignored -> task.run());
+        this.asyncExecutor =
+                task -> Bukkit.getAsyncScheduler().runNow(plugin, ignored -> task.run());
     }
 
     @Override
@@ -44,13 +45,17 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
         if (delayTicks <= 0) {
             return runGlobal(task);
         }
-        return wrap(Bukkit.getGlobalRegionScheduler().runDelayed(plugin, st -> task.run(), delayTicks));
+        return wrap(
+                Bukkit.getGlobalRegionScheduler().runDelayed(plugin, st -> task.run(), delayTicks));
     }
 
     @Override
-    public SchedulerAdapter.ScheduledTask runGlobalTimer(Runnable task, long delayTicks, long periodTicks) {
-        return wrap(Bukkit.getGlobalRegionScheduler()
-                .runAtFixedRate(plugin, st -> task.run(), Math.max(1, delayTicks), periodTicks));
+    public SchedulerAdapter.ScheduledTask runGlobalTimer(
+            Runnable task, long delayTicks, long periodTicks) {
+        return wrap(
+                Bukkit.getGlobalRegionScheduler()
+                        .runAtFixedRate(
+                                plugin, st -> task.run(), Math.max(1, delayTicks), periodTicks));
     }
 
     @Override
@@ -59,24 +64,34 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public SchedulerAdapter.ScheduledTask runAtLocationDelayed(Location location, Runnable task, long delayTicks) {
+    public SchedulerAdapter.ScheduledTask runAtLocationDelayed(
+            Location location, Runnable task, long delayTicks) {
         if (delayTicks <= 0) {
             return runAtLocation(location, task);
         }
-        return wrap(Bukkit.getRegionScheduler().runDelayed(plugin, location, st -> task.run(), delayTicks));
+        return wrap(
+                Bukkit.getRegionScheduler()
+                        .runDelayed(plugin, location, st -> task.run(), delayTicks));
     }
 
     @Override
     public SchedulerAdapter.ScheduledTask runAtLocationTimer(
             Location location, Runnable task, long delayTicks, long periodTicks) {
-        return wrap(Bukkit.getRegionScheduler()
-                .runAtFixedRate(plugin, location, st -> task.run(), Math.max(1, delayTicks), periodTicks));
+        return wrap(
+                Bukkit.getRegionScheduler()
+                        .runAtFixedRate(
+                                plugin,
+                                location,
+                                st -> task.run(),
+                                Math.max(1, delayTicks),
+                                periodTicks));
     }
 
     @Override
     public SchedulerAdapter.ScheduledTask runForEntity(
             Entity entity, Consumer<Entity> task, Runnable retired, long delayTicks) {
-        Consumer<io.papermc.paper.threadedregions.scheduler.ScheduledTask> callback = st -> task.accept(entity);
+        Consumer<io.papermc.paper.threadedregions.scheduler.ScheduledTask> callback =
+                st -> task.accept(entity);
         if (delayTicks <= 0) {
             return wrap(entity.getScheduler().run(plugin, callback, retired));
         }
@@ -90,19 +105,26 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public SchedulerAdapter.ScheduledTask runAsyncDelayed(Runnable task, long delayTicks) {
-        return wrap(Bukkit.getAsyncScheduler()
-                .runDelayed(plugin, st -> task.run(), Math.max(1, delayTicks) * TICK_MILLIS, TimeUnit.MILLISECONDS));
+        return wrap(
+                Bukkit.getAsyncScheduler()
+                        .runDelayed(
+                                plugin,
+                                st -> task.run(),
+                                Math.max(1, delayTicks) * TICK_MILLIS,
+                                TimeUnit.MILLISECONDS));
     }
 
     @Override
-    public SchedulerAdapter.ScheduledTask runAsyncTimer(Runnable task, long delayTicks, long periodTicks) {
-        return wrap(Bukkit.getAsyncScheduler()
-                .runAtFixedRate(
-                        plugin,
-                        st -> task.run(),
-                        Math.max(1, delayTicks) * TICK_MILLIS,
-                        Math.max(1, periodTicks) * TICK_MILLIS,
-                        TimeUnit.MILLISECONDS));
+    public SchedulerAdapter.ScheduledTask runAsyncTimer(
+            Runnable task, long delayTicks, long periodTicks) {
+        return wrap(
+                Bukkit.getAsyncScheduler()
+                        .runAtFixedRate(
+                                plugin,
+                                st -> task.run(),
+                                Math.max(1, delayTicks) * TICK_MILLIS,
+                                Math.max(1, periodTicks) * TICK_MILLIS,
+                                TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -110,7 +132,8 @@ public final class FoliaSchedulerAdapter implements SchedulerAdapter {
         return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
-    private static SchedulerAdapter.ScheduledTask wrap(io.papermc.paper.threadedregions.scheduler.ScheduledTask task) {
+    private static SchedulerAdapter.ScheduledTask wrap(
+            io.papermc.paper.threadedregions.scheduler.ScheduledTask task) {
         return new SchedulerAdapter.ScheduledTask() {
             @Override
             public void cancel() {

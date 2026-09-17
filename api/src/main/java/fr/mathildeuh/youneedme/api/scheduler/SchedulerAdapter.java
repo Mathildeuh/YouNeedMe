@@ -10,8 +10,8 @@ import org.bukkit.entity.Entity;
  *
  * <p>Transparently targets the classic {@code BukkitScheduler} on Paper/Spigot/Purpur, or the
  * regionised {@code GlobalRegionScheduler}/{@code RegionScheduler}/{@code EntityScheduler} on
- * Folia, whichever the server is actually running. Every module in YouNeedMe (and every
- * expansion) MUST go through this instead of touching {@code Bukkit.getScheduler()} or an
+ * Folia, whichever the server is actually running. Every module in YouNeedMe (and every expansion)
+ * MUST go through this instead of touching {@code Bukkit.getScheduler()} or an
  * entity/location-bound Folia scheduler directly - that is the one rule that keeps this plugin
  * Folia-safe.
  *
@@ -39,18 +39,20 @@ public interface SchedulerAdapter {
     ScheduledTask runAtLocationDelayed(Location location, Runnable task, long delayTicks);
 
     /** Runs a repeating task pinned to the region that owns {@code location}. */
-    ScheduledTask runAtLocationTimer(Location location, Runnable task, long delayTicks, long periodTicks);
+    ScheduledTask runAtLocationTimer(
+            Location location, Runnable task, long delayTicks, long periodTicks);
 
     /**
-     * Runs a task on the region that currently owns {@code entity}, on the region thread, with
-     * the live {@link Entity} handed back through the callback. On Folia this is the ONLY safe
-     * way to act on an entity from an async context; on Paper/Spigot it degrades to a normal
-     * scheduled task.
+     * Runs a task on the region that currently owns {@code entity}, on the region thread, with the
+     * live {@link Entity} handed back through the callback. On Folia this is the ONLY safe way to
+     * act on an entity from an async context; on Paper/Spigot it degrades to a normal scheduled
+     * task.
      *
-     * @param retired invoked instead of {@code task} if the entity is removed/invalid by the
-     *     time the task would run (e.g. the player logged off) - never silently dropped
+     * @param retired invoked instead of {@code task} if the entity is removed/invalid by the time
+     *     the task would run (e.g. the player logged off) - never silently dropped
      */
-    ScheduledTask runForEntity(Entity entity, Consumer<Entity> task, Runnable retired, long delayTicks);
+    ScheduledTask runForEntity(
+            Entity entity, Consumer<Entity> task, Runnable retired, long delayTicks);
 
     /** Runs a task off the main/region thread entirely, for blocking I/O (storage, HTTP). */
     ScheduledTask runAsync(Runnable task);
@@ -62,8 +64,8 @@ public interface SchedulerAdapter {
     ScheduledTask runAsyncTimer(Runnable task, long delayTicks, long periodTicks);
 
     /**
-     * Convenience wrapper: runs {@code supplier} asynchronously and completes the returned
-     * future with its result (or exception), for call sites that want to compose with {@link
+     * Convenience wrapper: runs {@code supplier} asynchronously and completes the returned future
+     * with its result (or exception), for call sites that want to compose with {@link
      * CompletableFuture} instead of callbacks.
      */
     <T> CompletableFuture<T> supplyAsync(java.util.function.Supplier<T> supplier);

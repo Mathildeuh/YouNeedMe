@@ -12,20 +12,24 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * Copies every resource under a classpath folder (e.g. the bundled {@code lang/} directory) out
- * to disk on first run, without overwriting files an admin already edited. {@code
+ * Copies every resource under a classpath folder (e.g. the bundled {@code lang/} directory) out to
+ * disk on first run, without overwriting files an admin already edited. {@code
  * JavaPlugin#saveResource} only handles a single known file name, hence this.
  */
 public final class ResourceExtractor {
 
     private ResourceExtractor() {}
 
-    public static void extractFolder(Class<?> anchor, String resourceFolder, Path targetDir, Logger logger) {
+    public static void extractFolder(
+            Class<?> anchor, String resourceFolder, Path targetDir, Logger logger) {
         try {
             Files.createDirectories(targetDir);
             URL url = anchor.getClassLoader().getResource(resourceFolder);
             if (url == null) {
-                logger.warning("Bundled resource folder '" + resourceFolder + "' not found in the plugin jar.");
+                logger.warning(
+                        "Bundled resource folder '"
+                                + resourceFolder
+                                + "' not found in the plugin jar.");
                 return;
             }
             JarURLConnection connection = (JarURLConnection) url.openConnection();
@@ -48,7 +52,11 @@ public final class ResourceExtractor {
                 }
             }
         } catch (IOException | ClassCastException e) {
-            logger.warning("Failed to extract bundled resources from '" + resourceFolder + "': " + e.getMessage());
+            logger.warning(
+                    "Failed to extract bundled resources from '"
+                            + resourceFolder
+                            + "': "
+                            + e.getMessage());
         }
     }
 }

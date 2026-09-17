@@ -21,10 +21,19 @@ public final class YouNeedMe extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        this.scheduler = ServerEnvironment.isFolia() ? new FoliaSchedulerAdapter(this) : new BukkitSchedulerAdapter(this);
-        getServer().getServicesManager().register(SchedulerAdapter.class, scheduler, this, ServicePriority.Normal);
+        this.scheduler =
+                ServerEnvironment.isFolia()
+                        ? new FoliaSchedulerAdapter(this)
+                        : new BukkitSchedulerAdapter(this);
+        getServer()
+                .getServicesManager()
+                .register(SchedulerAdapter.class, scheduler, this, ServicePriority.Normal);
         getLogger()
-                .info("Detected server environment: " + (ServerEnvironment.isFolia() ? "Folia (regionised)" : "Paper/Spigot"));
+                .info(
+                        "Detected server environment: "
+                                + (ServerEnvironment.isFolia()
+                                        ? "Folia (regionised)"
+                                        : "Paper/Spigot"));
     }
 
     @Override
@@ -33,9 +42,11 @@ public final class YouNeedMe extends JavaPlugin {
         configManager.load();
 
         this.languageManager = new LanguageManager(getLogger());
-        ResourceExtractor.extractFolder(getClass(), "lang", getDataFolder().toPath().resolve("lang"), getLogger());
+        ResourceExtractor.extractFolder(
+                getClass(), "lang", getDataFolder().toPath().resolve("lang"), getLogger());
         languageManager.load(
-                getDataFolder().toPath().resolve("lang"), configManager.main().getString("language.default", "en_US"));
+                getDataFolder().toPath().resolve("lang"),
+                configManager.main().getString("language.default", "en_US"));
 
         this.storageManager = new StorageManager(getLogger(), getDataFolder().toPath());
         storageManager
@@ -45,14 +56,20 @@ public final class YouNeedMe extends JavaPlugin {
     }
 
     private void onStorageReady(DataStorage storage) {
-        scheduler.runGlobal(() -> {
-            getServer().getServicesManager().register(DataStorage.class, storage, this, ServicePriority.Normal);
-            getLogger().info("YouNeedMe is ready.");
-        });
+        scheduler.runGlobal(
+                () -> {
+                    getServer()
+                            .getServicesManager()
+                            .register(DataStorage.class, storage, this, ServicePriority.Normal);
+                    getLogger().info("YouNeedMe is ready.");
+                });
     }
 
     private Void onStorageFailed(Throwable throwable) {
-        getLogger().severe("Could not initialize storage backend - disabling YouNeedMe: " + throwable.getMessage());
+        getLogger()
+                .severe(
+                        "Could not initialize storage backend - disabling YouNeedMe: "
+                                + throwable.getMessage());
         scheduler.runGlobal(() -> getServer().getPluginManager().disablePlugin(this));
         return null;
     }
