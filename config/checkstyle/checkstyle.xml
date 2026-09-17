@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  Baseline style/quality checks for YouNeedMe.
+  Wired as non-blocking (see build.gradle.kts: isIgnoreFailures = true) so the report is
+  tracked in CI without gating the build day one; tighten once the warning count is under
+  control. Formatting itself (whitespace/imports) is enforced separately and blockingly by
+  Spotless, so this ruleset focuses on things a formatter cannot fix.
+-->
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="warning"/>
+    <property name="fileExtensions" value="java"/>
+
+    <module name="FileLength">
+        <property name="max" value="1200"/>
+    </module>
+    <module name="LineLength">
+        <property name="max" value="140"/>
+        <property name="ignorePattern" value="^import|^package|https?://"/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="OuterTypeFilename"/>
+        <module name="AvoidStarImport"/>
+        <module name="UnusedImports"/>
+        <module name="RedundantImport"/>
+
+        <module name="EqualsHashCode"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="OneStatementPerLine"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="FallThrough"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="EmptyCatchBlock">
+            <property name="commentFormat" value="expected|ignore"/>
+        </module>
+        <module name="EmptyBlock">
+            <property name="option" value="text"/>
+        </module>
+
+        <module name="MethodLength">
+            <property name="max" value="150"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="max" value="8"/>
+        </module>
+
+        <module name="TypeName"/>
+        <module name="MethodName"/>
+        <module name="ConstantName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="PackageName">
+            <property name="format" value="^fr\.mathildeuh\.youneedme(\.[a-z][a-z0-9]*)*$"/>
+        </module>
+
+        <module name="NeedBraces"/>
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+
+        <module name="JavadocMethod">
+            <property name="scope" value="public"/>
+            <property name="allowMissingParamTags" value="true"/>
+            <property name="allowMissingReturnTag" value="true"/>
+            <property name="validateThrows" value="false"/>
+        </module>
+    </module>
+</module>
