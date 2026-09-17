@@ -1,0 +1,8 @@
+name: YouNeedMe
+prefix: [ SOS ]
+version: '${version}'
+
+main: fr.mathildeuh.youNeedMe.YouNeedMe
+api-version: '26.1'
+
+authors: [ Mathildeuh ]
