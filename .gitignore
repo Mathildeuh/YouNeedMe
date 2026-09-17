@@ -1,0 +1,51 @@
+# Gradle
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Java
+*.class
+hs_err_pid*
+replay_pid*
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Local test server / docker volumes
+/docker/data/
+/run/
+
+# Secrets / local env overrides
+.env
+.env.*
+*.local.yml
+
+# Internal planning briefs (not shipped with the plugin)
+/prompts/
+
+# Javadoc / site build output
+/site/
