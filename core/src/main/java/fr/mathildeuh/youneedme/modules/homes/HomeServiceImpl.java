@@ -52,11 +52,11 @@ public final class HomeServiceImpl implements HomeService {
                             Integer.parseInt(
                                     permission.substring("youneedme.homes.limit.".length()));
                     highest = Math.max(highest, value);
-                } catch (NumberFormatException ignored) {
-                    // not a numeric limit node
+                } catch (NumberFormatException e) {
+                    // ignore: not a numeric limit node
                 }
             }
-            if (info.getValue() && permission.equals("youneedme.homes.limit.unlimited")) {
+            if (info.getValue() && "youneedme.homes.limit.unlimited".equals(permission)) {
                 return Integer.MAX_VALUE;
             }
         }

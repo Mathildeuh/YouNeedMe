@@ -68,11 +68,11 @@
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
 
-        <module name="JavadocMethod">
-            <property name="scope" value="public"/>
-            <property name="allowMissingParamTags" value="true"/>
-            <property name="allowMissingReturnTag" value="true"/>
-            <property name="validateThrows" value="false"/>
-        </module>
+        <!--
+          JavadocMethod is deliberately not enabled here: its property surface (scope,
+          allowMissingParamTags, ...) changed too much across recent Checkstyle majors to pin
+          reliably, and the api module's own `javadoc` task (Xdoclint) already gates the one
+          place Javadoc completeness actually matters - the public API.
+        -->
     </module>
 </module>

@@ -11,18 +11,13 @@
 
     <rule ref="category/java/bestpractices.xml">
         <exclude name="GuardLogStatement"/>
-        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
     </rule>
-    <rule ref="category/java/errorprone.xml">
-        <exclude name="BeanMembersShouldSerialize"/>
-        <exclude name="DataflowAnomalyAnalysis"/>
-    </rule>
+    <rule ref="category/java/errorprone.xml"/>
     <rule ref="category/java/performance.xml"/>
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
         <exclude name="TooManyMethods"/>
         <exclude name="CyclomaticComplexity"/>
-        <exclude name="ExcessiveClassLength"/>
         <exclude name="LoosePackageCoupling"/>
     </rule>
     <rule ref="category/java/multithreading.xml">

@@ -139,7 +139,7 @@ public final class LanguageManager {
         if (template == null) {
             // Both the requested key and (if we get here recursively) "error.missing_key" itself
             // are absent from every loaded locale - a corrupted install. Never recurse forever.
-            if (key.equals("error.missing_key")) {
+            if ("error.missing_key".equals(key)) {
                 return Component.text("[YouNeedMe] Missing language key and no fallback available");
             }
             String fallbackLocale = messages.containsKey(defaultLocale) ? defaultLocale : "en_US";
