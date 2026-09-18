@@ -38,6 +38,7 @@ desktop.ini
 # Local test server / docker volumes
 /docker/data/
 /run/
+/test-server/
 
 # Secrets / local env overrides
 .env

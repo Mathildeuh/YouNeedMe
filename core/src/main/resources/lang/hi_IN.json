@@ -799,7 +799,6 @@
   "migration.status.warps": "<prefix> <color:#AAAAAA>  वार्प फाइलें: <color:#FFF200><count></color>",
   "migration.status.bans": "<prefix> <color:#AAAAAA>बैन फाइल (banned-players.json):</color> <color:#FFF200><status></color>",
   "migration.status.managers": "<prefix> <color:#AAAAAA>मैनेजर: <color:#FFF200>अर्थव्यवस्था=<economy>, होम्स=<homes>, निक्स=<nicks>, वार्प्स=<warps>, दंड=<punishments></color>",
-  "migration.status.managers": "<prefix> <color:#AAAAAA>मैनेजर: <color:#FFF200>अर्थव्यवस्था=<economy>, होम्स=<homes>, निक्स=<nicks>, वार्प्स=<warps>, दंड=<punishments></color>",
   "ynm.reload.success": "<prefix> <color:#FFF200>कॉन्फ़िगरेशन और भाषाएं रीलोड की गईं।</color>",
   "ynm.reload.economy_disabled": "<prefix> <color:#AAAAAA>अर्थव्यवस्था प्रणाली अक्षम।</color>",
   "ynm.reload.economy_enabled": "<prefix> <color:#FFF200>अर्थव्यवस्था प्रणाली सक्षम।</color>",
