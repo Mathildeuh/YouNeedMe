@@ -201,7 +201,7 @@ public final class KitEditorGui implements Listener {
                 simple(Material.TNT, "<red><bold>Delete Kit", List.of("Click twice to confirm")));
         inventory.setItem(
                 SLOT_BACK,
-                simple(Material.BARRIER, "<gray>Back", List.of("Discards unsaved changes")));
+                simple(Material.BARRIER, "<gray>Back", List.of("Saves and returns to the list")));
     }
 
     private static String plain(String miniMessage) {
@@ -264,11 +264,16 @@ public final class KitEditorGui implements Listener {
 
     private void onEditorClick(InventoryClickEvent event, Player player, String kitId) {
         int slot = event.getRawSlot();
-        if (slot < 0 || slot >= ITEM_SLOTS) {
-            event.setCancelled(true);
-        } else {
+        int topSize = event.getView().getTopInventory().getSize();
+        // Only the control row (45-53) in the TOP inventory is off-limits. Item slots (0-44) and
+        // the player's own inventory (rawSlot >= topSize) must stay uncancelled for normal
+        // pickup/drag/shift-click - cancelling rawSlot >= ITEM_SLOTS used to also cancel every
+        // click in the player's own inventory, making it impossible to ever pick an item up to
+        // place it in the kit.
+        if (slot < ITEM_SLOTS || slot >= topSize) {
             return;
         }
+        event.setCancelled(true);
         Draft draft =
                 drafts.computeIfAbsent(
                         kitId,
@@ -367,12 +372,8 @@ public final class KitEditorGui implements Listener {
                                                 max));
                                 plugin.scheduler().runGlobal(() -> openEditor(player, kitId));
                             });
-            case SLOT_SAVE -> save(player, kitId, event.getInventory());
+            case SLOT_SAVE, SLOT_BACK -> save(player, kitId, event.getInventory());
             case SLOT_DELETE -> delete(player, kitId);
-            case SLOT_BACK -> {
-                drafts.remove(kitId);
-                openList(player);
-            }
             default -> {}
         }
     }
