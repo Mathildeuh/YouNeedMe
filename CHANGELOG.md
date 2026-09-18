@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.4.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.3...v1.4.0) (2026-09-18)
+
+
+### Features
+
+* add /ynm panel, a one-screen staff dashboard GUI ([dd83ea9](https://github.com/Mathildeuh/YouNeedMe/commit/dd83ea9b5b9841db36c6b23a04bdff98ed6ea9f9))
+
 ## [1.3.3](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.2...v1.3.3) (2026-09-18)
 
 
