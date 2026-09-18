@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.3.3](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.2...v1.3.3) (2026-09-18)
+
+
+### Bug Fixes
+
+* remove environment block from javadoc job - an unresolvable environment reference can block the whole workflow run, not just that job ([95be936](https://github.com/Mathildeuh/YouNeedMe/commit/95be93624dae0d549af6fa72b5afb2f524336dc3))
+
 ## [1.3.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.1...v1.3.2) (2026-09-18)
 
 
