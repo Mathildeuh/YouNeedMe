@@ -1,0 +1,58 @@
+# Local test server: Paper + MariaDB + Redis, for exercising the mysql/mariadb storage backend
+# and Redis-backed cross-server sync during development.
+#
+# Usage:
+#   ./gradlew build
+#   docker compose up -d
+#   docker compose logs -f paper
+#
+# The plugin jar in build/libs/ is mounted read-only into the server's plugins/ folder, so a
+# rebuild + `docker compose restart paper` is enough to pick up code changes - no image rebuild.
+#
+# Then point plugins/YouNeedMe/config.yml (under docker/data/paper/plugins/YouNeedMe/) at:
+#   storage:
+#     type: mariadb
+#     mysql: { host: mariadb, port: 3306, database: youneedme, username: youneedme, password: youneedme }
+
+services:
+  paper:
+    image: itzg/minecraft-server:latest
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: "1.21.10"
+      MEMORY: "2G"
+      ONLINE_MODE: "FALSE"
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./docker/data/paper:/data
+      - ./build/libs:/plugins-source:ro
+    entrypoint: >
+      sh -c "mkdir -p /data/plugins &&
+             cp /plugins-source/YouNeedMe-*.jar /data/plugins/ &&
+             exec /start"
+    depends_on:
+      - mariadb
+      - redis
+    stdin_open: true
+    tty: true
+
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: youneedme
+      MARIADB_USER: youneedme
+      MARIADB_PASSWORD: youneedme
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/data/mariadb:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/data/redis:/data

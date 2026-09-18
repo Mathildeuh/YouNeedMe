@@ -34,7 +34,11 @@ dependencies {
     implementation(libs.jedis)
 
     testImplementation(project(":api"))
-    testImplementation(libs.paper.api)
+    // Pinned to the exact build MockBukkit 4.116.1 was tested against - the floating
+    // "26.2.build.+" main/compileOnly dependency resolves to whatever the newest 26.2 patch is at
+    // build time, which MockBukkit's internal compatibility check rejects with an
+    // IncompatiblePaperVersionException the moment it drifts from this exact build.
+    testImplementation("io.papermc.paper:paper-api:26.2.build.111-stable")
     testImplementation(libs.mockbukkit)
 }
 

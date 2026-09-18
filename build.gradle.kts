@@ -34,6 +34,22 @@ subprojects {
         maven("https://jitpack.io") { name = "jitpack" }
     }
 
+    // CI builds a second time against the following Paper line (see ci.yml's matrix) to catch API
+    // regressions before that build actually becomes stable, without the day-to-day build needing
+    // to know or care - `./gradlew build -PpaperApiVersion=26.3.build.+`. Test configurations are
+    // excluded: they're pinned to whatever exact build MockBukkit supports (see core's
+    // testImplementation), which a pre-release Paper line generally isn't yet.
+    val paperApiOverride = rootProject.findProperty("paperApiVersion") as String?
+    if (paperApiOverride != null) {
+        configurations.matching { !it.name.contains("test", ignoreCase = true) }.configureEach {
+            resolutionStrategy.eachDependency {
+                if (requested.group == "io.papermc.paper" && requested.name == "paper-api") {
+                    useVersion(paperApiOverride)
+                }
+            }
+        }
+    }
+
     extensions.configure<JavaPluginExtension> {
         toolchain.languageVersion.set(JavaLanguageVersion.of(catalog.versions.java.get().toInt()))
         withSourcesJar()
@@ -60,7 +76,10 @@ subprojects {
     }
 
     extensions.configure<JacocoPluginExtension> {
-        toolVersion = "0.8.12"
+        // 0.8.12 cannot parse Java 25's class file format (major version 69) and crashes
+        // instrumenting the JVM's own bootstrap classes - keep this at or above the first version
+        // that added Java 25 support.
+        toolVersion = "0.8.15"
     }
 
     tasks.named("test") {

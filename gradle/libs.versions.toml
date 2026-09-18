@@ -3,9 +3,10 @@
 java = "25"
 
 # --- Server API ---
-# Paper 26.2 ("Chaos Cubed") is the current stable line; 26.3 is pre-release.
-# api-version in plugin.yml stays on the 26.2 major so the plugin loads on both.
-paper-api = "26.3.build.+"
+# Paper 26.2 ("Chaos Cubed") is the current stable line; 26.3 is pre-release. The main build
+# compiles against 26.2 - CI additionally builds against 26.3 by overriding this with
+# `-PpaperApiVersion=26.3.build.+` (see ci.yml) to catch forward-compat regressions early.
+paper-api = "26.2.build.+"
 
 # --- Third-party integrations (all compileOnly / soft-depend) ---
 vault-api = "1.7.1"

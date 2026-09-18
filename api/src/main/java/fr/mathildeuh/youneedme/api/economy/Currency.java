@@ -1,5 +1,7 @@
 package fr.mathildeuh.youneedme.api.economy;
 
+import java.util.Locale;
+
 /**
  * A currency YouNeedMe's economy can hold a balance in. Servers running a single currency (the
  * default) never need to think about this type at all - every {@link EconomyService} method has an
@@ -9,7 +11,9 @@ public record Currency(
         String id, String symbol, String singularName, String pluralName, int decimalPlaces) {
 
     public String format(double amount) {
-        String number = String.format("%,." + decimalPlaces + "f", amount);
+        // Locale.ROOT, not the JVM default: a balance's digit grouping/decimal separator must not
+        // change depending on the host machine's system locale.
+        String number = String.format(Locale.ROOT, "%,." + decimalPlaces + "f", amount);
         return symbol.isEmpty()
                 ? number + " " + (amount == 1.0 ? singularName : pluralName)
                 : symbol + number;
