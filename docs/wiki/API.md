@@ -88,4 +88,4 @@ installed:
 
 Published to GitHub Pages on every tagged release: <https://mathildeuh.github.io/YouNeedMe/>.
 
-See also [Expansions](Expansions.md) for a lifecycle-managed alternative to a standalone plugin.
+See also [Expansions](Expansions) for a lifecycle-managed alternative to a standalone plugin.

@@ -26,4 +26,4 @@ lines:
 
 Built-in tokens: `{player}`, `{online}`, `{max}`, `{server}`. If PlaceholderAPI is installed, any
 `%placeholder%` in a line is also resolved — including YouNeedMe's own
-[official expansion](API.md#placeholderapi).
+[official expansion](API#placeholderapi).

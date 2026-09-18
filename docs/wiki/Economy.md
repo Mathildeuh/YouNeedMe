@@ -38,4 +38,4 @@ YouNeedMeAPI.economy().ifPresent(economy ->
                 .thenAccept(result -> { /* ... */ }));
 ```
 
-See [API](API.md) for the full `EconomyService` contract and the `EconomyTransactionEvent`.
+See [API](API) for the full `EconomyService` contract and the `EconomyTransactionEvent`.

@@ -21,6 +21,6 @@ your hand. Categories with a `permission` key are hidden from players who lack i
 
 ## Configuration
 
-See [Configuration](Configuration.md#shopyml-data-folder-root) for the `shop.yml` schema — each
+See [Configuration](Configuration#shopyml-data-folder-root) for the `shop.yml` schema — each
 item supports an optional `stock` (omit for unlimited), and either `buy-price` or `sell-price` can
 be omitted to make an item one-directional.

@@ -1,7 +1,7 @@
 # Kits
 
 Kits with per-kit cooldowns, permissions, and one-time or capped claims. Ships with three example
-kits (`starter`, `daily`, `vip`) in `kits.yml` — see [Configuration](Configuration.md#kitsyml-data-folder-root)
+kits (`starter`, `daily`, `vip`) in `kits.yml` — see [Configuration](Configuration#kitsyml-data-folder-root)
 for the schema.
 
 ## Commands
@@ -20,4 +20,4 @@ space — a kit is never partially granted.
 
 `KitClaimEvent` fires (and can be cancelled) right before a kit's items are handed out.
 Third-party expansions can register additional kits programmatically via `KitService#register`
-without touching `kits.yml` at all — see [Expansions](Expansions.md).
+without touching `kits.yml` at all — see [Expansions](Expansions).

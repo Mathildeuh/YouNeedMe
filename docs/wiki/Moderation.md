@@ -28,7 +28,7 @@ action even for staff who would otherwise be able to target them.
 
 ## Discord notifications
 
-See [Discord](Discord.md) — bans/mutes/kicks can be relayed to a Discord channel automatically.
+See [Discord](Discord) — bans/mutes/kicks can be relayed to a Discord channel automatically.
 
 ## For developers
 
