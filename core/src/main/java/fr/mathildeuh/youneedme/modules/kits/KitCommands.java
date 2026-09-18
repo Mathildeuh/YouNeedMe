@@ -240,12 +240,12 @@ final class KitsCommand extends YnmCommand {
                 "kits.list.header",
                 Placeholder.unparsed("count", String.valueOf(kits.size())));
         for (Kit kit : kits) {
-            send(
+            sendWithRaw(
                     sender,
                     "kits.list.entry",
+                    java.util.Map.of("name", kit.id()),
                     Placeholder.unparsed("status", "•"),
-                    Placeholder.unparsed("kit", kit.id()),
-                    Placeholder.unparsed("name", kit.displayName()));
+                    Placeholder.unparsed("kit", kit.displayName()));
         }
     }
 

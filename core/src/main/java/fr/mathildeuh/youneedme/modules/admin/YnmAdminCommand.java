@@ -58,6 +58,7 @@ public final class YnmAdminCommand extends YnmCommand {
         plugin.configManager().reload();
         plugin.lang()
                 .load(
+                        plugin.getClass(),
                         plugin.getDataFolder().toPath().resolve("lang"),
                         plugin.configManager().main().getString("language.default", "en_US"));
         services().warps.reload();

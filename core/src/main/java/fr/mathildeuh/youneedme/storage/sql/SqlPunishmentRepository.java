@@ -228,9 +228,20 @@ public final class SqlPunishmentRepository implements PunishmentRepository {
                 rs.getString("reason"),
                 issuedBy == null ? null : UUID.fromString(issuedBy),
                 rs.getLong("issued_at"),
-                rs.getObject("expires_at", Long.class),
+                nullableLong(rs, "expires_at"),
                 rs.getBoolean("active"),
                 revokedBy == null ? null : UUID.fromString(revokedBy),
-                rs.getObject("revoked_at", Long.class));
+                nullableLong(rs, "revoked_at"));
+    }
+
+    /**
+     * SQLite's driver throws "Bad value for type Long" from {@code getObject(column, Long.class)}
+     * on a NULL column instead of just returning null - getLong() + wasNull() is the
+     * driver-agnostic-safe way to read a nullable integer column.
+     */
+    private static java.lang.Long nullableLong(ResultSet rs, String column)
+            throws java.sql.SQLException {
+        long value = rs.getLong(column);
+        return rs.wasNull() ? null : value;
     }
 }

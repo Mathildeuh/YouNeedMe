@@ -69,6 +69,7 @@ public final class YouNeedMe extends JavaPlugin {
         ResourceExtractor.extractFolder(
                 getClass(), "lang", getDataFolder().toPath().resolve("lang"), getLogger());
         languageManager.load(
+                getClass(),
                 getDataFolder().toPath().resolve("lang"),
                 configManager.main().getString("language.default", "en_US"));
 

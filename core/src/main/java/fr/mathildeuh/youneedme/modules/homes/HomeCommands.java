@@ -6,6 +6,7 @@ import fr.mathildeuh.youneedme.api.model.Home;
 import fr.mathildeuh.youneedme.api.model.Position;
 import fr.mathildeuh.youneedme.command.YnmCommand;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
@@ -293,10 +294,10 @@ final class HomesCommand extends YnmCommand {
                                                     : String.valueOf(limit)));
                             send(sender, "homes.list.separator");
                             for (Home home : homes) {
-                                send(
+                                sendWithRaw(
                                         sender,
                                         "homes.list.entry",
-                                        Placeholder.unparsed("name", home.name()),
+                                        Map.of("name", home.name()),
                                         Placeholder.unparsed("world", home.position().worldName()),
                                         Placeholder.unparsed(
                                                 "x", String.valueOf((int) home.position().x())),

@@ -1,6 +1,6 @@
-# Chat formatting module. Only takes effect when LuckPerms is installed - without it there is no
-# group/prefix data to format with, so chat is left completely untouched.
+# Chat formatting module.
 enabled: true
-# Available placeholders: {prefix} {suffix} {group} {player} {message} - {player} already
-# resolves the player's nickname (see the nickname module) when one is set.
-format: "{prefix}<white>{player}</white>{suffix} <gray>»</gray> {message}"
+# Available placeholders (MiniMessage tag syntax, not curly braces): <prefix> <suffix> <group>
+# <player> <message> - <player> already resolves the player's nickname (see the nickname module)
+# when one is set. <prefix>/<suffix>/<group> come from LuckPerms and are empty/"default" without it.
+format: "<prefix><white><player></white><suffix> <gray>»</gray> <message>"

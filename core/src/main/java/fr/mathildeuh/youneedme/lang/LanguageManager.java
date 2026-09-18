@@ -1,14 +1,18 @@
 package fr.mathildeuh.youneedme.lang;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +38,9 @@ import org.jetbrains.annotations.Nullable;
 public final class LanguageManager {
 
     private static final Gson GSON = new Gson();
+    private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Type MAP_TYPE =
+            TypeToken.getParameterized(Map.class, String.class, String.class).getType();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final TagResolver[] NO_PLACEHOLDERS = new TagResolver[0];
 
@@ -46,11 +53,19 @@ public final class LanguageManager {
         this.logger = logger;
     }
 
-    public void load(Path langResourceDir, String defaultLocale) {
+    /**
+     * @param anchor used to read each locale's bundled defaults off the classpath (jar), so a key
+     *     added in a plugin update can be merged into a locale file an admin already has on disk -
+     *     {@link fr.mathildeuh.youneedme.util.ResourceExtractor} never overwrites existing files,
+     *     so without this, every already-installed server would need someone to manually delete or
+     *     hand-edit their lang files after every update that adds a translation key.
+     */
+    public void load(Class<?> anchor, Path langResourceDir, String defaultLocale) {
         this.defaultLocale = defaultLocale;
         messages.clear();
         try (var files = Files.list(langResourceDir)) {
-            files.filter(p -> p.getFileName().toString().endsWith(".json")).forEach(this::loadFile);
+            files.filter(p -> p.getFileName().toString().endsWith(".json"))
+                    .forEach(p -> loadFile(anchor, p));
         } catch (IOException e) {
             logger.severe(
                     "Could not list language files in " + langResourceDir + ": " + e.getMessage());
@@ -66,15 +81,65 @@ public final class LanguageManager {
                 "Loaded " + messages.size() + " languages (default: " + this.defaultLocale + ").");
     }
 
-    private void loadFile(Path path) {
+    private void loadFile(Class<?> anchor, Path path) {
         String locale = path.getFileName().toString().replace(".json", "");
+        Map<String, String> onDisk = readJson(path);
+        if (onDisk == null) {
+            return;
+        }
+        Map<String, String> merged = mergeBundledDefaults(anchor, locale, onDisk, path);
+        messages.put(locale, merged);
+    }
+
+    private @Nullable Map<String, String> readJson(Path path) {
         try (InputStream in = Files.newInputStream(path);
                 InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-            Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
-            Map<String, String> loaded = GSON.fromJson(reader, type);
-            messages.put(locale, loaded == null ? Map.of() : loaded);
+            Map<String, String> loaded = GSON.fromJson(reader, MAP_TYPE);
+            return loaded == null ? new LinkedHashMap<>() : new LinkedHashMap<>(loaded);
         } catch (IOException e) {
             logger.warning("Failed to load language file " + path + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    private Map<String, String> mergeBundledDefaults(
+            Class<?> anchor, String locale, Map<String, String> onDisk, Path diskPath) {
+        try (InputStream in =
+                anchor.getClassLoader().getResourceAsStream("lang/" + locale + ".json")) {
+            if (in == null) {
+                return onDisk; // a locale an admin added themselves, with no bundled counterpart
+            }
+            Map<String, String> bundled;
+            try (InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+                Map<String, String> parsed = GSON.fromJson(reader, MAP_TYPE);
+                bundled = parsed == null ? Map.of() : parsed;
+            }
+            int added = 0;
+            for (var entry : bundled.entrySet()) {
+                if (!onDisk.containsKey(entry.getKey())) {
+                    onDisk.put(entry.getKey(), entry.getValue());
+                    added++;
+                }
+            }
+            if (added > 0) {
+                writeJson(diskPath, onDisk);
+                logger.info(
+                        "Added " + added + " new translation key(s) to " + diskPath.getFileName());
+            }
+            return onDisk;
+        } catch (IOException e) {
+            logger.warning(
+                    "Could not merge bundled defaults into " + diskPath + ": " + e.getMessage());
+            return onDisk;
+        }
+    }
+
+    private void writeJson(Path path, Map<String, String> content) {
+        try (Writer writer =
+                new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8)) {
+            PRETTY_GSON.toJson(content, MAP_TYPE, writer);
+        } catch (IOException e) {
+            logger.warning("Could not write merged language file " + path + ": " + e.getMessage());
         }
     }
 
@@ -159,6 +224,35 @@ public final class LanguageManager {
     }
 
     public Component render(String localeCode, String key, TagResolver... placeholders) {
+        return render(localeCode, key, Map.of(), placeholders);
+    }
+
+    /**
+     * Like {@link #render}, but additionally does a plain-text {@code <name>} substitution directly
+     * on the raw template for every entry in {@code rawSubstitutions}, before MiniMessage ever sees
+     * it. Needed for any value that must survive inside a {@code <click:run_command:'...'>}
+     * argument: verified empirically that MiniMessage does NOT resolve a nested custom TagResolver
+     * placeholder there (unlike a tag such as {@code hover:show_text} whose argument is genuinely
+     * reparsed as a mini-document) - it stores the argument as a literal string, {@code <name>} and
+     * all, so a button built that way silently runs the wrong command instead of failing loudly.
+     *
+     * <p>Only pass values from a validated/trusted source here (a regex-restricted warp/home/kit
+     * id, a page number) - unlike {@link Placeholder#unparsed}, this offers no injection protection
+     * since it edits the literal template text before MiniMessage parses anything.
+     */
+    public Component render(
+            CommandSender sender,
+            String key,
+            Map<String, String> rawSubstitutions,
+            TagResolver... placeholders) {
+        return render(resolveLocale(sender), key, rawSubstitutions, placeholders);
+    }
+
+    private Component render(
+            String localeCode,
+            String key,
+            Map<String, String> rawSubstitutions,
+            TagResolver... placeholders) {
         String template = lookup(localeCode, key);
         if (template == null) {
             // Both the requested key and (if we get here recursively) "error.missing_key" itself
@@ -168,6 +262,9 @@ public final class LanguageManager {
             }
             String fallbackLocale = messages.containsKey(defaultLocale) ? defaultLocale : "en_US";
             return render(fallbackLocale, "error.missing_key", Placeholder.unparsed("key", key));
+        }
+        for (var entry : rawSubstitutions.entrySet()) {
+            template = template.replace("<" + entry.getKey() + ">", entry.getValue());
         }
         try {
             return MINI_MESSAGE.deserialize(template, withPrefix(localeCode, placeholders));

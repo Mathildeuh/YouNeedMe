@@ -91,6 +91,21 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(plugin.lang().render(sender, key, placeholders));
     }
 
+    /**
+     * Like {@link #send}, but for a message containing a {@code <click:run_command:'...'>} that
+     * embeds one of these placeholders in its argument - see {@link
+     * fr.mathildeuh.youneedme.lang.LanguageManager#render(org.bukkit.command.CommandSender, String,
+     * java.util.Map, TagResolver...)} for why that needs different handling. Only pass
+     * validated/trusted values (a regex-restricted id, a page number).
+     */
+    protected final void sendWithRaw(
+            CommandSender sender,
+            String key,
+            java.util.Map<String, String> rawSubstitutions,
+            TagResolver... placeholders) {
+        sender.sendMessage(plugin.lang().render(sender, key, rawSubstitutions, placeholders));
+    }
+
     protected final void broadcast(String key, TagResolver... placeholders) {
         plugin.getServer()
                 .sendMessage(

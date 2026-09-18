@@ -59,10 +59,10 @@ final class WarpCommand extends YnmCommand {
                                 return;
                             }
                             if (warp.cost() > 0 && !confirmed) {
-                                send(
+                                sendWithRaw(
                                         sender,
                                         "warp.confirm_cost",
-                                        Placeholder.unparsed("warp", name),
+                                        java.util.Map.of("warp", name),
                                         Placeholder.unparsed(
                                                 "cost",
                                                 services()
@@ -316,10 +316,10 @@ final class WarpsCommand extends YnmCommand {
                                                 }
                                                 list.forEach(
                                                         w ->
-                                                                send(
+                                                                sendWithRaw(
                                                                         sender,
                                                                         "warp.entry",
-                                                                        Placeholder.unparsed(
+                                                                        java.util.Map.of(
                                                                                 "warp", w.name()),
                                                                         Placeholder.unparsed(
                                                                                 "cost",
