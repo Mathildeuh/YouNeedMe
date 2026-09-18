@@ -104,6 +104,7 @@ public final class PlayerLifecycleListener implements Listener {
             return;
         }
         plugin.services().nicknames.cache(player.getUniqueId(), profile.nickname());
+        fr.mathildeuh.youneedme.modules.nickname.NicknameDisplay.apply(player, profile.nickname());
         if (profile.languageCode() != null) {
             plugin.lang().setPlayerLocaleOverride(player.getUniqueId(), profile.languageCode());
         }
@@ -182,6 +183,41 @@ public final class PlayerLifecycleListener implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         plugin.services().lastDeathLocation.put(player.getUniqueId(), player.getLocation());
+        rewriteDeathMessageWithNicknames(event, player);
+    }
+
+    /**
+     * The vanilla death message is built from the account's real username, not any display
+     * name/nametag override - substitute the victim's (and, if applicable, the killer's) nickname
+     * in place so a death doesn't leak a nicknamed player's real name in chat.
+     */
+    private void rewriteDeathMessageWithNicknames(PlayerDeathEvent event, Player victim) {
+        Component message = event.deathMessage();
+        if (message == null) {
+            return;
+        }
+        message = replaceIfNicknamed(message, victim);
+        Player killer = victim.getKiller();
+        if (killer != null) {
+            message = replaceIfNicknamed(message, killer);
+        }
+        event.deathMessage(message);
+    }
+
+    private Component replaceIfNicknamed(Component message, Player player) {
+        return plugin.services()
+                .nicknames
+                .nickname(player.getUniqueId())
+                .map(
+                        nickname ->
+                                message.replaceText(
+                                        builder ->
+                                                builder.matchLiteral(player.getName())
+                                                        .replacement(
+                                                                net.kyori.adventure.text.minimessage
+                                                                        .MiniMessage.miniMessage()
+                                                                        .deserialize(nickname))))
+                .orElse(message);
     }
 
     @EventHandler(ignoreCancelled = true)

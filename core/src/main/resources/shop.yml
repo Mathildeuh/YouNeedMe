@@ -68,4 +68,18 @@ categories:
     permission: youneedme.shop.blackmarket
     items:
       netherite-ingot: { material: NETHERITE_INGOT, buy-price: 5000.0, stock: 10 }
+      # A shop item can carry the same full set of properties as a kit item: display name, lore,
+      # enchantments, item flags, unbreakable, custom model data - not just material/price/stock.
+      enchanted-bow:
+        material: BOW
+        buy-price: 2500.0
+        stock: 5
+        display-name: "<dark_red><bold>Reaper's Bow"
+        lore:
+          - "<gray>Pulled from the black market's darkest corner."
+        enchantments:
+          power: 5
+          infinity: 1
+        flags: [HIDE_ENCHANTS]
+        unbreakable: true
       elytra: { material: ELYTRA, buy-price: 15000.0, stock: 1 }

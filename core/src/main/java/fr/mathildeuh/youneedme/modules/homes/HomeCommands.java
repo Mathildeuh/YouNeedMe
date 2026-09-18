@@ -118,6 +118,10 @@ final class HomeCommand extends YnmCommand {
     @Override
     protected void execute(CommandSender sender, String label, String[] args) {
         Player player = player(sender);
+        if (args.length > 0 && args[0].regionMatches(true, 0, "user:", 0, 5)) {
+            teleportToOthersHome(sender, player, args);
+            return;
+        }
         String name = args.length > 0 ? args[0] : "home";
         if (services().warmups.hasPending(player.getUniqueId())) {
             send(sender, "home.teleport.already_pending");
@@ -176,6 +180,56 @@ final class HomeCommand extends YnmCommand {
                                             plugin.scheduler(),
                                             () -> teleport(player, home),
                                             () -> send(sender, "home.teleport.cancelled"));
+                        });
+    }
+
+    /**
+     * {@code /home user:<player> <home>} - staff jumping to another player's home for moderation.
+     */
+    private void teleportToOthersHome(CommandSender sender, Player staff, String[] args) {
+        if (!staff.hasPermission("youneedme.home.others")) {
+            send(sender, "error.no_permission");
+            return;
+        }
+        String targetName = args[0].substring("user:".length());
+        if (targetName.isBlank()) {
+            send(sender, "command.usage.home_others");
+            return;
+        }
+        String name = args.length > 1 ? args[1] : "home";
+        var target = org.bukkit.Bukkit.getOfflinePlayer(targetName);
+        services()
+                .homes
+                .get(target.getUniqueId(), name)
+                .thenAccept(
+                        home -> {
+                            if (home == null) {
+                                send(
+                                        sender,
+                                        "home.teleport.not_found_other",
+                                        Placeholder.unparsed("name", name),
+                                        Placeholder.unparsed("player", targetName));
+                                return;
+                            }
+                            Location location = home.position().toLocation();
+                            if (location == null) {
+                                send(
+                                        sender,
+                                        "home.teleport.invalid_world",
+                                        Placeholder.unparsed("world", home.position().worldName()));
+                                return;
+                            }
+                            plugin.scheduler()
+                                    .runAtLocation(
+                                            location,
+                                            () -> {
+                                                staff.teleportAsync(location);
+                                                send(
+                                                        sender,
+                                                        "home.teleport.success_other",
+                                                        Placeholder.unparsed("name", name),
+                                                        Placeholder.unparsed("player", targetName));
+                                            });
                         });
     }
 

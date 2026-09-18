@@ -93,6 +93,26 @@ public final class ConfigManager {
         return YamlConfiguration.loadConfiguration(dataFolder.resolve("kits.yml").toFile());
     }
 
+    /**
+     * Persists in-game edits (the kit/shop editor GUIs) back to the file {@link #shop()}/{@link
+     * #kits()} read from.
+     */
+    public void saveShop(YamlConfiguration config) {
+        saveDataFile("shop.yml", config);
+    }
+
+    public void saveKits(YamlConfiguration config) {
+        saveDataFile("kits.yml", config);
+    }
+
+    private void saveDataFile(String fileName, YamlConfiguration config) {
+        try {
+            config.save(dataFolder.resolve(fileName).toFile());
+        } catch (IOException e) {
+            logger.warning("Failed to save " + fileName + ": " + e.getMessage());
+        }
+    }
+
     public boolean isModuleEnabled(String name) {
         return mainConfig.getBoolean("modules." + name + ".enabled", true);
     }

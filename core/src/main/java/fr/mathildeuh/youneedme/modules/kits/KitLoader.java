@@ -1,10 +1,11 @@
 package fr.mathildeuh.youneedme.modules.kits;
 
 import fr.mathildeuh.youneedme.api.kits.Kit;
+import fr.mathildeuh.youneedme.util.ItemConfigCodec;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,16 +27,12 @@ public final class KitLoader {
             }
             List<ItemStack> items = new ArrayList<>();
             for (var raw : section.getMapList("items")) {
-                Object materialName = raw.get("material");
-                if (materialName == null) {
-                    continue;
+                ConfigurationSection itemSection =
+                        new MemoryConfiguration().createSection("item", raw);
+                ItemStack item = ItemConfigCodec.load(itemSection);
+                if (item != null) {
+                    items.add(item);
                 }
-                Material material = Material.matchMaterial(materialName.toString());
-                if (material == null) {
-                    continue;
-                }
-                int amount = raw.get("amount") instanceof Number number ? number.intValue() : 1;
-                items.add(new ItemStack(material, Math.max(1, amount)));
             }
             int maxClaimsValue = section.getInt("max-claims", -1);
             kits.add(

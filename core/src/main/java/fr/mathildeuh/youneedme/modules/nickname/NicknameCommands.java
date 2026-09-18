@@ -61,6 +61,12 @@ final class NickCommand extends YnmCommand {
                                                 String.valueOf(finalNicknameArg.length())));
                                 return;
                             }
+                            plugin.scheduler()
+                                    .runGlobal(
+                                            () ->
+                                                    NicknameDisplay.apply(
+                                                            finalTarget,
+                                                            removing ? null : finalNicknameArg));
                             if (removing) {
                                 send(self1 ? sender : finalTarget, "nick.success.reset.self");
                                 if (!self1) {

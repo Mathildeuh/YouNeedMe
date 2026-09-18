@@ -46,7 +46,7 @@ commands:
   god: { description: Enable God Mode, usage: "/god [player]", permission: youneedme.god }
   hat: { description: Wear item as hat, usage: /hat, permission: youneedme.hat }
   heal: { description: Heal yourself, usage: /heal, permission: youneedme.heal }
-  home: { description: Teleport to a home, usage: "/home [name]", permission: youneedme.home }
+  home: { description: Teleport to a home, usage: "/home [name|user:<player> <name>]", permission: youneedme.home }
   homes: { description: List your homes, usage: "/homes", permission: youneedme.homes }
   ignore: { description: "Ignore/unignore a player", usage: "/ignore [player]", permission: youneedme.ignore }
   invsee: { description: "View another's inventory", usage: "/invsee <player>", permission: youneedme.invsee }
@@ -145,6 +145,7 @@ permissions:
   youneedme.vanish.see: { default: op }
   youneedme.nick.others: { default: op }
   youneedme.spawn.others: { default: op }
+  youneedme.home.others: { default: op }
 
   # Moderation / administration - op-gated by default, never granted to everyone.
   youneedme.eco.admin: { default: op }

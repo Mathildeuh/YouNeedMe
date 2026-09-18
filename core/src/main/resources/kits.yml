@@ -28,7 +28,20 @@ kits:
     one-time: false
     max-claims: 100
     items:
-      - { material: DIAMOND_SWORD, amount: 1 }
+      # An item can be as plain as { material, amount } (see the kits above) or carry the full set
+      # of properties an in-game item editor can set: display name, lore, enchantments, item
+      # flags, unbreakable, custom model data.
+      - material: DIAMOND_SWORD
+        amount: 1
+        display-name: "<light_purple><bold>VIP Blade"
+        lore:
+          - "<gray>Forged for our most loyal supporters."
+        enchantments:
+          sharpness: 5
+          unbreaking: 3
+          mending: 1
+        flags: [HIDE_ENCHANTS, HIDE_ATTRIBUTES]
+        unbreakable: true
       - { material: DIAMOND_PICKAXE, amount: 1 }
       - { material: DIAMOND, amount: 8 }
       - { material: ENDER_PEARL, amount: 4 }

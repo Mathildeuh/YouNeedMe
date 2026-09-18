@@ -2,6 +2,7 @@ package fr.mathildeuh.youneedme.modules.shop;
 
 import fr.mathildeuh.youneedme.api.shop.ShopCategory;
 import fr.mathildeuh.youneedme.api.shop.ShopItem;
+import fr.mathildeuh.youneedme.util.ItemConfigCodec;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
@@ -35,9 +36,13 @@ public final class ShopConfigLoader {
                     if (itemSection == null) {
                         continue;
                     }
-                    Material material =
-                            Material.matchMaterial(itemSection.getString("material", itemId));
-                    if (material == null) {
+                    // Historically the item id itself doubled as the material name when no
+                    // explicit "material" key was set - preserved for backward compatibility.
+                    if (!itemSection.contains("material")) {
+                        itemSection.set("material", itemId);
+                    }
+                    ItemStack item = ItemConfigCodec.load(itemSection);
+                    if (item == null) {
                         continue;
                     }
                     Double buyPrice =
@@ -50,9 +55,7 @@ public final class ShopConfigLoader {
                                     : null;
                     int stockValue = itemSection.getInt("stock", -1);
                     Integer stock = stockValue < 0 ? null : stockValue;
-                    items.add(
-                            new ShopItem(
-                                    itemId, new ItemStack(material), buyPrice, sellPrice, stock));
+                    items.add(new ShopItem(itemId, item, buyPrice, sellPrice, stock));
                 }
             }
             categories.add(
