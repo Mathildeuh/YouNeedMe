@@ -15,7 +15,7 @@ val catalog = libs
 
 allprojects {
     group = "fr.mathildeuh"
-    version = "1.3.1" // x-release-please-version
+    version = "1.3.3" // x-release-please-version
 }
 
 subprojects {
