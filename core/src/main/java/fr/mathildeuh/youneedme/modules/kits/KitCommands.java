@@ -126,15 +126,27 @@ final class KitCommand extends YnmCommand {
 
 final class KitsCommand extends YnmCommand {
 
-    KitsCommand(YouNeedMe plugin) {
+    private final KitEditorGui editorGui;
+
+    KitsCommand(YouNeedMe plugin, KitEditorGui editorGui) {
         super(plugin, "youneedme.kits.list", false);
+        this.editorGui = editorGui;
     }
 
     @Override
     protected void execute(CommandSender sender, String label, String[] args) {
         String sub = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "list";
         if ("reload".equals(sub)) {
+            services().kits.reloadFrom(KitLoader.load(plugin.configManager().kits()));
             send(sender, "kits.reload.success");
+            return;
+        }
+        if ("edit".equals(sub)) {
+            if (!sender.hasPermission("youneedme.admin")) {
+                send(sender, "error.no_permission");
+                return;
+            }
+            editorGui.openList(player(sender));
             return;
         }
         var kits = services().kits.kits();
@@ -158,6 +170,6 @@ final class KitsCommand extends YnmCommand {
 
     @Override
     protected List<String> tabComplete(CommandSender sender, String[] args) {
-        return args.length == 1 ? List.of("list", "reload") : List.of();
+        return args.length == 1 ? List.of("list", "reload", "edit") : List.of();
     }
 }

@@ -27,7 +27,8 @@ public final class ShopModule {
                 .register(ShopService.class, service, plugin, ServicePriority.Normal);
 
         ShopGui gui = new ShopGui(plugin);
-        CommandRegistrar.register(plugin, "shop", new ShopCommand(plugin, gui));
+        ShopEditorGui editorGui = new ShopEditorGui(plugin);
+        CommandRegistrar.register(plugin, "shop", new ShopCommand(plugin, gui, editorGui));
         CommandRegistrar.register(plugin, "sell", new SellCommand(plugin, gui));
         CommandRegistrar.register(plugin, "quicksell", new QuickSellCommand(plugin));
         CommandRegistrar.register(plugin, "worth", new WorthCommand(plugin));

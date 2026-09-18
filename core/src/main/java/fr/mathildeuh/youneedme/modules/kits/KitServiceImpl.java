@@ -49,6 +49,15 @@ public final class KitServiceImpl implements KitService {
         kits.remove(id.toLowerCase(java.util.Locale.ROOT));
     }
 
+    /**
+     * Replaces every registered kit with {@code newKits} - used by {@code /kits reload} and the
+     * in-game editor.
+     */
+    public void reloadFrom(java.util.List<Kit> newKits) {
+        kits.clear();
+        newKits.forEach(this::register);
+    }
+
     @Override
     public CompletableFuture<KitClaimState> claimState(UUID player, String kitId) {
         return repository.findClaimState(player, kitId);

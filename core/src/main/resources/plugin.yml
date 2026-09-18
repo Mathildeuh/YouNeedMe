@@ -14,7 +14,7 @@ softdepend: [ Vault, LuckPerms, PlaceholderAPI, Floodgate, DiscordSRV, TAB ]
 commands:
   afk: { description: Toggle your AFK status, usage: /afk, permission: youneedme.afk }
   afklist: { description: List all AFK players, usage: /afklist, permission: youneedme.afklist }
-  ah: { description: Auction House commands, usage: "/ah [sell|cancel|expired|listings|notifications|page]", permission: youneedme.ah.use }
+  ah: { description: Open the Auction House menu, usage: /ah, permission: youneedme.ah.use }
   anvil: { description: Open a virtual anvil, usage: /anvil, permission: youneedme.anvil }
   back: { description: Return to your last location, usage: /back, permission: youneedme.back }
   balance: { description: Check your balance, usage: "/balance [player]", permission: youneedme.balance, aliases: [ bal ] }
@@ -53,7 +53,7 @@ commands:
   itemid: { description: Info about held item, usage: /itemid, permission: youneedme.itemid }
   kick: { description: Kick a player, usage: "/kick <player>", permission: youneedme.kick }
   kit: { description: "Claim/manage kits", usage: "/kit [claim|cooldown|notifications|debug] <kit>", permission: youneedme.kit }
-  kits: { description: "List/manage kits", usage: "/kits [list|reload]", permission: youneedme.kits.list }
+  kits: { description: "List/manage kits", usage: "/kits [list|reload|edit]", permission: youneedme.kits.list }
   language: { description: Change your language, usage: "/language <lang_key>", permission: youneedme.language, aliases: [ lang ] }
   migration: { description: "Migrate data from another Essentials-style plugin", usage: "/migration <source> [--apply]", permission: youneedme.migration }
   msg: { description: Private message, usage: "/msg <player> <message>", permission: youneedme.msg, aliases: [ tell, w, m ] }
@@ -79,7 +79,7 @@ commands:
   sethome: { description: Set a home, usage: "/sethome [name]", permission: youneedme.sethome }
   setspawn: { description: Set server spawn, usage: /setspawn, permission: youneedme.setspawn }
   setwarp: { description: Create a warp, usage: "/setwarp <name>", permission: youneedme.setwarp }
-  shop: { description: Open server shop, usage: "/shop [category|reload]", permission: youneedme.shop }
+  shop: { description: Open server shop, usage: "/shop [category|reload|edit]", permission: youneedme.shop }
   smite: { description: Strike a player with lightning, usage: "/smite <player>", permission: youneedme.smite }
   spawn: { description: Teleport to spawn, usage: "/spawn [player]", permission: youneedme.spawn }
   spawnentity: { description: Spawn entities, usage: "/spawnentity <entity> [amount]", permission: youneedme.spawnentity }

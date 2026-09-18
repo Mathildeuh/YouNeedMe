@@ -17,8 +17,9 @@ public final class KitsModule {
                 .getServicesManager()
                 .register(KitService.class, service, plugin, ServicePriority.Normal);
 
+        KitEditorGui editorGui = new KitEditorGui(plugin);
         CommandRegistrar.register(plugin, "kit", new KitCommand(plugin));
-        CommandRegistrar.register(plugin, "kits", new KitsCommand(plugin));
+        CommandRegistrar.register(plugin, "kits", new KitsCommand(plugin, editorGui));
         return service;
     }
 }

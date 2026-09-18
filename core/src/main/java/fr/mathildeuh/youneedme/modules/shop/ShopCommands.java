@@ -10,10 +10,12 @@ import org.bukkit.entity.Player;
 final class ShopCommand extends YnmCommand {
 
     private final ShopGui gui;
+    private final ShopEditorGui editorGui;
 
-    ShopCommand(YouNeedMe plugin, ShopGui gui) {
+    ShopCommand(YouNeedMe plugin, ShopGui gui, ShopEditorGui editorGui) {
         super(plugin, "youneedme.shop", true);
         this.gui = gui;
+        this.editorGui = editorGui;
     }
 
     @Override
@@ -21,6 +23,14 @@ final class ShopCommand extends YnmCommand {
         Player player = player(sender);
         if (args.length > 0 && "reload".equalsIgnoreCase(args[0])) {
             services().shop.reload().thenRun(() -> send(sender, "shop.reload-success"));
+            return;
+        }
+        if (args.length > 0 && "edit".equalsIgnoreCase(args[0])) {
+            if (!sender.hasPermission("youneedme.admin")) {
+                send(sender, "error.no_permission");
+                return;
+            }
+            editorGui.openList(player);
             return;
         }
         if (args.length > 0) {
