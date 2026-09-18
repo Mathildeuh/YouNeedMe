@@ -1,0 +1,10 @@
+# Cross-server state sync (currently: vanish) over Redis. Off by default - only needed if you run
+# more than one server sharing the same player base and want vanish to apply network-wide.
+# Requires a Redis instance reachable from every server in the network.
+enabled: false
+
+redis:
+  host: localhost
+  port: 6379
+  # Leave blank if your Redis instance has no password (e.g. requirepass not set).
+  password: ""

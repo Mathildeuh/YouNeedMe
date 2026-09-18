@@ -100,6 +100,9 @@ public final class YouNeedMe extends JavaPlugin {
                     services.nicknames = NicknameModule.enable(this, storage.playerProfiles());
                     services.tpa = TpaModule.enable(this);
                     services.luckPerms = LuckPermsIntegration.enable(this);
+                    services.networkVanish =
+                            fr.mathildeuh.youneedme.integrations.network.NetworkVanishSync.enable(
+                                    this);
                     PlaceholderApiIntegration.enable(this);
 
                     RtpModule.enable(this);
@@ -132,6 +135,9 @@ public final class YouNeedMe extends JavaPlugin {
     @Override
     public void onDisable() {
         expansionManager.disableAll();
+        if (services.networkVanish != null) {
+            services.networkVanish.disable();
+        }
         if (storageManager != null) {
             storageManager.shutdown().join();
         }

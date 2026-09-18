@@ -30,7 +30,8 @@ public final class ConfigManager {
         "kits",
         "discord",
         "migration",
-        "chat"
+        "chat",
+        "network"
     };
 
     private final Plugin plugin;

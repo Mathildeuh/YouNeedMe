@@ -2,6 +2,7 @@ package fr.mathildeuh.youneedme;
 
 import fr.mathildeuh.youneedme.api.storage.DataStorage;
 import fr.mathildeuh.youneedme.integrations.luckperms.LuckPermsHook;
+import fr.mathildeuh.youneedme.integrations.network.NetworkVanishSync;
 import fr.mathildeuh.youneedme.modules.auctionhouse.AuctionHouseServiceImpl;
 import fr.mathildeuh.youneedme.modules.economy.EconomyServiceImpl;
 import fr.mathildeuh.youneedme.modules.homes.HomeServiceImpl;
@@ -37,6 +38,9 @@ public final class Services {
 
     /** Null when LuckPerms isn't installed - callers fall back to plain usernames. */
     public LuckPermsHook luckPerms;
+
+    /** Cross-server vanish sync over Redis - inert (all calls no-op) unless configured/enabled. */
+    public NetworkVanishSync networkVanish;
 
     public final Cooldowns cooldowns = new Cooldowns();
     public final TeleportWarmup warmups = new TeleportWarmup();

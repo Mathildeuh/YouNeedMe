@@ -746,6 +746,7 @@ final class VanishCommand extends YnmCommand {
                 other.showPlayer(plugin, player);
             }
         }
+        services().networkVanish.publish(player.getUniqueId(), nowVanished);
         send(sender, nowVanished ? "vanish.enabled" : "vanish.disabled");
     }
 }
