@@ -44,7 +44,15 @@ final class BanCommand extends YnmCommand {
         services()
                 .moderation
                 .ban(target.getUniqueId(), issuedBy, parsed.reason(), parsed.durationMillis())
-                .thenAccept(punishment -> onBanned(sender, target, punishment, onlineTarget));
+                .thenAccept(punishment -> onBanned(sender, target, punishment, onlineTarget))
+                .exceptionally(reportAsyncFailure(sender, label));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1
+                ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()
+                : List.of();
     }
 
     private void onBanned(
@@ -171,7 +179,15 @@ final class BanIpCommand extends YnmCommand {
                                     Placeholder.unparsed("banner", senderName(sender)),
                                     Placeholder.unparsed("reason", punishment.reason()),
                                     Placeholder.unparsed("duration", durationLabel));
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1
+                ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()
+                : List.of();
     }
 }
 
@@ -212,7 +228,8 @@ final class UnbanCommand extends YnmCommand {
                                     Placeholder.unparsed(
                                             "target", String.valueOf(target.getName())),
                                     Placeholder.unparsed("unbanner", senderName(sender)));
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
     }
 }
 
@@ -246,7 +263,8 @@ final class UnbanIpCommand extends YnmCommand {
                                     "unbanip.broadcast",
                                     Placeholder.unparsed("ip", args[0]),
                                     Placeholder.unparsed("unbanner", senderName(sender)));
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
     }
 }
 
@@ -309,7 +327,15 @@ final class MuteCommand extends YnmCommand {
                                         Placeholder.unparsed("muter", senderName(sender)),
                                         Placeholder.unparsed("reason", punishment.reason()));
                             }
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1
+                ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()
+                : List.of();
     }
 }
 
@@ -354,7 +380,15 @@ final class UnmuteCommand extends YnmCommand {
                             if (online != null) {
                                 send(online, "unmute.target_message");
                             }
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1
+                ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()
+                : List.of();
     }
 }
 
@@ -410,7 +444,8 @@ final class KickCommand extends YnmCommand {
                                     Placeholder.unparsed("target", target.getName()),
                                     Placeholder.unparsed("kicker", senderName(sender)),
                                     Placeholder.unparsed("reason", reason));
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
     }
 
     @Override
@@ -495,7 +530,15 @@ final class CheckPunishCommand extends YnmCommand {
                                         Placeholder.unparsed(
                                                 "player", String.valueOf(target.getName())));
                             }
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1
+                ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()
+                : List.of();
     }
 }
 
@@ -581,7 +624,8 @@ final class BanListCommand extends YnmCommand {
                                     "banlist.footer",
                                     Placeholder.unparsed("current", String.valueOf(page)),
                                     Placeholder.unparsed("total", String.valueOf(page)));
-                        });
+                        })
+                .exceptionally(reportAsyncFailure(sender, label));
     }
 
     private static int parsePage(String raw) {
@@ -590,6 +634,11 @@ final class BanListCommand extends YnmCommand {
         } catch (NumberFormatException e) {
             return 1;
         }
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1 ? List.of("players", "ips") : List.of();
     }
 }
 

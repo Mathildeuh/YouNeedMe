@@ -97,4 +97,19 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
                         plugin.lang()
                                 .render(plugin.getServer().getConsoleSender(), key, placeholders));
     }
+
+    /**
+     * Chain onto an async command's {@code CompletableFuture} (after {@code thenAccept}) so an
+     * exception there - a DB error, a bug in the callback - reaches the sender instead of vanishing
+     * silently: unlike the synchronous body of {@link #execute}, nothing surfaces an exception
+     * thrown inside a {@code thenAccept} callback unless something explicitly handles it.
+     */
+    protected final java.util.function.Function<Throwable, Void> reportAsyncFailure(
+            CommandSender sender, String label) {
+        return t -> {
+            plugin.getLogger().log(Level.SEVERE, "Unhandled async error executing /" + label, t);
+            send(sender, "error.internal");
+            return null;
+        };
+    }
 }

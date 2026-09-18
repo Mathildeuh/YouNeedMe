@@ -260,23 +260,29 @@ public final class PlayerLifecycleListener implements Listener {
     }
 
     private void applyChatFormat(AsyncChatEvent event, Player player) {
-        var luckPerms = plugin.services().luckPerms;
-        if (luckPerms == null
-                || !plugin.configManager().module("chat").getBoolean("enabled", true)) {
+        if (!plugin.configManager().module("chat").getBoolean("enabled", true)) {
             return;
         }
         String format =
                 plugin.configManager().module("chat").getString("format", "{player}: {message}");
         String displayName =
                 plugin.services().nicknames.nickname(player.getUniqueId()).orElse(player.getName());
+        // Nickname substitution must not depend on LuckPerms being installed - only the rank
+        // prefix/suffix/group placeholders do, and they degrade to empty/"default" without it.
+        var luckPerms = plugin.services().luckPerms;
         // LuckPerms prefixes/suffixes are conventionally legacy ("&6[VIP]") strings, not
         // MiniMessage - converted up front so the format template below can stay pure MiniMessage.
         Component prefix =
-                LegacyComponentSerializer.legacyAmpersand()
-                        .deserialize(luckPerms.prefix(player.getUniqueId()));
+                luckPerms == null
+                        ? Component.empty()
+                        : LegacyComponentSerializer.legacyAmpersand()
+                                .deserialize(luckPerms.prefix(player.getUniqueId()));
         Component suffix =
-                LegacyComponentSerializer.legacyAmpersand()
-                        .deserialize(luckPerms.suffix(player.getUniqueId()));
+                luckPerms == null
+                        ? Component.empty()
+                        : LegacyComponentSerializer.legacyAmpersand()
+                                .deserialize(luckPerms.suffix(player.getUniqueId()));
+        String group = luckPerms == null ? "default" : luckPerms.primaryGroup(player.getUniqueId());
         event.renderer(
                 ChatRenderer.viewerUnaware(
                         (source, sourceDisplayName, message) ->
@@ -285,10 +291,7 @@ public final class PlayerLifecycleListener implements Listener {
                                                 format,
                                                 Placeholder.component("prefix", prefix),
                                                 Placeholder.component("suffix", suffix),
-                                                Placeholder.unparsed(
-                                                        "group",
-                                                        luckPerms.primaryGroup(
-                                                                player.getUniqueId())),
+                                                Placeholder.unparsed("group", group),
                                                 Placeholder.unparsed("player", displayName),
                                                 Placeholder.component("message", message))));
     }
