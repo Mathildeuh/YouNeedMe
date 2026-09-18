@@ -57,10 +57,16 @@ public final class ShopGui implements Listener {
         player.openInventory(inventory);
     }
 
+    private static final net.kyori.adventure.text.minimessage.MiniMessage MINI_MESSAGE =
+            net.kyori.adventure.text.minimessage.MiniMessage.miniMessage();
+
     private ItemStack categoryIcon(ShopCategory category) {
         ItemStack stack = new ItemStack(category.icon());
         ItemMeta meta = stack.getItemMeta();
-        meta.displayName(Component.text(category.displayName(), NamedTextColor.YELLOW));
+        meta.displayName(
+                MINI_MESSAGE
+                        .deserialize(category.displayName())
+                        .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
         stack.setItemMeta(meta);
         return stack;
     }

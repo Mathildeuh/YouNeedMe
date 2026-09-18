@@ -101,9 +101,7 @@ final class DelHomeCommand extends YnmCommand {
     @Override
     protected List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 1 && sender instanceof Player player) {
-            return services().homes.list(player.getUniqueId()).getNow(List.of()).stream()
-                    .map(Home::name)
-                    .toList();
+            return services().homes.cachedNames(player.getUniqueId());
         }
         return List.of();
     }
@@ -259,9 +257,7 @@ final class HomeCommand extends YnmCommand {
     @Override
     protected List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 1 && sender instanceof Player player) {
-            return services().homes.list(player.getUniqueId()).getNow(List.of()).stream()
-                    .map(Home::name)
-                    .toList();
+            return services().homes.cachedNames(player.getUniqueId());
         }
         return List.of();
     }

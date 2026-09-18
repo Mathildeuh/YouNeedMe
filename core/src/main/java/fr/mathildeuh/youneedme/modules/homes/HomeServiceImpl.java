@@ -8,8 +8,10 @@ import fr.mathildeuh.youneedme.api.scheduler.SchedulerAdapter;
 import fr.mathildeuh.youneedme.api.storage.HomeRepository;
 import fr.mathildeuh.youneedme.util.SyncEvents;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -18,6 +20,11 @@ public final class HomeServiceImpl implements HomeService {
     private final HomeRepository repository;
     private final SchedulerAdapter scheduler;
     private final int defaultLimit;
+    // Tab-completion needs home names synchronously, but the repository is async (DB-backed) -
+    // getNow(default) on a future that's never actually done in time would always return empty.
+    // This cache is refreshed every time list() resolves and on every set()/delete(), so it lags
+    // by at most one round-trip instead of never having data at all.
+    private final Map<UUID, List<String>> nameCache = new ConcurrentHashMap<>();
 
     public HomeServiceImpl(
             HomeRepository repository, SchedulerAdapter scheduler, int defaultLimit) {
@@ -28,7 +35,18 @@ public final class HomeServiceImpl implements HomeService {
 
     @Override
     public CompletableFuture<List<Home>> list(UUID owner) {
-        return repository.findByOwner(owner);
+        return repository
+                .findByOwner(owner)
+                .thenApply(
+                        homes -> {
+                            nameCache.put(owner, homes.stream().map(Home::name).toList());
+                            return homes;
+                        });
+    }
+
+    /** Synchronous, possibly-stale home names for {@code owner} - tab-completion only. */
+    public List<String> cachedNames(UUID owner) {
+        return nameCache.getOrDefault(owner, List.of());
     }
 
     @Override
@@ -115,12 +133,26 @@ public final class HomeServiceImpl implements HomeService {
                     }
                     Home home =
                             new Home(owner, name, position, createdAt, System.currentTimeMillis());
-                    return repository.save(home).thenApply(v -> home);
+                    return repository
+                            .save(home)
+                            .thenApply(
+                                    v -> {
+                                        list(owner);
+                                        return home;
+                                    });
                 });
     }
 
     @Override
     public CompletableFuture<Boolean> delete(UUID owner, String name) {
-        return repository.delete(owner, name);
+        return repository
+                .delete(owner, name)
+                .thenApply(
+                        deleted -> {
+                            if (deleted) {
+                                list(owner);
+                            }
+                            return deleted;
+                        });
     }
 }

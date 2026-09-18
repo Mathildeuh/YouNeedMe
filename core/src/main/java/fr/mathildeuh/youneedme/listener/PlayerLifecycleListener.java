@@ -97,6 +97,9 @@ public final class PlayerLifecycleListener implements Listener {
                 .thenAccept(
                         profile ->
                                 plugin.scheduler().runGlobal(() -> applyProfile(player, profile)));
+        // Warms HomeServiceImpl's name cache so /home and /delhome tab-completion has data as soon
+        // as possible instead of only after the player's first /homes or /home use this session.
+        plugin.services().homes.list(player.getUniqueId());
     }
 
     private void applyProfile(Player player, PlayerProfile profile) {

@@ -302,10 +302,31 @@ final class WarpsCommand extends YnmCommand {
                                                 }
                                                 list.forEach(
                                                         w ->
-                                                                sender.sendMessage(
-                                                                        net.kyori.adventure.text
-                                                                                .Component.text(
-                                                                                " - " + w.name())));
+                                                                send(
+                                                                        sender,
+                                                                        "warp.entry",
+                                                                        Placeholder.unparsed(
+                                                                                "warp", w.name()),
+                                                                        Placeholder.unparsed(
+                                                                                "cost",
+                                                                                w.cost() > 0
+                                                                                        ? services()
+                                                                                                .economy
+                                                                                                .currency(
+                                                                                                        "default")
+                                                                                                .format(
+                                                                                                        w
+                                                                                                                .cost())
+                                                                                        : "Free"),
+                                                                        Placeholder.unparsed(
+                                                                                "description",
+                                                                                w.description()
+                                                                                                        == null
+                                                                                                || w.description()
+                                                                                                        .isBlank()
+                                                                                        ? ""
+                                                                                        : w
+                                                                                                .description())));
                                             });
                         });
     }
