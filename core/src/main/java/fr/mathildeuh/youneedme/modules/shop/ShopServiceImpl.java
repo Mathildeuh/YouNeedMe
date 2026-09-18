@@ -176,7 +176,10 @@ public final class ShopServiceImpl implements ShopService {
             if (!wholeInventory) {
                 online.getInventory().setItemInMainHand(null);
             } else {
-                online.getInventory().getStorageContents()[i] = null;
+                // getStorageContents() returns a fresh copy each call - mutating that copy (as
+                // this used to) never touched the real inventory. contents IS the array written
+                // back below, so it must be nulled here instead.
+                contents[i] = null;
             }
         }
         if (wholeInventory) {
