@@ -67,12 +67,11 @@ jobs:
 
   javadoc:
     runs-on: ubuntu-latest
-    # Requires a "github-pages" environment, which GitHub only provisions once Pages is enabled for
-    # this repo (Settings > Pages > Source: GitHub Actions) - harmless to leave failing until then,
-    # since it no longer shares a job with the actual release.
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy-pages.outputs.page_url }}
+    # Deliberately no `environment:` block: referencing a "github-pages" environment that GitHub
+    # hasn't finished provisioning (or that protection rules make unresolvable) doesn't just fail
+    # this job - it can block the ENTIRE run, including the unrelated `release` job, before either
+    # one starts. actions/deploy-pages works fine without declaring a formal environment; the only
+    # loss is the "deployed to <url>" link in the GitHub UI.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
