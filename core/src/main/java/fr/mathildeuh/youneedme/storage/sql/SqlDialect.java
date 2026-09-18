@@ -4,7 +4,10 @@ import fr.mathildeuh.youneedme.api.storage.StorageType;
 
 /** The handful of syntax differences between the four JDBC backends {@link SqlStorage} drives. */
 public enum SqlDialect {
-    SQLITE(StorageType.SQLITE, "org.sqlite.JDBC", "BIGINT PRIMARY KEY AUTOINCREMENT", "BOOLEAN"),
+    // SQLite's parser only recognizes AUTOINCREMENT after the literal token "INTEGER PRIMARY KEY" -
+    // BIGINT has the same storage affinity but is rejected with "AUTOINCREMENT is only allowed on
+    // an INTEGER PRIMARY KEY" even though SQLite has no fixed-width integer types to begin with.
+    SQLITE(StorageType.SQLITE, "org.sqlite.JDBC", "INTEGER PRIMARY KEY AUTOINCREMENT", "BOOLEAN"),
     MYSQL(
             StorageType.MYSQL,
             "org.mariadb.jdbc.Driver",
