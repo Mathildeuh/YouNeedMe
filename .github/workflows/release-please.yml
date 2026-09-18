@@ -59,29 +59,48 @@ jobs:
       # JitPack builds the `api` module on demand straight from this tag - nothing to publish here,
       # a consumer just needs `com.github.Mathildeuh.YouNeedMe:api:<tag>` to trigger the first build.
 
+      # modrinth/minotaur is a Gradle plugin only - it has no `action.yml`, so `uses:
+      # modrinth/minotaur@v3` (the original scaffold) could never have worked as a GitHub Action
+      # regardless of `with:` formatting. mc-publish is the real, maintained action for this.
       - name: Publish to Modrinth
-        uses: modrinth/minotaur@v3
+        uses: Kir-Antipov/mc-publish@v3.3
         continue-on-error: true
         with:
-          token: ${{ secrets.MODRINTH_TOKEN }}
-          project-id: youneedme
-          version-type: release
+          modrinth-id: youneedme
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-version: ${{ needs.release-please.outputs.tag_name }}
+          modrinth-version-type: release
           files: build/libs/YouNeedMe.jar
-          changelog-file: CHANGELOG.md
-          loaders: [paper, purpur, folia, spigot]
-          game-versions: ["1.21"]
+          modrinth-changelog-file: CHANGELOG.md
+          modrinth-loaders: |
+            paper
+            purpur
+            folia
+            spigot
+          # >=1.21 rather than a hardcoded upper bound - Paper's own versioning has since moved to
+          # a year.minor scheme (26.2/26.3 are the current line - see README), but Modrinth's game
+          # version list is keyed off vanilla Minecraft version strings, not Paper's; an open-ended
+          # lower bound keeps this correct as new versions ship instead of going stale every release.
+          modrinth-game-versions: ">=1.21"
+          modrinth-game-version-filter: releases
 
+      # HangarMC/hangar-publish-action does not exist (the repo returns 404) - the original scaffold
+      # invented it. benwoo1110/hangar-upload-action is the real, working action for this.
       - name: Publish to Hangar
-        uses: HangarMC/hangar-publish-action@v0.2.0
+        uses: benwoo1110/hangar-upload-action@v1
         continue-on-error: true
         with:
-          api_key: ${{ secrets.HANGAR_API_KEY }}
+          api_token: ${{ secrets.HANGAR_API_KEY }}
+          slug: YouNeedMe
           version: ${{ needs.release-please.outputs.tag_name }}
           channel: Release
-          id: YouNeedMe
-          platforms: PAPER
-          platform_versions: '{"PAPER": ["1.21"]}'
-          files: '[{"platforms": ["PAPER"], "path": "build/libs/"}]'
+          files: |
+            [
+              {
+                "path": "build/libs/YouNeedMe.jar",
+                "platforms": ["PAPER"]
+              }
+            ]
 
   javadoc:
     needs: release-please
