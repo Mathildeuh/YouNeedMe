@@ -121,9 +121,10 @@ public final class YouNeedMe extends JavaPlugin {
 
     private Void onStorageFailed(Throwable throwable) {
         getLogger()
-                .severe(
-                        "Could not initialize storage backend - disabling YouNeedMe: "
-                                + throwable.getMessage());
+                .log(
+                        java.util.logging.Level.SEVERE,
+                        "Could not initialize storage backend - disabling YouNeedMe",
+                        throwable);
         scheduler.runGlobal(() -> getServer().getPluginManager().disablePlugin(this));
         return null;
     }

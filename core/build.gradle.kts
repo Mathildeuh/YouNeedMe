@@ -52,14 +52,22 @@ tasks.named<ShadowJar>("shadowJar") {
     // with MariaDB's own plugin SPIs). Gradle's default DuplicatesStrategy (EXCLUDE) drops a
     // duplicate entry before the transformer ever sees it, silently keeping only the first jar's
     // registrations - INCLUDE hands every duplicate to the transformer so the merge is complete.
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    // Scoped to META-INF/services/** only: applying INCLUDE jar-wide also let every dependency's
+    // own META-INF/LICENSE.txt and native-image descriptors through unmerged, producing duplicate
+    // zip entries in the shaded jar (harmless but noisy - "Duplicate entries found" warnings).
+    filesMatching("META-INF/services/**") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
     mergeServiceFiles()
 
+    // org.sqlite / org.mariadb.jdbc / org.postgresql are deliberately NOT relocated:
+    // SqlDialect#jdbcDriver() hands their driver class name to
+    // HikariConfig#setDriverClassName(...) as a hardcoded string ("org.sqlite.JDBC", etc.), which
+    // the relocator can't rewrite (it only rewrites type references, not string constants).
+    // Relocating the packages while leaving that string untouched made Class.forName fail at
+    // runtime with ClassNotFoundException, silently disabling the plugin on every storage backend.
     listOf(
         "com.zaxxer.hikari",
-        "org.sqlite",
-        "org.mariadb.jdbc",
-        "org.postgresql",
         "com.mongodb",
         "org.bson",
         "redis.clients.jedis",
