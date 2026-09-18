@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.5.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.5.0...v1.5.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* stop Qodana workflow failing (and emailing) until QODANA_TOKEN is set up ([a7e0f86](https://github.com/Mathildeuh/YouNeedMe/commit/a7e0f86762bf610560bfd8fc85d7029dce42ce8e))
+
 ## [1.5.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.4.0...v1.5.0) (2026-09-18)
 
 
