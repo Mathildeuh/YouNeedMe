@@ -166,6 +166,8 @@
   "shop.gui.item.left-click": "<#474747>Clic Gauche <gray>pour acheter",
   "shop.gui.item.right-click": "<#474747>Clic Droit <gray>pour vendre",
   "shop.gui.item.shift-click": "<#474747>Shift+Clic <gray>pour la pile",
+  "shop.gui.main.back": "<gray>Retour",
+  "shop.item-not-found": "<prefix> <color:#FF0000>Cet objet n'existe pas !</color>",
   "command.usage.tpa": "<prefix> <color:#FF0000>Utilisation : /tpa <player></color>",
   "command.usage.tpahere": "<prefix> <color:#FF0000>Utilisation : /tpahere <player></color>",
   "command.usage.tpaccept": "<prefix> <color:#FF0000>Utilisation : /tpaccept [player]</color>",

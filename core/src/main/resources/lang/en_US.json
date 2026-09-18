@@ -166,6 +166,8 @@
   "shop.gui.item.left-click": "<#474747>Left-Click <gray>to buy",
   "shop.gui.item.right-click": "<#474747>Right-Click <gray>to sell",
   "shop.gui.item.shift-click": "<#474747>Shift-Click <gray>for stack",
+  "shop.gui.main.back": "<gray>Back",
+  "shop.item-not-found": "<prefix> <color:#FF0000>That item doesn't exist!</color>",
   "command.usage.tpa": "<prefix> <color:#FF0000>Usage: /tpa <player></color>",
   "command.usage.tpahere": "<prefix> <color:#FF0000>Usage: /tpahere <player></color>",
   "command.usage.tpaccept": "<prefix> <color:#FF0000>Usage: /tpaccept [player]</color>",
