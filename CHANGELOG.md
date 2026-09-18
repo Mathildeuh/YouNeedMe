@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.3.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.2.0...v1.3.0) (2026-09-18)
+
+
+### Features
+
+* in-game kit/shop editors and a fully GUI-driven auction house ([1688be3](https://github.com/Mathildeuh/YouNeedMe/commit/1688be3815004589fa8c406327ec800c895d50a4))
+
 ## [1.2.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.1.0...v1.2.0) (2026-09-18)
 
 
