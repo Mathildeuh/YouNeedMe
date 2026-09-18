@@ -8,6 +8,19 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.5.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.4.0...v1.5.0) (2026-09-18)
+
+
+### Features
+
+* real bidding on the auction house, not just fixed-price listings ([c74a971](https://github.com/Mathildeuh/YouNeedMe/commit/c74a9711d22082c812f9c7c2bd97b5ee8f115045))
+
+
+### Bug Fixes
+
+* chain the publish/javadoc jobs onto release-please instead of a separate tag-triggered workflow ([cb12b2b](https://github.com/Mathildeuh/YouNeedMe/commit/cb12b2b81156372e073647f9a76e198c092c4b14))
+* replace two nonexistent GitHub Actions in the release workflow with real ones ([5218fee](https://github.com/Mathildeuh/YouNeedMe/commit/5218feed75d1165c15d0001493705054b26becd2))
+
 ## [1.4.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.3...v1.4.0) (2026-09-18)
 
 
