@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.mongodb.driver.sync)
     implementation(libs.jedis)
+    implementation(libs.bstats.bukkit)
 
     testImplementation(project(":api"))
     // Pinned to the exact build MockBukkit 4.116.1 was tested against - the floating
@@ -76,6 +77,7 @@ tasks.named<ShadowJar>("shadowJar") {
         "redis.clients.jedis",
         "org.apache.commons.pool2",
         "org.slf4j",
+        "org.bstats",
     ).forEach { relocate(it, "$shadeRelocate.$it") }
 
     // These two ship their own module-info / multi-release jars that upset the relocator;

@@ -105,6 +105,8 @@ public final class YouNeedMe extends JavaPlugin {
                             fr.mathildeuh.youneedme.integrations.network.NetworkVanishSync.enable(
                                     this);
                     PlaceholderApiIntegration.enable(this);
+                    fr.mathildeuh.youneedme.integrations.metrics.PluginMetrics.enable(this);
+                    fr.mathildeuh.youneedme.integrations.update.UpdateChecker.check(this);
 
                     RtpModule.enable(this);
                     NavigationModule.enable(this);

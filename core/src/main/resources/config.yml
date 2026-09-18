@@ -7,6 +7,10 @@ language:
   # See lang/ for every bundled locale - add your own by dropping a new lang/<code>.json file.
   default: en_US
 
+# Checks GitHub Releases once on startup for a newer version and logs it to console + nags online
+# ops with youneedme.admin on join. Purely informational, never auto-updates anything.
+update-checker: true
+
 storage:
   # sqlite | mysql | mariadb | postgresql | mongodb | json
   type: sqlite
