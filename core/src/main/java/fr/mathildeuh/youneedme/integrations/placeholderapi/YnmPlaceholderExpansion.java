@@ -73,13 +73,22 @@ public final class YnmPlaceholderExpansion extends PlaceholderExpansion {
                     services.nicknames.nickname(player.getUniqueId()).orElse(player.getName());
             case "afk" -> String.valueOf(services.afk.contains(player.getUniqueId()));
             case "vanished" -> String.valueOf(services.vanished.contains(player.getUniqueId()));
-            case "playtime" ->
-                    services.storage
-                            .playerProfiles()
-                            .find(player.getUniqueId())
-                            .join()
-                            .map(profile -> TimeParser.format(profile.playtimeSeconds() * 1000))
-                            .orElse("0s");
+            case "playtime" -> {
+                long stored =
+                        services.storage
+                                .playerProfiles()
+                                .find(player.getUniqueId())
+                                .join()
+                                .map(profile -> profile.playtimeSeconds())
+                                .orElse(0L);
+                // The stored value only reflects playtime as of the last quit - add this session's
+                // elapsed time, otherwise the placeholder shows 0/stale for a player still online.
+                Long joinedAt = services.joinedAt.get(player.getUniqueId());
+                if (joinedAt != null) {
+                    stored += Math.max(0, (System.currentTimeMillis() - joinedAt) / 1000);
+                }
+                yield TimeParser.format(stored * 1000);
+            }
             case "group" ->
                     services.luckPerms == null
                             ? ""

@@ -25,7 +25,7 @@ commands:
   broadcast: { description: Broadcast a message, usage: "/broadcast <message>", permission: youneedme.broadcast }
   checkpunish: { description: Check punishment status, usage: "/checkpunish <player>", permission: youneedme.checkpunish }
   clearinventory: { description: Clear inventory, usage: "/clearinventory [player]", permission: youneedme.clearinventory, aliases: [ ci, clearinv ] }
-  craftingtable: { description: Open a crafting table, usage: /craftingtable, permission: youneedme.craftingtable, aliases: [ ct, workbench ] }
+  craftingtable: { description: Open a crafting table, usage: /craftingtable, permission: youneedme.craftingtable, aliases: [ ct, craft, workbench ] }
   dback: { description: Teleport to last death location, usage: /dback, permission: youneedme.dback }
   delhome: { description: Delete one of your homes, usage: "/delhome <name>", permission: youneedme.delhome }
   delwarp: { description: Delete a warp, usage: "/delwarp <name>", permission: youneedme.delwarp }
@@ -66,7 +66,7 @@ commands:
   playtime: { description: Check playtime, usage: "/playtime [player]", permission: youneedme.playtime }
   ptime: { description: Personal time, usage: "/ptime [time|day|night|reset] [locked]", permission: youneedme.ptime }
   pweather: { description: Personal weather, usage: "/pweather [clear|rain|storm|reset]", permission: youneedme.pweather }
-  quicksell: { description: Quick sell items, usage: "/quicksell [hand|inventory]", permission: youneedme.quicksell.hand }
+  quicksell: { description: Quick sell items, usage: "/quicksell [hand|inventory]", permission: youneedme.quicksell.hand, aliases: [ qs ] }
   realname: { description: Lookup real name by nick, usage: "/realname <nickname>", permission: youneedme.realname }
   rename: { description: Rename an item, usage: /rename, permission: youneedme.rename }
   repair: { description: Repair held item, usage: "/repair [player]", permission: youneedme.repair }

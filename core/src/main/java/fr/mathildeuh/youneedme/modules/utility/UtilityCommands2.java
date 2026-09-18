@@ -270,6 +270,19 @@ final class EnchantCommand extends YnmCommand {
                         input.toLowerCase(java.util.Locale.ROOT).replace(' ', '_'));
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(key);
     }
+
+    static java.util.List<String> allEnchantmentKeys() {
+        java.util.List<String> keys = new java.util.ArrayList<>();
+        RegistryAccess.registryAccess()
+                .getRegistry(RegistryKey.ENCHANTMENT)
+                .forEach(e -> keys.add(e.getKey().getKey()));
+        return keys;
+    }
+
+    @Override
+    protected java.util.List<String> tabComplete(CommandSender sender, String[] args) {
+        return args.length == 1 ? allEnchantmentKeys() : java.util.List.of();
+    }
 }
 
 final class UnenchantCommand extends YnmCommand {
@@ -301,5 +314,15 @@ final class UnenchantCommand extends YnmCommand {
                 sender,
                 "unenchant.success.single",
                 Placeholder.unparsed("enchantment", enchantment.getKey().getKey()));
+    }
+
+    @Override
+    protected java.util.List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length != 1 || !(sender instanceof Player player)) {
+            return java.util.List.of();
+        }
+        return player.getInventory().getItemInMainHand().getEnchantments().keySet().stream()
+                .map(e -> e.getKey().getKey())
+                .toList();
     }
 }

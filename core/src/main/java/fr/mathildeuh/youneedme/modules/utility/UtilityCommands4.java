@@ -68,6 +68,15 @@ final class PlaytimeCommand extends YnmCommand {
                 .thenAccept(
                         opt -> {
                             long seconds = opt.map(p -> p.playtimeSeconds()).orElse(0L);
+                            // The stored value only reflects playtime as of the last quit - add
+                            // the current session's elapsed time for a player who's still online,
+                            // otherwise /playtime shows 0 (or stale) for anyone checking
+                            // mid-session.
+                            Long joinedAt = services().joinedAt.get(target.getUniqueId());
+                            if (joinedAt != null) {
+                                seconds +=
+                                        Math.max(0, (System.currentTimeMillis() - joinedAt) / 1000);
+                            }
                             long days = seconds / 86400;
                             long hours = (seconds % 86400) / 3600;
                             long minutes = (seconds % 3600) / 60;
