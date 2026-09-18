@@ -28,7 +28,8 @@ public final class ModerationModule {
         CommandRegistrar.register(plugin, "smite", new SmiteCommand(plugin));
         CommandRegistrar.register(plugin, "god", new GodCommand(plugin));
         CommandRegistrar.register(plugin, "vanish", new VanishCommand(plugin));
-        CommandRegistrar.register(plugin, "invsee", new InvSeeCommand(plugin));
+        InvSeeGui invSeeGui = new InvSeeGui(plugin);
+        CommandRegistrar.register(plugin, "invsee", new InvSeeCommand(plugin, invSeeGui));
         CommandRegistrar.register(plugin, "endersee", new EnderSeeCommand(plugin));
         CommandRegistrar.register(plugin, "sudo", new SudoCommand(plugin));
         CommandRegistrar.register(plugin, "clearinventory", new ClearInventoryCommand(plugin));

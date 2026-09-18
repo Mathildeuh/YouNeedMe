@@ -753,8 +753,11 @@ final class VanishCommand extends YnmCommand {
 
 final class InvSeeCommand extends YnmCommand {
 
-    InvSeeCommand(YouNeedMe plugin) {
+    private final InvSeeGui gui;
+
+    InvSeeCommand(YouNeedMe plugin, InvSeeGui gui) {
         super(plugin, "youneedme.invsee", true);
+        this.gui = gui;
     }
 
     @Override
@@ -773,7 +776,7 @@ final class InvSeeCommand extends YnmCommand {
             send(sender, "invsee.self");
             return;
         }
-        viewer.openInventory(target.getInventory());
+        gui.open(viewer, target);
         send(sender, "invsee.opened", Placeholder.unparsed("target", target.getName()));
     }
 

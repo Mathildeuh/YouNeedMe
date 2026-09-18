@@ -36,7 +36,12 @@ final class AnvilCommand extends YnmCommand {
 
     @Override
     protected void execute(CommandSender sender, String label, String[] args) {
-        player(sender).openAnvil(null, true);
+        Player player = player(sender);
+        // A null location makes this a fully virtual anvil with no backing block, which is where
+        // shift-click-to-quick-move gets unreliable on some versions - anchoring it to the
+        // player's own location keeps it "virtual" (force=true, nothing is placed) while giving
+        // the server a real position to resolve container interactions against.
+        player.openAnvil(player.getLocation(), true);
         send(sender, "anvil.opened");
     }
 }
@@ -50,7 +55,6 @@ final class StonecutterCommand extends YnmCommand {
     @Override
     protected void execute(CommandSender sender, String label, String[] args) {
         Player player = player(sender);
-        Location loc = player.getLocation();
         player.openInventory(
                 Bukkit.createInventory(null, org.bukkit.event.inventory.InventoryType.STONECUTTER));
         send(sender, "stonecutter.opened");
