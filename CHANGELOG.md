@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.3.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.1...v1.3.2) (2026-09-18)
+
+
+### Bug Fixes
+
+* click:run_command arguments never actually resolved a nested placeholder ([920eeee](https://github.com/Mathildeuh/YouNeedMe/commit/920eeee776ba34458a540bff436e92f70e8bc2da))
+
 ## [1.3.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.0...v1.3.1) (2026-09-18)
 
 
