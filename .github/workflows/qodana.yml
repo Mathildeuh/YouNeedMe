@@ -27,17 +27,20 @@ jobs:
           fetch-depth: 0 # full history required for pull request analysis
 
       - name: Qodana Scan
+        id: qodana
+        # Qodana Linters have required a Qodana Cloud connection (QODANA_TOKEN) since 2023.2 - it
+        # refuses to run at all without one, unlike Modrinth/Hangar's "best-effort" publish steps.
+        # continue-on-error here so a missing token doesn't fail the whole run (and spam commit
+        # status emails) until QODANA_TOKEN is set up - see docs/QODANA_SETUP.md.
+        continue-on-error: true
         uses: JetBrains/qodana-action@v2026.2.1
         with:
           upload-result: true
         env:
-          # Optional: set a QODANA_TOKEN repo secret (from a project on qodana.cloud) for the full
-          # cloud dashboard/history. Without it, this still runs and uploads findings straight to
-          # GitHub's own Security > Code scanning tab via the SARIF step below.
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
       - name: Upload SARIF to GitHub code scanning
-        if: always()
+        if: steps.qodana.outcome == 'success'
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
