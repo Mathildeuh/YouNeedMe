@@ -27,8 +27,9 @@ public final class SqlAuctionRepository implements AuctionRepository {
                     try (PreparedStatement ps =
                             connection.prepareStatement(
                                     """
-                                    INSERT INTO ynm_auctions (seller, seller_username, item, price, listed_at, expires_at, status, buyer)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                    INSERT INTO ynm_auctions (seller, seller_username, item, price, listed_at, expires_at,
+                                        status, buyer, is_auction, current_bid, current_bidder, current_bidder_username)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                                     """,
                                     Statement.RETURN_GENERATED_KEYS)) {
                         bindWithoutId(ps, listing);
@@ -36,16 +37,7 @@ public final class SqlAuctionRepository implements AuctionRepository {
                         try (ResultSet keys = ps.getGeneratedKeys()) {
                             keys.next();
                             long id = keys.getLong(1);
-                            return new AuctionListing(
-                                    id,
-                                    listing.seller(),
-                                    listing.sellerLastKnownUsername(),
-                                    listing.item(),
-                                    listing.price(),
-                                    listing.listedAt(),
-                                    listing.expiresAt(),
-                                    listing.status(),
-                                    listing.buyer());
+                            return withId(listing, id);
                         }
                     }
                 });
@@ -59,7 +51,8 @@ public final class SqlAuctionRepository implements AuctionRepository {
                             connection.prepareStatement(
                                     """
                                     UPDATE ynm_auctions SET seller = ?, seller_username = ?, item = ?, price = ?, listed_at = ?,
-                                        expires_at = ?, status = ?, buyer = ? WHERE id = ?
+                                        expires_at = ?, status = ?, buyer = ?, is_auction = ?, current_bid = ?,
+                                        current_bidder = ?, current_bidder_username = ? WHERE id = ?
                                     """)) {
                         int i = bindWithoutId(ps, listing);
                         ps.setLong(i, listing.id());
@@ -122,14 +115,16 @@ public final class SqlAuctionRepository implements AuctionRepository {
     }
 
     @Override
-    public CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller) {
+    public CompletableFuture<List<AuctionListing>> findAwaitingCollection(UUID player) {
         return sql.submit(
                 connection -> {
                     try (PreparedStatement ps =
                             connection.prepareStatement(
-                                    "SELECT * FROM ynm_auctions WHERE seller = ? AND status ="
-                                            + " 'EXPIRED' ORDER BY expires_at DESC")) {
-                        ps.setString(1, seller.toString());
+                                    "SELECT * FROM ynm_auctions WHERE (seller = ? AND status ="
+                                        + " 'EXPIRED') OR (buyer = ? AND status = 'WON') ORDER BY"
+                                        + " expires_at DESC")) {
+                        ps.setString(1, player.toString());
+                        ps.setString(2, player.toString());
                         try (ResultSet rs = ps.executeQuery()) {
                             return mapAll(rs);
                         }
@@ -138,15 +133,17 @@ public final class SqlAuctionRepository implements AuctionRepository {
     }
 
     @Override
-    public CompletableFuture<Integer> expireOverdue() {
+    public CompletableFuture<List<AuctionListing>> findActiveExpired(long now) {
         return sql.submit(
                 connection -> {
                     try (PreparedStatement ps =
                             connection.prepareStatement(
-                                    "UPDATE ynm_auctions SET status = 'EXPIRED' WHERE status ="
-                                            + " 'ACTIVE' AND expires_at <= ?")) {
-                        ps.setLong(1, System.currentTimeMillis());
-                        return ps.executeUpdate();
+                                    "SELECT * FROM ynm_auctions WHERE status = 'ACTIVE' AND"
+                                            + " expires_at <= ?")) {
+                        ps.setLong(1, now);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            return mapAll(rs);
+                        }
                     }
                 });
     }
@@ -162,6 +159,15 @@ public final class SqlAuctionRepository implements AuctionRepository {
         ps.setLong(i++, listing.expiresAt());
         ps.setString(i++, listing.status().name());
         ps.setString(i++, listing.buyer() == null ? null : listing.buyer().toString());
+        ps.setBoolean(i++, listing.auction());
+        if (listing.currentBid() == null) {
+            ps.setNull(i++, java.sql.Types.DOUBLE);
+        } else {
+            ps.setDouble(i++, listing.currentBid());
+        }
+        ps.setString(
+                i++, listing.currentBidder() == null ? null : listing.currentBidder().toString());
+        ps.setString(i++, listing.currentBidderUsername());
         return i;
     }
 
@@ -175,6 +181,9 @@ public final class SqlAuctionRepository implements AuctionRepository {
 
     private static AuctionListing mapRow(ResultSet rs) throws java.sql.SQLException {
         String buyer = rs.getString("buyer");
+        String currentBidder = rs.getString("current_bidder");
+        double currentBid = rs.getDouble("current_bid");
+        boolean hasCurrentBid = !rs.wasNull();
         return new AuctionListing(
                 rs.getLong("id"),
                 UUID.fromString(rs.getString("seller")),
@@ -184,6 +193,27 @@ public final class SqlAuctionRepository implements AuctionRepository {
                 rs.getLong("listed_at"),
                 rs.getLong("expires_at"),
                 AuctionListing.Status.valueOf(rs.getString("status")),
-                buyer == null ? null : UUID.fromString(buyer));
+                buyer == null ? null : UUID.fromString(buyer),
+                rs.getBoolean("is_auction"),
+                hasCurrentBid ? currentBid : null,
+                currentBidder == null ? null : UUID.fromString(currentBidder),
+                rs.getString("current_bidder_username"));
+    }
+
+    private static AuctionListing withId(AuctionListing listing, long id) {
+        return new AuctionListing(
+                id,
+                listing.seller(),
+                listing.sellerLastKnownUsername(),
+                listing.item(),
+                listing.price(),
+                listing.listedAt(),
+                listing.expiresAt(),
+                listing.status(),
+                listing.buyer(),
+                listing.auction(),
+                listing.currentBid(),
+                listing.currentBidder(),
+                listing.currentBidderUsername());
     }
 }

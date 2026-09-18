@@ -472,6 +472,8 @@
   "ah.auction_not_found": "<prefix> <color:#FF0000>Cette enchère n'est plus disponible.</color>",
   "ah.cancel_failed": "<prefix> <color:#FF0000>Échec de l'annulation de l'enchère. Veuillez réessayer.</color>",
   "ah.purchase.success": "<prefix> <color:#FFF200>Achat réussi !</color>",
+  "ah.bid.success": "<prefix> <color:#FFF200>Enchère placée !</color>",
+  "ah.bid.too_low": "<prefix> <color:#FF0000>Votre enchère doit dépasser l'enchère actuelle.</color>",
   "ah.purchase.insufficient_funds": "<prefix> <color:#FF0000>Vous n'avez pas assez d'argent pour cela.</color>",
   "ah.purchase.own_listing": "<prefix> <color:#FF0000>Vous ne pouvez pas acheter votre propre enchère.</color>",
   "ah.purchase.expired": "<prefix> <color:#FF0000>Cette enchère a expiré.</color>",

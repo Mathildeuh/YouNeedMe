@@ -668,47 +668,33 @@ public final class JsonStorage
     }
 
     @Override
-    public CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller) {
+    public CompletableFuture<List<AuctionListing>> findAwaitingCollection(UUID player) {
         return supplyAsync(
                 () ->
                         auctions.stream()
                                 .filter(
                                         a ->
-                                                a.seller().equals(seller)
-                                                        && a.status()
-                                                                == AuctionListing.Status.EXPIRED)
+                                                (a.seller().equals(player)
+                                                                && a.status()
+                                                                        == AuctionListing.Status
+                                                                                .EXPIRED)
+                                                        || (player.equals(a.buyer())
+                                                                && a.status()
+                                                                        == AuctionListing.Status
+                                                                                .WON))
                                 .collect(Collectors.toList()));
     }
 
     @Override
-    public CompletableFuture<Integer> expireOverdue() {
+    public CompletableFuture<List<AuctionListing>> findActiveExpired(long now) {
         return supplyAsync(
-                () -> {
-                    long now = System.currentTimeMillis();
-                    int count = 0;
-                    for (int i = 0; i < auctions.size(); i++) {
-                        AuctionListing a = auctions.get(i);
-                        if (a.status() == AuctionListing.Status.ACTIVE && a.expiresAt() <= now) {
-                            auctions.set(
-                                    i,
-                                    new AuctionListing(
-                                            a.id(),
-                                            a.seller(),
-                                            a.sellerLastKnownUsername(),
-                                            a.item(),
-                                            a.price(),
-                                            a.listedAt(),
-                                            a.expiresAt(),
-                                            AuctionListing.Status.EXPIRED,
-                                            a.buyer()));
-                            count++;
-                        }
-                    }
-                    if (count > 0) {
-                        saveList(file("auctions.json"), auctions);
-                    }
-                    return count;
-                });
+                () ->
+                        auctions.stream()
+                                .filter(
+                                        a ->
+                                                a.status() == AuctionListing.Status.ACTIVE
+                                                        && a.expiresAt() <= now)
+                                .collect(Collectors.toList()));
     }
 
     // --- ShopRepository ------------------------------------------------------------------------
@@ -824,7 +810,11 @@ public final class JsonStorage
                 a.listedAt(),
                 a.expiresAt(),
                 a.status(),
-                a.buyer());
+                a.buyer(),
+                a.auction(),
+                a.currentBid(),
+                a.currentBidder(),
+                a.currentBidderUsername());
     }
 
     private static Type profileMapType() {

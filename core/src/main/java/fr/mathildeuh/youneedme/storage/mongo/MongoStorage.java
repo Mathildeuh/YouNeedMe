@@ -886,17 +886,24 @@ public final class MongoStorage
     }
 
     @Override
-    public CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller) {
+    public CompletableFuture<List<AuctionListing>> findAwaitingCollection(UUID player) {
         return supplyAsync(
                 () -> {
                     List<AuctionListing> result = new ArrayList<>();
-                    for (Document doc :
-                            auctions.find(
+                    Bson filter =
+                            com.mongodb.client.model.Filters.or(
                                     com.mongodb.client.model.Filters.and(
                                             com.mongodb.client.model.Filters.eq(
-                                                    "seller", seller.toString()),
+                                                    "seller", player.toString()),
                                             com.mongodb.client.model.Filters.eq(
-                                                    "status", "EXPIRED")))) {
+                                                    "status", "EXPIRED")),
+                                    com.mongodb.client.model.Filters.and(
+                                            com.mongodb.client.model.Filters.eq(
+                                                    "buyer", player.toString()),
+                                            com.mongodb.client.model.Filters.eq("status", "WON")));
+                    for (Document doc :
+                            auctions.find(filter)
+                                    .sort(com.mongodb.client.model.Sorts.descending("expiresAt"))) {
                         result.add(mapAuction(doc));
                     }
                     return result;
@@ -904,20 +911,20 @@ public final class MongoStorage
     }
 
     @Override
-    public CompletableFuture<Integer> expireOverdue() {
+    public CompletableFuture<List<AuctionListing>> findActiveExpired(long now) {
         return supplyAsync(
-                () ->
-                        (int)
-                                auctions.updateMany(
-                                                com.mongodb.client.model.Filters.and(
-                                                        com.mongodb.client.model.Filters.eq(
-                                                                "status", "ACTIVE"),
-                                                        com.mongodb.client.model.Filters.lte(
-                                                                "expiresAt",
-                                                                System.currentTimeMillis())),
-                                                com.mongodb.client.model.Updates.set(
-                                                        "status", "EXPIRED"))
-                                        .getModifiedCount());
+                () -> {
+                    List<AuctionListing> result = new ArrayList<>();
+                    for (Document doc :
+                            auctions.find(
+                                    com.mongodb.client.model.Filters.and(
+                                            com.mongodb.client.model.Filters.eq("status", "ACTIVE"),
+                                            com.mongodb.client.model.Filters.lte(
+                                                    "expiresAt", now)))) {
+                        result.add(mapAuction(doc));
+                    }
+                    return result;
+                });
     }
 
     private static Document toDocument(AuctionListing a) {
@@ -929,11 +936,19 @@ public final class MongoStorage
                 .append("listedAt", a.listedAt())
                 .append("expiresAt", a.expiresAt())
                 .append("status", a.status().name())
-                .append("buyer", a.buyer() == null ? null : a.buyer().toString());
+                .append("buyer", a.buyer() == null ? null : a.buyer().toString())
+                .append("auction", a.auction())
+                .append("currentBid", a.currentBid())
+                .append(
+                        "currentBidder",
+                        a.currentBidder() == null ? null : a.currentBidder().toString())
+                .append("currentBidderUsername", a.currentBidderUsername());
     }
 
     private static AuctionListing mapAuction(Document doc) {
         String buyer = doc.getString("buyer");
+        String currentBidder = doc.getString("currentBidder");
+        Double currentBid = doc.getDouble("currentBid");
         return new AuctionListing(
                 doc.getLong("_id"),
                 UUID.fromString(doc.getString("seller")),
@@ -943,7 +958,11 @@ public final class MongoStorage
                 doc.getLong("listedAt"),
                 doc.getLong("expiresAt"),
                 AuctionListing.Status.valueOf(doc.getString("status")),
-                buyer == null ? null : UUID.fromString(buyer));
+                buyer == null ? null : UUID.fromString(buyer),
+                Boolean.TRUE.equals(doc.getBoolean("auction")),
+                currentBid,
+                currentBidder == null ? null : UUID.fromString(currentBidder),
+                doc.getString("currentBidderUsername"));
     }
 
     private static AuctionListing withId(AuctionListing a, long id) {
@@ -956,7 +975,11 @@ public final class MongoStorage
                 a.listedAt(),
                 a.expiresAt(),
                 a.status(),
-                a.buyer());
+                a.buyer(),
+                a.auction(),
+                a.currentBid(),
+                a.currentBidder(),
+                a.currentBidderUsername());
     }
 
     // --- ShopRepository ------------------------------------------------------------------------

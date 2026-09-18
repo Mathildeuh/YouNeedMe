@@ -138,10 +138,14 @@ final class SqlSchema {
                     listed_at BIGINT NOT NULL,
                     expires_at BIGINT NOT NULL,
                     status VARCHAR(16) NOT NULL,
-                    buyer VARCHAR(36)
+                    buyer VARCHAR(36),
+                    is_auction %s NOT NULL DEFAULT %s,
+                    current_bid DOUBLE PRECISION,
+                    current_bidder VARCHAR(36),
+                    current_bidder_username VARCHAR(16)
                 )
                 """
-                        .formatted(id),
+                        .formatted(id, bool, dialect.isMySqlFamily() ? "0" : "FALSE"),
                 "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_status ON ynm_auctions (status,"
                         + " expires_at)",
                 "CREATE INDEX IF NOT EXISTS idx_ynm_auctions_seller ON ynm_auctions (seller,"
@@ -154,5 +158,26 @@ final class SqlSchema {
                     PRIMARY KEY (category_id, item_id)
                 )
                 """);
+    }
+
+    /**
+     * Additive columns for an install whose tables predate them - {@code CREATE TABLE IF NOT
+     * EXISTS} is a no-op against an already-existing table, so a new column never reaches it that
+     * way. Every statement here is expected to fail with "duplicate column" on a database that
+     * already has it (either from a fresh {@link #statements} run, or a previous run of this same
+     * migration) - {@code SqlStorage#migrate()} runs these best-effort, one at a time, swallowing
+     * exactly that failure instead of the strict all-or-nothing handling {@link #statements} gets.
+     */
+    static List<String> additiveMigrations(SqlDialect dialect) {
+        String bool = dialect.booleanType();
+        String falseLiteral = dialect.isMySqlFamily() ? "0" : "FALSE";
+        return List.of(
+                "ALTER TABLE ynm_auctions ADD COLUMN is_auction "
+                        + bool
+                        + " NOT NULL DEFAULT "
+                        + falseLiteral,
+                "ALTER TABLE ynm_auctions ADD COLUMN current_bid DOUBLE PRECISION",
+                "ALTER TABLE ynm_auctions ADD COLUMN current_bidder VARCHAR(36)",
+                "ALTER TABLE ynm_auctions ADD COLUMN current_bidder_username VARCHAR(16)");
     }
 }

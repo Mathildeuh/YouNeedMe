@@ -438,6 +438,8 @@
   "ah.auction_not_found": "<prefix> <color:#FF0000>This auction is no longer available.</color>",
   "ah.cancel_failed": "<prefix> <color:#FF0000>Failed to cancel auction. Please try again.</color>",
   "ah.purchase.success": "<prefix> <color:#FFF200>Purchase successful!</color>",
+  "ah.bid.success": "<prefix> <color:#FFF200>Bid placed!</color>",
+  "ah.bid.too_low": "<prefix> <color:#FF0000>Your bid must beat the current highest bid.</color>",
   "ah.purchase.insufficient_funds": "<prefix> <color:#FF0000>You don't have enough money for that.</color>",
   "ah.purchase.own_listing": "<prefix> <color:#FF0000>You cannot buy your own listing.</color>",
   "ah.purchase.expired": "<prefix> <color:#FF0000>That listing has expired.</color>",

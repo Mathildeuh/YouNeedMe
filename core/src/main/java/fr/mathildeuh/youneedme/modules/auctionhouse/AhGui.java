@@ -29,10 +29,14 @@ public final class AhGui implements Listener {
 
     private final YouNeedMe plugin;
     private final NamespacedKey listingIdKey;
+    private final NamespacedKey auctionFlagKey;
+    private final NamespacedKey minNextBidKey;
 
     public AhGui(YouNeedMe plugin) {
         this.plugin = plugin;
         this.listingIdKey = new NamespacedKey(plugin, "ah-listing-id");
+        this.auctionFlagKey = new NamespacedKey(plugin, "ah-is-auction");
+        this.minNextBidKey = new NamespacedKey(plugin, "ah-min-next-bid");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -128,11 +132,19 @@ public final class AhGui implements Listener {
                         "<gray>Cancel",
                         List.of("Returns the item to your inventory")));
         inventory.setItem(
-                22,
+                21,
                 icon(
                         Material.EMERALD,
                         "<green><bold>List for Sale",
-                        List.of("Place an item above, then click here")));
+                        List.of("Place an item above, then click here", "Fixed price")));
+        inventory.setItem(
+                23,
+                icon(
+                        Material.GOLD_INGOT,
+                        "<gold><bold>Start Auction",
+                        List.of(
+                                "Place an item above, then click here",
+                                "Players bid until the listing expires")));
         player.openInventory(inventory);
     }
 
@@ -212,15 +224,30 @@ public final class AhGui implements Listener {
     private ItemStack listingIcon(AuctionListing listing, boolean showSeller) {
         ItemStack stack = listing.item().clone();
         ItemMeta meta = stack.getItemMeta();
+        var currency = plugin.services().economy.currency("default");
         var lore = new java.util.ArrayList<Component>();
-        lore.add(
-                Component.text(
-                        "Price: "
-                                + plugin.services()
-                                        .economy
-                                        .currency("default")
-                                        .format(listing.price()),
-                        NamedTextColor.GREEN));
+        if (listing.auction()) {
+            if (listing.currentBid() != null) {
+                lore.add(
+                        Component.text(
+                                "Current bid: " + currency.format(listing.currentBid()),
+                                NamedTextColor.GOLD));
+                lore.add(
+                        Component.text(
+                                "By: " + listing.currentBidderUsername(), NamedTextColor.GRAY));
+            } else {
+                lore.add(
+                        Component.text(
+                                "Starting bid: " + currency.format(listing.price()),
+                                NamedTextColor.GOLD));
+                lore.add(Component.text("No bids yet", NamedTextColor.GRAY));
+            }
+            lore.add(Component.text("Click to place a bid", NamedTextColor.YELLOW));
+        } else {
+            lore.add(
+                    Component.text(
+                            "Price: " + currency.format(listing.price()), NamedTextColor.GREEN));
+        }
         if (showSeller) {
             lore.add(
                     Component.text(
@@ -228,7 +255,14 @@ public final class AhGui implements Listener {
         }
         lore.add(Component.text("ID: #" + listing.id(), NamedTextColor.DARK_GRAY));
         meta.lore(lore);
-        meta.getPersistentDataContainer().set(listingIdKey, PersistentDataType.LONG, listing.id());
+        var pdc = meta.getPersistentDataContainer();
+        pdc.set(listingIdKey, PersistentDataType.LONG, listing.id());
+        if (listing.auction()) {
+            double minNextBid =
+                    listing.currentBid() != null ? listing.currentBid() + 1 : listing.price();
+            pdc.set(auctionFlagKey, PersistentDataType.BYTE, (byte) 1);
+            pdc.set(minNextBidKey, PersistentDataType.DOUBLE, minNextBid);
+        }
         stack.setItemMeta(meta);
         return stack;
     }
@@ -293,8 +327,13 @@ public final class AhGui implements Listener {
             openBrowse(player, page + 1);
             return;
         }
-        Long id = listingId(event.getCurrentItem());
+        ItemStack clicked = event.getCurrentItem();
+        Long id = listingId(clicked);
         if (id == null) {
+            return;
+        }
+        if (isAuctionListing(clicked)) {
+            promptBid(player, id, minNextBid(clicked), page);
             return;
         }
         plugin.services()
@@ -326,9 +365,65 @@ public final class AhGui implements Listener {
                         });
     }
 
+    /** Tagged by {@link #listingIcon} - avoids a repository round-trip just to know the type. */
+    private boolean isAuctionListing(ItemStack clicked) {
+        Byte flag =
+                clicked.getItemMeta()
+                        .getPersistentDataContainer()
+                        .get(auctionFlagKey, PersistentDataType.BYTE);
+        return flag != null && flag == (byte) 1;
+    }
+
+    private double minNextBid(ItemStack clicked) {
+        Double value =
+                clicked.getItemMeta()
+                        .getPersistentDataContainer()
+                        .get(minNextBidKey, PersistentDataType.DOUBLE);
+        return value == null ? 1 : value;
+    }
+
+    private void promptBid(Player player, long listingId, double minimum, int page) {
+        DialogInputPrompt.open(
+                player,
+                "Place a Bid",
+                "Bid (minimum " + (long) minimum + ")",
+                String.valueOf((long) minimum),
+                bidText -> {
+                    double amount = parsePriceOrNegative(bidText);
+                    plugin.services()
+                            .auctionHouse
+                            .bid(player.getUniqueId(), listingId, amount)
+                            .thenAccept(
+                                    result -> {
+                                        String key =
+                                                switch (result) {
+                                                    case SUCCESS -> "ah.bid.success";
+                                                    case BID_TOO_LOW -> "ah.bid.too_low";
+                                                    case INSUFFICIENT_FUNDS ->
+                                                            "ah.purchase.insufficient_funds";
+                                                    case CANNOT_BID_OWN_LISTING ->
+                                                            "ah.purchase.own_listing";
+                                                    case LISTING_EXPIRED -> "ah.purchase.expired";
+                                                    case LISTING_NOT_FOUND,
+                                                            LISTING_NOT_ACTIVE,
+                                                            NOT_AN_AUCTION ->
+                                                            "ah.purchase.gone";
+                                                };
+                                        plugin.scheduler()
+                                                .runGlobal(
+                                                        () -> {
+                                                            player.sendMessage(
+                                                                    plugin.lang()
+                                                                            .render(player, key));
+                                                            openBrowse(player, page);
+                                                        });
+                                    });
+                });
+    }
+
     private void onSellClick(InventoryClickEvent event, Player player) {
         int slot = event.getRawSlot();
-        if (slot != 13 && slot != 18 && slot != 22) {
+        if (slot != 13 && slot != 18 && slot != 21 && slot != 23) {
             // Anywhere else in the top inventory of this 27-slot GUI is unused chrome.
             if (slot >= 0 && slot < 27) {
                 event.setCancelled(true);
@@ -351,12 +446,13 @@ public final class AhGui implements Listener {
                     Component.text("Place an item in the slot first.", NamedTextColor.RED));
             return;
         }
+        boolean auction = slot == 23;
         double minPrice =
                 plugin.configManager().module("auctionhouse").getDouble("minimum-price", 1);
         DialogInputPrompt.open(
                 player,
-                "Sale Price",
-                "Price (minimum " + minPrice + ")",
+                auction ? "Starting Bid" : "Sale Price",
+                (auction ? "Starting bid" : "Price") + " (minimum " + minPrice + ")",
                 String.valueOf((int) minPrice),
                 priceText -> {
                     double price = parsePriceOrNegative(priceText);
@@ -375,9 +471,15 @@ public final class AhGui implements Listener {
                         return;
                     }
                     inventory.setItem(13, null);
-                    plugin.services()
-                            .auctionHouse
-                            .list(player.getUniqueId(), toSell, price)
+                    var listFuture =
+                            auction
+                                    ? plugin.services()
+                                            .auctionHouse
+                                            .listAuction(player.getUniqueId(), toSell, price)
+                                    : plugin.services()
+                                            .auctionHouse
+                                            .list(player.getUniqueId(), toSell, price);
+                    listFuture
                             .thenAccept(
                                     listing ->
                                             plugin.scheduler()
@@ -385,7 +487,12 @@ public final class AhGui implements Listener {
                                                             () -> {
                                                                 player.sendMessage(
                                                                         Component.text(
-                                                                                "Listed for "
+                                                                                (auction
+                                                                                                ? "Auction"
+                                                                                                      + " started"
+                                                                                                      + " at "
+                                                                                                : "Listed"
+                                                                                                      + " for ")
                                                                                         + plugin.services()
                                                                                                 .economy
                                                                                                 .currency(

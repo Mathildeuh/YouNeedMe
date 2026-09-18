@@ -18,11 +18,13 @@ public interface AuctionRepository {
 
     CompletableFuture<List<AuctionListing>> findBySeller(UUID seller, boolean activeOnly);
 
-    CompletableFuture<List<AuctionListing>> findExpiredAwaitingCollection(UUID seller);
-
     /**
-     * Flips every active listing whose {@code expiresAt} has passed to {@code EXPIRED}; returns how
-     * many.
+     * Listings a player has something waiting on: their own unsold/expired fixed-price listings
+     * (item to reclaim) plus any auction they won (item to collect, seller already paid at
+     * resolution time).
      */
-    CompletableFuture<Integer> expireOverdue();
+    CompletableFuture<List<AuctionListing>> findAwaitingCollection(UUID player);
+
+    /** Every ACTIVE listing whose {@code expiresAt} is at or before {@code now}. */
+    CompletableFuture<List<AuctionListing>> findActiveExpired(long now);
 }
