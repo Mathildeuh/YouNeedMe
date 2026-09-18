@@ -10,11 +10,12 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-publish:
+  # Split from the Pages deploy on purpose: that job requires a "github-pages" GitHub Environment,
+  # and referencing an environment that isn't configured for the repo fails the whole job before a
+  # single step runs (no logs, just "workflow file issue") - which used to take the plugin jar
+  # release down with it every single time, since both lived in one job.
+  release:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy-pages.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,8 +29,8 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build shaded plugin jar and API javadoc
-        run: ./gradlew build :api:javadoc --console=plain
+      - name: Build shaded plugin jar
+        run: ./gradlew build --console=plain
 
       - name: Attach the plugin jar to the GitHub Release
         uses: softprops/action-gh-release@v2
@@ -63,6 +64,30 @@ jobs:
           platforms: PAPER
           platform_versions: '{"PAPER": ["1.21"]}'
           files: '[{"platforms": ["PAPER"], "path": "build/libs/"}]'
+
+  javadoc:
+    runs-on: ubuntu-latest
+    # Requires a "github-pages" environment, which GitHub only provisions once Pages is enabled for
+    # this repo (Settings > Pages > Source: GitHub Actions) - harmless to leave failing until then,
+    # since it no longer shares a job with the actual release.
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build API javadoc
+        run: ./gradlew :api:javadoc --console=plain
 
       - name: Upload Javadoc to GitHub Pages
         uses: actions/upload-pages-artifact@v3
