@@ -17,7 +17,7 @@ commands:
   ah: { description: Open the Auction House menu, usage: /ah, permission: youneedme.ah.use }
   anvil: { description: Open a virtual anvil, usage: /anvil, permission: youneedme.anvil }
   back: { description: Return to your last location, usage: /back, permission: youneedme.back }
-  balance: { description: Check your balance, usage: "/balance [player]", permission: youneedme.balance, aliases: [ bal ] }
+  balance: { description: Check your balance, usage: "/balance [player]", permission: youneedme.balance, aliases: [ bal, money ] }
   baltop: { description: View top balances, usage: "/baltop [page]", permission: youneedme.baltop }
   ban: { description: Ban a player from the server, usage: "/ban <player> [duration] [reason]", permission: youneedme.ban }
   ban-ip: { description: Ban an IP address or player's IP, usage: "/ban-ip <player|ip> [duration] [reason]", permission: youneedme.banip }
@@ -100,7 +100,7 @@ commands:
   tphereall: { description: Teleport all online players to you, usage: /tphereall, permission: youneedme.tphereall }
   tpoffline: { description: Teleport to offline player's last logout, usage: "/tpoffline <player>", permission: youneedme.tpoffline }
   trash: { description: Virtual trash inventory, usage: /trash, permission: youneedme.trash }
-  unban: { description: Unban a player, usage: "/unban <player>", permission: youneedme.unban }
+  unban: { description: Unban a player, usage: "/unban <player>", permission: youneedme.unban, aliases: [ pardon ] }
   unban-ip: { description: Unban an IP, usage: "/unban-ip <ip>", permission: youneedme.unbanip }
   unenchant: { description: Remove enchantments, usage: "/unenchant [enchantment]", permission: youneedme.unenchant }
   unmute: { description: Unmute a player, usage: "/unmute <player>", permission: youneedme.unmute }

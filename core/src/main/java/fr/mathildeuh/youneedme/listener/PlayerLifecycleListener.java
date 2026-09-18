@@ -100,6 +100,10 @@ public final class PlayerLifecycleListener implements Listener {
         // Warms HomeServiceImpl's name cache so /home and /delhome tab-completion has data as soon
         // as possible instead of only after the player's first /homes or /home use this session.
         plugin.services().homes.list(player.getUniqueId());
+        // Without this, a player who never deposits/withdraws has no row in ynm_balances at all
+        // (balance() only returns a virtual default, it never persists it) and is invisible to
+        // /baltop even though /balance correctly shows their starting balance.
+        plugin.services().economy.ensureAccountExists(player.getUniqueId());
     }
 
     private void applyProfile(Player player, PlayerProfile profile) {

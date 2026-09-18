@@ -70,6 +70,16 @@ public final class EconomyServiceImpl implements EconomyService {
         return balance(player, currencyId).thenApply(b -> b >= amount);
     }
 
+    /**
+     * Materializes a {@code default}-currency balance row for {@code player} if one doesn't exist
+     * yet, so a player who has never deposited/withdrawn still shows up in {@code /baltop} - which
+     * reads directly from the balances table, unlike {@link #balance} which only returns a virtual
+     * default without persisting it. Called on join; a no-op for returning players.
+     */
+    public void ensureAccountExists(UUID player) {
+        repository.applyDelta(player, DEFAULT_CURRENCY, 0, defaultBalance);
+    }
+
     @Override
     public CompletableFuture<EconomyResult> deposit(UUID player, String currencyId, double amount) {
         if (amount < 0) {
