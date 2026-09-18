@@ -18,7 +18,8 @@ public final class KitsModule {
                 .register(KitService.class, service, plugin, ServicePriority.Normal);
 
         KitEditorGui editorGui = new KitEditorGui(plugin);
-        CommandRegistrar.register(plugin, "kit", new KitCommand(plugin));
+        KitGui gui = new KitGui(plugin);
+        CommandRegistrar.register(plugin, "kit", new KitCommand(plugin, gui));
         CommandRegistrar.register(plugin, "kits", new KitsCommand(plugin, editorGui));
         return service;
     }

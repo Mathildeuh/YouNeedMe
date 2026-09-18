@@ -13,15 +13,18 @@ import org.bukkit.entity.Player;
 
 final class KitCommand extends YnmCommand {
 
-    KitCommand(YouNeedMe plugin) {
+    private final KitGui gui;
+
+    KitCommand(YouNeedMe plugin, KitGui gui) {
         super(plugin, "youneedme.kit", true);
+        this.gui = gui;
     }
 
     @Override
     protected void execute(CommandSender sender, String label, String[] args) {
         Player player = player(sender);
         if (args.length == 0) {
-            send(sender, "kit.usage");
+            gui.open(player, 1);
             return;
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
