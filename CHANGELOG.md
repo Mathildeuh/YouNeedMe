@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.2.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.1.0...v1.2.0) (2026-09-18)
+
+
+### Features
+
+* full item metadata in configs, admin /home, hardened nicknames, dialog input ([ea106b0](https://github.com/Mathildeuh/YouNeedMe/commit/ea106b0d19bd7baad311584724e82813a0d13c1e))
+
 ## [1.1.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.0.0...v1.1.0) (2026-09-18)
 
 
