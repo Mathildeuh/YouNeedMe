@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +24,9 @@ public final class KitServiceImpl implements KitService {
     private final KitRepository repository;
     private final SchedulerAdapter scheduler;
     private final Map<String, Kit> kits = new ConcurrentHashMap<>(new LinkedHashMap<>());
+    // Session-only preference: not persisted, resets on relog like most other per-session toggles
+    // here (e.g. LanguageManager's client-locale fallback before an explicit /language set).
+    private final Set<UUID> cooldownNotificationsEnabled = ConcurrentHashMap.newKeySet();
 
     public KitServiceImpl(KitRepository repository, SchedulerAdapter scheduler) {
         this.repository = repository;
@@ -134,6 +138,15 @@ public final class KitServiceImpl implements KitService {
                                                         .thenApply(v -> ClaimResult.SUCCESS);
                                             });
                         });
+    }
+
+    /** Toggles the caller's kit-cooldown-notification preference and returns the new state. */
+    public boolean toggleCooldownNotifications(UUID player) {
+        if (cooldownNotificationsEnabled.remove(player)) {
+            return false;
+        }
+        cooldownNotificationsEnabled.add(player);
+        return true;
     }
 
     private static int countFreeSlots(Player player) {

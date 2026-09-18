@@ -90,6 +90,30 @@ public final class LanguageManager {
         return messages.containsKey(code);
     }
 
+    /**
+     * Resolves a player-typed locale code to a loaded one: exact match first (e.g. {@code fr_FR}),
+     * then a case-insensitive match, then the first loaded locale whose language part matches (so
+     * {@code /language fr} works without requiring the exact {@code fr_FR} file name).
+     */
+    @Nullable
+    public String matchLocale(String input) {
+        if (hasLocale(input)) {
+            return input;
+        }
+        for (String code : messages.keySet()) {
+            if (code.equalsIgnoreCase(input)) {
+                return code;
+            }
+        }
+        String prefix = input.toLowerCase(Locale.ROOT) + "_";
+        for (String code : messages.keySet()) {
+            if (code.toLowerCase(Locale.ROOT).startsWith(prefix)) {
+                return code;
+            }
+        }
+        return null;
+    }
+
     public void setPlayerLocaleOverride(UUID player, @Nullable String localeCode) {
         if (localeCode == null) {
             playerLocaleOverrides.remove(player);

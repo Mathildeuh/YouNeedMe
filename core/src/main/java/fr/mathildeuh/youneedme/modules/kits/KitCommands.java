@@ -26,31 +26,109 @@ final class KitCommand extends YnmCommand {
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
         KitService kits = services().kits;
-        if ("cooldown".equals(sub)) {
-            if (args.length < 2) {
-                send(sender, "kit.usage");
+        switch (sub) {
+            case "cooldown" -> {
+                if (args.length < 2) {
+                    send(sender, "kit.usage");
+                    return;
+                }
+                kits.cooldownRemaining(player.getUniqueId(), args[1])
+                        .thenAccept(
+                                remaining -> {
+                                    if (remaining <= 0) {
+                                        send(
+                                                sender,
+                                                "kit.cooldown.ready",
+                                                Placeholder.unparsed("kit", args[1]));
+                                    } else {
+                                        send(
+                                                sender,
+                                                "kit.cooldown.status",
+                                                Placeholder.unparsed("kit", args[1]),
+                                                Placeholder.unparsed(
+                                                        "time",
+                                                        TimeParser.format(remaining * 1000)));
+                                    }
+                                });
                 return;
             }
-            kits.cooldownRemaining(player.getUniqueId(), args[1])
-                    .thenAccept(
-                            remaining -> {
-                                if (remaining <= 0) {
-                                    send(
-                                            sender,
-                                            "kit.cooldown.ready",
-                                            Placeholder.unparsed("kit", args[1]));
-                                } else {
-                                    send(
-                                            sender,
-                                            "kit.cooldown.status",
-                                            Placeholder.unparsed("kit", args[1]),
-                                            Placeholder.unparsed(
-                                                    "time", TimeParser.format(remaining * 1000)));
-                                }
-                            });
-            return;
+            case "claim" -> {
+                if (args.length < 2) {
+                    send(sender, "kit.usage");
+                    return;
+                }
+                claim(sender, player, kits, args[1]);
+                return;
+            }
+            case "notifications" -> {
+                boolean enabled = services().kits.toggleCooldownNotifications(player.getUniqueId());
+                send(sender, enabled ? "kit.notifications.enabled" : "kit.notifications.disabled");
+                return;
+            }
+            case "debug" -> {
+                if (args.length < 2) {
+                    send(sender, "kit.usage");
+                    return;
+                }
+                debug(sender, kits, args[1]);
+                return;
+            }
+            default -> claim(sender, player, kits, sub);
         }
-        String kitId = "claim".equals(sub) && args.length > 1 ? args[1] : sub;
+    }
+
+    private void debug(CommandSender sender, KitService kits, String kitId) {
+        kits.kit(kitId)
+                .ifPresentOrElse(
+                        k -> {
+                            send(sender, "kit.debug.header", Placeholder.unparsed("kit", k.id()));
+                            send(
+                                    sender,
+                                    "kit.debug.name",
+                                    Placeholder.unparsed("name", k.displayName()));
+                            send(
+                                    sender,
+                                    "kit.debug.permission",
+                                    Placeholder.unparsed(
+                                            "perm", k.permission() == null ? "-" : k.permission()));
+                            send(
+                                    sender,
+                                    "kit.debug.items",
+                                    Placeholder.unparsed(
+                                            "count", String.valueOf(k.items().size())));
+                            send(
+                                    sender,
+                                    "kit.debug.cooldown",
+                                    Placeholder.unparsed(
+                                            "secs", String.valueOf(k.cooldownSeconds())));
+                            send(
+                                    sender,
+                                    "kit.debug.onetime",
+                                    Placeholder.unparsed("val", String.valueOf(k.oneTime())));
+                            send(
+                                    sender,
+                                    "kit.debug.maxclaims",
+                                    Placeholder.unparsed(
+                                            "max",
+                                            k.maxClaims() == null
+                                                    ? "-"
+                                                    : String.valueOf(k.maxClaims())));
+                            send(sender, "kit.debug.itemlist");
+                            for (var item : k.items()) {
+                                if (item != null && !item.getType().isAir()) {
+                                    send(
+                                            sender,
+                                            "kit.debug.item_entry",
+                                            Placeholder.unparsed("type", item.getType().name()),
+                                            Placeholder.unparsed(
+                                                    "amount", String.valueOf(item.getAmount())));
+                                }
+                            }
+                        },
+                        () -> send(sender, "kit.not_found", Placeholder.unparsed("kit", kitId)));
+    }
+
+    private void claim(CommandSender sender, Player player, KitService kits, String kitId) {
         kits.claim(player.getUniqueId(), kitId)
                 .thenAccept(
                         result -> {

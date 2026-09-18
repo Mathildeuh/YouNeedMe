@@ -161,34 +161,25 @@ final class LanguageCommand extends YnmCommand {
                         Placeholder.unparsed("language", lang.resolveLocale(player)));
             }
             case "set" -> {
-                if (args.length < 2 || !lang.hasLocale(args[1])) {
+                String resolved = args.length < 2 ? null : lang.matchLocale(args[1]);
+                if (resolved == null) {
                     send(
                             sender,
                             "language.error.not_found",
                             Placeholder.unparsed("lang", args.length > 1 ? args[1] : ""));
                     return;
                 }
-                lang.setPlayerLocaleOverride(player.getUniqueId(), args[1]);
-                services()
-                        .storage
-                        .playerProfiles()
-                        .find(player.getUniqueId())
-                        .thenAccept(
-                                opt ->
-                                        opt.ifPresent(
-                                                p ->
-                                                        services()
-                                                                .storage
-                                                                .playerProfiles()
-                                                                .save(
-                                                                        p.withLanguageCode(
-                                                                                args[1]))));
-                send(sender, "language.set.success", Placeholder.unparsed("language", args[1]));
+                applyLocale(player, resolved);
+                send(sender, "language.set.success", Placeholder.unparsed("language", resolved));
             }
             default -> {
-                if (lang.hasLocale(args[0])) {
-                    lang.setPlayerLocaleOverride(player.getUniqueId(), args[0]);
-                    send(sender, "language.set.success", Placeholder.unparsed("language", args[0]));
+                String resolved = lang.matchLocale(args[0]);
+                if (resolved != null) {
+                    applyLocale(player, resolved);
+                    send(
+                            sender,
+                            "language.set.success",
+                            Placeholder.unparsed("language", resolved));
                 } else {
                     send(
                             sender,
@@ -197,6 +188,22 @@ final class LanguageCommand extends YnmCommand {
                 }
             }
         }
+    }
+
+    private void applyLocale(Player player, String localeCode) {
+        plugin.lang().setPlayerLocaleOverride(player.getUniqueId(), localeCode);
+        services()
+                .storage
+                .playerProfiles()
+                .find(player.getUniqueId())
+                .thenAccept(
+                        opt ->
+                                opt.ifPresent(
+                                        p ->
+                                                services()
+                                                        .storage
+                                                        .playerProfiles()
+                                                        .save(p.withLanguageCode(localeCode))));
     }
 
     @Override
