@@ -170,7 +170,7 @@ public final class LanguageManager {
             return render(fallbackLocale, "error.missing_key", Placeholder.unparsed("key", key));
         }
         try {
-            return MINI_MESSAGE.deserialize(template, placeholders);
+            return MINI_MESSAGE.deserialize(template, withPrefix(localeCode, placeholders));
         } catch (RuntimeException e) {
             logger.warning(
                     "Malformed MiniMessage template for key '"
@@ -190,6 +190,24 @@ public final class LanguageManager {
     public String renderPlain(String localeCode, String key, TagResolver... placeholders) {
         return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
                 .serialize(render(localeCode, key, placeholders));
+    }
+
+    /**
+     * Every lang file defines its own {@code "prefix"} key (the localized "YNM »" chat tag) and
+     * almost every other key opens with a literal {@code <prefix>} tag expecting it - but {@code
+     * <prefix>} is not a MiniMessage builtin, so without this it was silently left untouched in the
+     * rendered output (MiniMessage passes through unknown tag names as literal text instead of
+     * failing the whole parse). This injects it as a parsed placeholder on every render.
+     */
+    private TagResolver[] withPrefix(String localeCode, TagResolver[] placeholders) {
+        String prefixTemplate = lookup(localeCode, "prefix");
+        if (prefixTemplate == null) {
+            return placeholders;
+        }
+        TagResolver[] combined = new TagResolver[placeholders.length + 1];
+        System.arraycopy(placeholders, 0, combined, 0, placeholders.length);
+        combined[placeholders.length] = Placeholder.parsed("prefix", prefixTemplate);
+        return combined;
     }
 
     public boolean hasKey(String localeCode, String key) {
