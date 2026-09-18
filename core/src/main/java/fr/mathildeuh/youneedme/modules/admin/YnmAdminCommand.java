@@ -19,9 +19,11 @@ import org.bukkit.command.CommandSender;
 public final class YnmAdminCommand extends YnmCommand {
 
     private final AtomicBoolean debugMode = new AtomicBoolean(false);
+    private final AdminDashboardGui dashboard;
 
-    public YnmAdminCommand(YouNeedMe plugin) {
+    public YnmAdminCommand(YouNeedMe plugin, AdminDashboardGui dashboard) {
         super(plugin, "youneedme.admin", false);
+        this.dashboard = dashboard;
     }
 
     public boolean isDebug() {
@@ -45,6 +47,13 @@ public final class YnmAdminCommand extends YnmCommand {
                         sender,
                         "ynm.debug.toggled",
                         Placeholder.unparsed("state", now ? "ON" : "OFF"));
+            }
+            case "panel" -> {
+                if (sender instanceof org.bukkit.entity.Player player) {
+                    dashboard.open(player);
+                } else {
+                    send(sender, "error.player_only");
+                }
             }
             case "backup" -> backup(sender, args);
             case "dump" -> dump(sender);
@@ -72,6 +81,7 @@ public final class YnmAdminCommand extends YnmCommand {
         send(sender, "ynm.help.version");
         send(sender, "ynm.help.debug");
         send(sender, "ynm.help.backup");
+        send(sender, "ynm.help.panel");
         send(sender, "ynm.help.placeholders", Placeholder.unparsed("page", "1"));
         send(sender, "ynm.help.commands", Placeholder.unparsed("page", "1"));
         send(sender, "ynm.help.wiki");
@@ -278,6 +288,7 @@ public final class YnmAdminCommand extends YnmCommand {
                     "debug",
                     "placeholders",
                     "commands",
+                    "panel",
                     "help");
         }
         if (args.length == 2 && "backup".equalsIgnoreCase(args[0])) {

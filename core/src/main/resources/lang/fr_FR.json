@@ -845,6 +845,7 @@
   "ynm.backup.delete.success": "<prefix> <color:#FFF200>Sauvegarde <color:#FFFFFF><name></color> supprimée.</color>",
   "ynm.backup.delete.not_found": "<prefix> <color:#FF0000>Sauvegarde <color:#FFFFFF><name></color> introuvable.</color>",
   "ynm.help.backup": "<prefix> <color:#FFF200>/ynm backup [list|delete]</color> <color:#666666>-</color> <#FFFFFF>Gérer les sauvegardes de données du plugin.",
+  "ynm.help.panel": "<prefix> <color:#FFF200>/ynm panel</color> <color:#666666>-</color> <#FFFFFF>Ouvrir le tableau de bord staff.",
   "command.usage.ynm": "<prefix> <color:#FF0000>Utilisation : /ynm <reload|version|debug|help></color>",
   "ah.notifications.enabled": "<prefix> <color:#FFF200>Notifications d'enchère activées. <color:#FFFFFF>Vous serez notifié quand vos objets seront vendus.</color></color>",
   "ah.notifications.disabled": "<prefix> <color:#FF0000>Notifications d'enchère désactivées. <color:#FFFFFF>Vous ne recevrez plus d'alertes de vente.</color></color>",

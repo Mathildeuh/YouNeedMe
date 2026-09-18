@@ -12,8 +12,7 @@ import org.bstats.charts.SimplePie;
  */
 public final class PluginMetrics {
 
-    // https://bstats.org/plugin/bukkit/YouNeedMe/456 - replace once the real plugin id is issued.
-    private static final int BSTATS_PLUGIN_ID = 456;
+    private static final int BSTATS_PLUGIN_ID = 34116;
 
     private PluginMetrics() {}
 

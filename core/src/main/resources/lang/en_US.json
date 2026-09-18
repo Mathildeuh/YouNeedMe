@@ -811,6 +811,7 @@
   "ynm.backup.delete.success": "<prefix> <color:#FFF200>Backup <color:#FFFFFF><name></color> deleted.</color>",
   "ynm.backup.delete.not_found": "<prefix> <color:#FF0000>Backup <color:#FFFFFF><name></color> not found.</color>",
   "ynm.help.backup": "<prefix> <color:#FFF200>/ynm backup <color:#FFFFFF>[list|delete]</color> <color:#666666>-</color> <#FFFFFF>Manage plugin data backups.</color>",
+  "ynm.help.panel": "<prefix> <color:#FFF200>/ynm panel</color> <color:#666666>-</color> <#FFFFFF>Open the staff overview GUI.</color>",
   "command.usage.ynm": "<prefix> <color:#FF0000>Usage: /ynm <reload|version|debug|help></color>",
   "ah.notifications.enabled": "<prefix> <color:#FFF200>Auction notifications enabled. <color:#FFFFFF>You will be notified when your items sell.</color></color>",
   "ah.notifications.disabled": "<prefix> <color:#FF0000>Auction notifications disabled. <color:#FFFFFF>You will no longer receive sale alerts.</color></color>",

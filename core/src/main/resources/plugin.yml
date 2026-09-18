@@ -34,7 +34,7 @@ commands:
   enchant: { description: Enchant item in hand, usage: "/enchant <enchantment> [level]", permission: youneedme.enchant }
   enderchest: { description: "Open your/other's enderchest", usage: "/enderchest [player]", permission: youneedme.enderchest, aliases: [ ec ] }
   endersee: { description: "View another's enderchest", usage: "/endersee <player>", permission: youneedme.endersee }
-  ynm: { description: Main plugin command, usage: "/ynm <dump|reload|backup|version|debug|placeholders|commands|help>", permission: youneedme.admin, aliases: [ youneedme ] }
+  ynm: { description: Main plugin command, usage: "/ynm <dump|reload|backup|version|debug|placeholders|commands|panel|help>", permission: youneedme.admin, aliases: [ youneedme ] }
   feed: { description: "Feed yourself/other", usage: "/feed [player]", permission: youneedme.feed }
   fly: { description: Fly, usage: /fly, permission: youneedme.fly }
   gamemode: { description: Change gamemode, usage: "/gamemode <mode> [player]", permission: youneedme.gamemode }
