@@ -7,12 +7,108 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - id: release
+        uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  # A tag/release created by release-please-action uses the default GITHUB_TOKEN, and GitHub
+  # deliberately does not let a GITHUB_TOKEN-authored push/release trigger ANOTHER workflow (its
+  # anti-recursion protection) - so a separate release.yml with `on: push: tags: [...]` would never
+  # actually fire for these tags. This is the officially documented workaround: chain the publish
+  # steps as a follow-up job in THIS workflow, gated on release-please's own output, instead of
+  # relying on the tag push to trigger anything.
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build shaded plugin jar
+        run: ./gradlew build --console=plain
+
+      - name: Attach the plugin jar to the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ needs.release-please.outputs.tag_name }}" build/libs/YouNeedMe.jar --clobber
+
+      # JitPack builds the `api` module on demand straight from this tag - nothing to publish here,
+      # a consumer just needs `com.github.Mathildeuh.YouNeedMe:api:<tag>` to trigger the first build.
+
+      - name: Publish to Modrinth
+        uses: modrinth/minotaur@v3
+        continue-on-error: true
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project-id: youneedme
+          version-type: release
+          files: build/libs/YouNeedMe.jar
+          changelog-file: CHANGELOG.md
+          loaders: [paper, purpur, folia, spigot]
+          game-versions: ["1.21"]
+
+      - name: Publish to Hangar
+        uses: HangarMC/hangar-publish-action@v0.2.0
+        continue-on-error: true
+        with:
+          api_key: ${{ secrets.HANGAR_API_KEY }}
+          version: ${{ needs.release-please.outputs.tag_name }}
+          channel: Release
+          id: YouNeedMe
+          platforms: PAPER
+          platform_versions: '{"PAPER": ["1.21"]}'
+          files: '[{"platforms": ["PAPER"], "path": "build/libs/"}]'
+
+  javadoc:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build API javadoc
+        run: ./gradlew :api:javadoc --console=plain
+
+      - name: Upload Javadoc to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: api/build/docs/javadoc
+
+      - name: Deploy Javadoc
+        uses: actions/deploy-pages@v4
