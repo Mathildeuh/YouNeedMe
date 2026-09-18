@@ -43,10 +43,13 @@ dependencies {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-    // "YouNeedMe-<version>.jar" instead of the default "core-<version>.jar" - this is the file a
-    // server operator drops into plugins/, so it needs to be identifiable at a glance.
+    // "YouNeedMe.jar" instead of the default "core-<version>.jar" - this is the file a server
+    // operator drops into plugins/, so it needs to be identifiable at a glance, and unversioned so
+    // updating the plugin is a straight overwrite instead of deleting the old-versioned jar first
+    // (the version is still embedded in plugin.yml/MANIFEST and reported by /ynm version).
     archiveBaseName.set("YouNeedMe")
     archiveClassifier.set("")
+    archiveVersion.set("")
     // mergeServiceFiles() merges every jar's META-INF/services/* into one file per SPI (needed so
     // both the SQLite and MariaDB java.sql.Driver registrations survive in the shaded jar, along
     // with MariaDB's own plugin SPIs). Gradle's default DuplicatesStrategy (EXCLUDE) drops a

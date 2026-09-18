@@ -137,8 +137,7 @@ subprojects {
 val productionJar by tasks.registering(Copy::class) {
     dependsOn(":core:shadowJar")
     from(project(":core").layout.buildDirectory.dir("libs")) {
-        include("YouNeedMe-*.jar")
-        exclude("*-sources.jar")
+        include("YouNeedMe.jar")
     }
     into(layout.buildDirectory.dir("libs"))
 }
