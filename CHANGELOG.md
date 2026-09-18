@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.3.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.3.0...v1.3.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* remove duplicate migration.status.managers key in hi_IN.json ([daa72f8](https://github.com/Mathildeuh/YouNeedMe/commit/daa72f8b600d935868f3560777e91cc30883bd61))
+
 ## [1.3.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.2.0...v1.3.0) (2026-09-18)
 
 
