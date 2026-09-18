@@ -93,7 +93,14 @@ final class NickCommand extends YnmCommand {
 
     @Override
     protected List<String> tabComplete(CommandSender sender, String[] args) {
-        return args.length == 1 ? List.of("off") : List.of();
+        if (args.length == 1) {
+            List<String> options = new java.util.ArrayList<>(List.of("off"));
+            if (sender.hasPermission("youneedme.nick.others")) {
+                Bukkit.getOnlinePlayers().forEach(p -> options.add(p.getName()));
+            }
+            return options;
+        }
+        return List.of();
     }
 }
 
@@ -120,5 +127,16 @@ final class RealNameCommand extends YnmCommand {
                 "realname.success",
                 Placeholder.unparsed("nick", args[0]),
                 Placeholder.unparsed("real", String.valueOf(realName)));
+    }
+
+    @Override
+    protected List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length != 1) {
+            return List.of();
+        }
+        return Bukkit.getOnlinePlayers().stream()
+                .map(p -> services().nicknames.nickname(p.getUniqueId()))
+                .flatMap(java.util.Optional::stream)
+                .toList();
     }
 }
