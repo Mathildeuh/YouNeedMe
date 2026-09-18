@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.file.DuplicatesStrategy
 
 plugins {
     alias(libs.plugins.shadow)
@@ -38,7 +39,16 @@ dependencies {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
+    // "YouNeedMe-<version>.jar" instead of the default "core-<version>.jar" - this is the file a
+    // server operator drops into plugins/, so it needs to be identifiable at a glance.
+    archiveBaseName.set("YouNeedMe")
     archiveClassifier.set("")
+    // mergeServiceFiles() merges every jar's META-INF/services/* into one file per SPI (needed so
+    // both the SQLite and MariaDB java.sql.Driver registrations survive in the shaded jar, along
+    // with MariaDB's own plugin SPIs). Gradle's default DuplicatesStrategy (EXCLUDE) drops a
+    // duplicate entry before the transformer ever sees it, silently keeping only the first jar's
+    // registrations - INCLUDE hands every duplicate to the transformer so the merge is complete.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     mergeServiceFiles()
 
     listOf(

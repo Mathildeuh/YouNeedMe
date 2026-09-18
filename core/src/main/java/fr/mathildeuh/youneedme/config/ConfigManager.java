@@ -29,7 +29,8 @@ public final class ConfigManager {
         "nickname",
         "kits",
         "discord",
-        "migration"
+        "migration",
+        "chat"
     };
 
     private final Plugin plugin;

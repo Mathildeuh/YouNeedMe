@@ -44,6 +44,10 @@ public interface EconomyService {
         return withdraw(player, DEFAULT_CURRENCY, amount);
     }
 
+    default CompletableFuture<EconomyResult> setBalance(UUID player, double amount) {
+        return setBalance(player, DEFAULT_CURRENCY, amount);
+    }
+
     /**
      * Withdraws from {@code from} and deposits to {@code to} as a single atomic unit: on
      * insufficient funds neither balance changes. This is what {@code /pay} uses, and is the right

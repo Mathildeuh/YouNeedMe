@@ -1,0 +1,9 @@
+id: extended-placeholders
+version: 1.0.0
+main: fr.mathildeuh.youneedme.expansion.placeholders.ExtendedPlaceholdersExpansion
+api-version: "1.0"
+authors: [ Mathildeuh ]
+description: >
+  Official example expansion - registers a handful of extra PlaceholderAPI placeholders (warps
+  count, kits available) beyond the built-in expansion, purely as living documentation for anyone
+  writing their own YouNeedMe expansion.

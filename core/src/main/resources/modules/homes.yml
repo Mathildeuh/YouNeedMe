@@ -1,0 +1,5 @@
+# Homes module.
+# Default number of homes for players with no youneedme.homes.limit.<n> permission node.
+default-limit: 3
+teleport-warmup-seconds: 3
+teleport-cooldown-seconds: 0

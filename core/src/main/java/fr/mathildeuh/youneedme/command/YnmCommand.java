@@ -1,5 +1,6 @@
 package fr.mathildeuh.youneedme.command;
 
+import fr.mathildeuh.youneedme.Services;
 import fr.mathildeuh.youneedme.YouNeedMe;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,6 +77,14 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
 
     protected final Player player(CommandSender sender) {
         return (Player) sender;
+    }
+
+    protected final String senderName(CommandSender sender) {
+        return sender instanceof Player p ? p.getName() : "Console";
+    }
+
+    protected final Services services() {
+        return plugin.services();
     }
 
     protected final void send(CommandSender sender, String key, TagResolver... placeholders) {

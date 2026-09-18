@@ -2,6 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
+    base
     alias(libs.plugins.shadow) apply false
     alias(libs.plugins.spotless) apply false
 }
@@ -109,4 +110,20 @@ subprojects {
         "testImplementation"(catalog.mockito.core)
         "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
     }
+}
+
+// The single artifact a server operator needs: core's shaded plugin jar, copied to the root
+// build/libs/ (not just core/build/libs/) so it's found where `./gradlew build` conventionally
+// leaves a project's output, regardless of which module actually produces it.
+val productionJar by tasks.registering(Copy::class) {
+    dependsOn(":core:shadowJar")
+    from(project(":core").layout.buildDirectory.dir("libs")) {
+        include("YouNeedMe-*.jar")
+        exclude("*-sources.jar")
+    }
+    into(layout.buildDirectory.dir("libs"))
+}
+
+tasks.named("assemble") {
+    dependsOn(productionJar)
 }

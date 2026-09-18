@@ -42,6 +42,8 @@ public interface ModerationService {
 
     CompletableFuture<@Nullable Punishment> activeMute(UUID target);
 
+    CompletableFuture<@Nullable Punishment> activeIpBan(String ip);
+
     /** Full punishment history for a player, newest first. */
     CompletableFuture<List<Punishment>> history(UUID target);
 

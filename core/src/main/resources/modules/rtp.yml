@@ -1,0 +1,8 @@
+# Random teleport (Wild) module.
+enabled: true
+center-x: 0
+center-z: 0
+min-radius: 100
+max-radius: 5000
+teleport-warmup-seconds: 3
+cooldown-seconds: 0

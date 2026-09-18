@@ -1,0 +1,2 @@
+# Kits module settings. Kit definitions themselves live in kits.yml at the plugin's data folder
+# root, not here - see that file for ready-to-use example kits.

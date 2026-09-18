@@ -1,0 +1,2 @@
+# Teleport request (TPA) module.
+request-expiry-seconds: 60

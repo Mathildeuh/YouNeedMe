@@ -1,0 +1,69 @@
+# YouNeedMe main configuration.
+# Per-feature settings live in modules/<name>.yml instead of here, so this file stays short.
+# Everything here (and in modules/*.yml) is reloadable at runtime with /ynm reload.
+
+language:
+  # Locale used when a player has no override and no matching client locale is loaded.
+  # See lang/ for every bundled locale - add your own by dropping a new lang/<code>.json file.
+  default: en_US
+
+storage:
+  # sqlite | mysql | mariadb | postgresql | mongodb | json
+  type: sqlite
+
+  sqlite:
+    file: data.db
+
+  mysql:
+    host: localhost
+    port: 3306
+    database: youneedme
+    username: youneedme
+    password: ""
+    pool-size: 10
+    parameters: "useSSL=false&characterEncoding=utf8"
+
+  postgresql:
+    host: localhost
+    port: 5432
+    database: youneedme
+    username: youneedme
+    password: ""
+    pool-size: 10
+    parameters: ""
+
+  mongodb:
+    connection-string: "mongodb://localhost:27017"
+    database: youneedme
+    pool-size: 10
+
+# Toggle a whole feature module on/off without touching its own modules/<name>.yml.
+modules:
+  economy: { enabled: true }
+  shop: { enabled: true }
+  auctionhouse: { enabled: true }
+  homes: { enabled: true }
+  warps: { enabled: true }
+  rtp: { enabled: true }
+  tpa: { enabled: true }
+  moderation: { enabled: true }
+  scoreboard: { enabled: true }
+  nickname: { enabled: true }
+  kits: { enabled: true }
+  discord: { enabled: true }
+  migration: { enabled: true }
+
+navigation:
+  back-cooldown-seconds: 0
+  # Set automatically by /setspawn - leave absent until then.
+  # spawn: { world: world, x: 0.5, y: 65.0, z: 0.5, yaw: 0.0, pitch: 0.0 }
+
+utility:
+  spawnentity-max-amount: 50
+  rename-max-length: 32
+
+rules:
+  - "<gray>1. Be respectful to other players and staff."
+  - "<gray>2. No cheating, hacking or exploiting bugs."
+  - "<gray>3. No spamming or advertising other servers."
+  - "<gray>4. Follow staff instructions at all times."

@@ -1,0 +1,12 @@
+# Discord integration. When DiscordSRV is installed, notifications are relayed through it
+# automatically and take priority over the raw webhook below (per the brief).
+invite-url: ""
+webhook-url: ""
+
+notify:
+  bans: true
+  mutes: true
+  kicks: true
+  warns: false
+  joins: false
+  quits: false

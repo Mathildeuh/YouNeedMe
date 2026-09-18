@@ -1,0 +1,11 @@
+# Built-in sidebar scoreboard. Automatically disabled while the TAB plugin is installed and
+# managing its own scoreboard, to avoid two plugins fighting over the sidebar.
+enabled: true
+refresh-interval-ticks: 20
+title: "<gold><bold>YouNeedMe"
+lines:
+  - ""
+  - "<gray>Player: <white>{player}"
+  - "<gray>Online: <white>{online}/{max}"
+  - ""
+  - "<yellow>play.example.com"

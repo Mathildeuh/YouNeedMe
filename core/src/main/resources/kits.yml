@@ -1,0 +1,34 @@
+# Default YouNeedMe kits - a ready-to-use starting point. Reload with /kits reload after editing.
+kits:
+  starter:
+    display-name: "<green>Starter Kit"
+    one-time: true
+    cooldown-seconds: 0
+    items:
+      - { material: WOODEN_SWORD, amount: 1 }
+      - { material: WOODEN_PICKAXE, amount: 1 }
+      - { material: WOODEN_AXE, amount: 1 }
+      - { material: BREAD, amount: 16 }
+      - { material: TORCH, amount: 32 }
+
+  daily:
+    display-name: "<gold>Daily Kit"
+    permission: youneedme.kit.daily
+    cooldown-seconds: 86400
+    one-time: false
+    items:
+      - { material: IRON_INGOT, amount: 4 }
+      - { material: COOKED_BEEF, amount: 8 }
+      - { material: GOLDEN_APPLE, amount: 1 }
+
+  vip:
+    display-name: "<light_purple>VIP Kit"
+    permission: youneedme.kit.vip
+    cooldown-seconds: 43200
+    one-time: false
+    max-claims: 100
+    items:
+      - { material: DIAMOND_SWORD, amount: 1 }
+      - { material: DIAMOND_PICKAXE, amount: 1 }
+      - { material: DIAMOND, amount: 8 }
+      - { material: ENDER_PEARL, amount: 4 }

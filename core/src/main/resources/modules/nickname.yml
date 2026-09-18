@@ -1,0 +1,6 @@
+# Nicknames module.
+max-length: 16
+blacklist:
+  - admin
+  - moderator
+  - owner

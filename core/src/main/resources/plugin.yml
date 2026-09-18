@@ -1,8 +1,182 @@
 name: YouNeedMe
-prefix: [ SOS ]
 version: '${version}'
+description: Essentials-style administration & utility plugin for Paper/Spigot/Folia.
+website: https://github.com/Mathildeuh/YouNeedMe
 
-main: fr.mathildeuh.youNeedMe.YouNeedMe
-api-version: '26.1'
+main: fr.mathildeuh.youneedme.YouNeedMe
+api-version: '26.2'
+folia-supported: true
 
 authors: [ Mathildeuh ]
+
+softdepend: [ Vault, LuckPerms, PlaceholderAPI, Floodgate, DiscordSRV, TAB ]
+
+commands:
+  afk: { description: Toggle your AFK status, usage: /afk, permission: youneedme.afk }
+  afklist: { description: List all AFK players, usage: /afklist, permission: youneedme.afklist }
+  ah: { description: Auction House commands, usage: "/ah [sell|cancel|expired|listings|notifications|page]", permission: youneedme.ah.use }
+  anvil: { description: Open a virtual anvil, usage: /anvil, permission: youneedme.anvil }
+  back: { description: Return to your last location, usage: /back, permission: youneedme.back }
+  balance: { description: Check your balance, usage: "/balance [player]", permission: youneedme.balance, aliases: [ bal ] }
+  baltop: { description: View top balances, usage: "/baltop [page]", permission: youneedme.baltop }
+  ban: { description: Ban a player from the server, usage: "/ban <player> [duration] [reason]", permission: youneedme.ban }
+  ban-ip: { description: Ban an IP address or player's IP, usage: "/ban-ip <player|ip> [duration] [reason]", permission: youneedme.banip }
+  banlist: { description: List all active bans, usage: "/banlist [players|ips] [page]", permission: youneedme.banlist }
+  broadcast: { description: Broadcast a message, usage: "/broadcast <message>", permission: youneedme.broadcast }
+  checkpunish: { description: Check punishment status, usage: "/checkpunish <player>", permission: youneedme.checkpunish }
+  clearinventory: { description: Clear inventory, usage: "/clearinventory [player]", permission: youneedme.clearinventory, aliases: [ ci, clearinv ] }
+  craftingtable: { description: Open a crafting table, usage: /craftingtable, permission: youneedme.craftingtable, aliases: [ ct, workbench ] }
+  dback: { description: Teleport to last death location, usage: /dback, permission: youneedme.dback }
+  delhome: { description: Delete one of your homes, usage: "/delhome <name>", permission: youneedme.delhome }
+  delwarp: { description: Delete a warp, usage: "/delwarp <name>", permission: youneedme.delwarp }
+  discord: { description: Get the Discord invite, usage: /discord, permission: youneedme.discord }
+  eco: { description: Admin economy commands, usage: "/eco <give|take|set|reset> <player> <amount>", permission: youneedme.eco.admin }
+  enchant: { description: Enchant item in hand, usage: "/enchant <enchantment> [level]", permission: youneedme.enchant }
+  enderchest: { description: "Open your/other's enderchest", usage: "/enderchest [player]", permission: youneedme.enderchest, aliases: [ ec ] }
+  endersee: { description: "View another's enderchest", usage: "/endersee <player>", permission: youneedme.endersee }
+  ynm: { description: Main plugin command, usage: "/ynm <dump|reload|backup|version|debug|placeholders|commands|help>", permission: youneedme.admin, aliases: [ youneedme ] }
+  feed: { description: "Feed yourself/other", usage: "/feed [player]", permission: youneedme.feed }
+  fly: { description: Fly, usage: /fly, permission: youneedme.fly }
+  gamemode: { description: Change gamemode, usage: "/gamemode <mode> [player]", permission: youneedme.gamemode }
+  gm: { description: Change gamemode, usage: "/gm <mode> [player]", permission: youneedme.gamemode }
+  gma: { description: Adventure mode, usage: "/gma [player]", permission: youneedme.gamemode.adventure }
+  gmc: { description: Creative mode, usage: "/gmc [player]", permission: youneedme.gamemode.creative }
+  gms: { description: Survival mode, usage: "/gms [player]", permission: youneedme.gamemode.survival }
+  gmsp: { description: Spectator mode, usage: "/gmsp [player]", permission: youneedme.gamemode.spectator }
+  god: { description: Enable God Mode, usage: "/god [player]", permission: youneedme.god }
+  hat: { description: Wear item as hat, usage: /hat, permission: youneedme.hat }
+  heal: { description: Heal yourself, usage: /heal, permission: youneedme.heal }
+  home: { description: Teleport to a home, usage: "/home [name]", permission: youneedme.home }
+  homes: { description: List your homes, usage: "/homes", permission: youneedme.homes }
+  ignore: { description: "Ignore/unignore a player", usage: "/ignore [player]", permission: youneedme.ignore }
+  invsee: { description: "View another's inventory", usage: "/invsee <player>", permission: youneedme.invsee }
+  itemid: { description: Info about held item, usage: /itemid, permission: youneedme.itemid }
+  kick: { description: Kick a player, usage: "/kick <player>", permission: youneedme.kick }
+  kit: { description: "Claim/manage kits", usage: "/kit [claim|cooldown|notifications|debug] <kit>", permission: youneedme.kit }
+  kits: { description: "List/manage kits", usage: "/kits [list|reload]", permission: youneedme.kits.list }
+  language: { description: Change your language, usage: "/language <lang_key>", permission: youneedme.language, aliases: [ lang ] }
+  migration: { description: "Migrate data from another Essentials-style plugin", usage: "/migration <source> [--apply]", permission: youneedme.migration }
+  msg: { description: Private message, usage: "/msg <player> <message>", permission: youneedme.msg, aliases: [ tell, w, m ] }
+  mute: { description: Mute a player, usage: "/mute <player> [duration] [reason]", permission: youneedme.mute }
+  mysql: { description: MySQL network sync administration, usage: "/mysql <status|test|reload|baltop|push|pull|version>", permission: youneedme.admin }
+  nick: { description: Set your nickname, usage: "/nick <nickname|off>", permission: youneedme.nick }
+  pay: { description: Pay another player, usage: "/pay <player> <amount>", permission: youneedme.pay }
+  ping: { description: See your ping, usage: "/ping [player]", permission: youneedme.ping }
+  playerlist: { description: Online players list, usage: /playerlist, permission: youneedme.playerlist, aliases: [ plist ] }
+  playtime: { description: Check playtime, usage: "/playtime [player]", permission: youneedme.playtime }
+  ptime: { description: Personal time, usage: "/ptime [time|day|night|reset] [locked]", permission: youneedme.ptime }
+  pweather: { description: Personal weather, usage: "/pweather [clear|rain|storm|reset]", permission: youneedme.pweather }
+  quicksell: { description: Quick sell items, usage: "/quicksell [hand|inventory]", permission: youneedme.quicksell.hand }
+  realname: { description: Lookup real name by nick, usage: "/realname <nickname>", permission: youneedme.realname }
+  rename: { description: Rename an item, usage: /rename, permission: youneedme.rename }
+  repair: { description: Repair held item, usage: "/repair [player]", permission: youneedme.repair }
+  reply: { description: Reply to last PM, usage: "/reply <message>", permission: youneedme.reply, aliases: [ r ] }
+  rtp: { description: Random teleport, usage: /rtp, permission: youneedme.rtp, aliases: [ wild ] }
+  rules: { description: Display server rules, usage: "/rules [reload]", permission: youneedme.rules }
+  scoreboard: { description: "Toggle/manage scoreboard", usage: "/scoreboard [toggle|reload]", permission: youneedme.scoreboard.toggle, aliases: [ sb ] }
+  seen: { description: Last online time, usage: "/seen <player>", permission: youneedme.seen }
+  sell: { description: Open sell GUI, usage: /sell, permission: youneedme.sell }
+  sethome: { description: Set a home, usage: "/sethome [name]", permission: youneedme.sethome }
+  setspawn: { description: Set server spawn, usage: /setspawn, permission: youneedme.setspawn }
+  setwarp: { description: Create a warp, usage: "/setwarp <name>", permission: youneedme.setwarp }
+  shop: { description: Open server shop, usage: "/shop [category|reload]", permission: youneedme.shop }
+  smite: { description: Strike a player with lightning, usage: "/smite <player>", permission: youneedme.smite }
+  spawn: { description: Teleport to spawn, usage: "/spawn [player]", permission: youneedme.spawn }
+  spawnentity: { description: Spawn entities, usage: "/spawnentity <entity> [amount]", permission: youneedme.spawnentity }
+  speed: { description: Movement speed, usage: "/speed <reset|walkspeed|flyspeed> [speed]", permission: youneedme.speed }
+  stonecutter: { description: Open virtual stonecutter, usage: /stonecutter, permission: youneedme.stonecutter, aliases: [ sc ] }
+  sudo: { description: Force a command/message, usage: "/sudo <player> <command/message>", permission: youneedme.sudo }
+  suicide: { description: Kill yourself, usage: /suicide, permission: youneedme.suicide }
+  top: { description: Teleport to highest block, usage: /top, permission: youneedme.top }
+  tpa: { description: Request teleport to player, usage: "/tpa <player>", permission: youneedme.tpa }
+  tpaccept: { description: Accept teleport request, usage: "/tpaccept [player]", permission: youneedme.tpaccept }
+  tpahere: { description: Request player teleport to you, usage: "/tpahere <player>", permission: youneedme.tpahere }
+  tpaignore: { description: Ignore TPA requests, usage: "/tpaignore <player>", permission: youneedme.tpaignore }
+  tpaqueue: { description: View pending TPA requests, usage: /tpaqueue, permission: youneedme.tpaqueue }
+  tpatoggle: { description: Toggle TPA requests, usage: /tpatoggle, permission: youneedme.tpatoggle }
+  tpcancel: { description: Cancel outgoing teleport request, usage: "/tpcancel [player]", permission: youneedme.tpcancel }
+  tpdeny: { description: Deny a teleport request, usage: "/tpdeny [player]", permission: youneedme.tpdeny }
+  tphere: { description: Teleport player to you, usage: "/tphere <player>", permission: youneedme.tphere }
+  tphereall: { description: Teleport all online players to you, usage: /tphereall, permission: youneedme.tphereall }
+  tpoffline: { description: Teleport to offline player's last logout, usage: "/tpoffline <player>", permission: youneedme.tpoffline }
+  trash: { description: Virtual trash inventory, usage: /trash, permission: youneedme.trash }
+  unban: { description: Unban a player, usage: "/unban <player>", permission: youneedme.unban }
+  unban-ip: { description: Unban an IP, usage: "/unban-ip <ip>", permission: youneedme.unbanip }
+  unenchant: { description: Remove enchantments, usage: "/unenchant [enchantment]", permission: youneedme.unenchant }
+  unmute: { description: Unmute a player, usage: "/unmute <player>", permission: youneedme.unmute }
+  uptime: { description: Server uptime, usage: /uptime, permission: youneedme.uptime }
+  user: { description: Internal profile lookup, usage: "/user <player> [profile|states|punishments|locations|cooldowns|all]", permission: youneedme.admin }
+  vanish: { description: Toggle vanish mode, usage: /vanish, permission: youneedme.vanish, aliases: [ v ] }
+  warp: { description: Teleport to a warp, usage: "/warp [name]", permission: youneedme.warp }
+  warpadmin: { description: Admin warp management, usage: "/warpadmin <setperm|setcost|setdesc|setcategory|hide|unhide|move|info|reload>", permission: youneedme.warpadmin }
+  warps: { description: List available warps, usage: /warps, permission: youneedme.warps }
+  worth: { description: Sell worth of items, usage: "/worth [inventory]", permission: youneedme.worth.hand }
+
+permissions:
+  youneedme.admin:
+    description: Full administrative access to YouNeedMe.
+    default: op
+    children:
+      youneedme.eco.admin: true
+      youneedme.warpadmin: true
+      youneedme.ban: true
+      youneedme.banip: true
+      youneedme.banlist: true
+      youneedme.unban: true
+      youneedme.unbanip: true
+      youneedme.mute: true
+      youneedme.unmute: true
+      youneedme.kick: true
+      youneedme.checkpunish: true
+      youneedme.smite: true
+      youneedme.vanish: true
+      youneedme.invsee: true
+      youneedme.endersee: true
+      youneedme.sudo: true
+      youneedme.clearinventory: true
+      youneedme.setwarp: true
+      youneedme.delwarp: true
+      youneedme.setspawn: true
+      youneedme.kits.list: true
+      youneedme.migration: true
+  youneedme.exempt.*: { default: false }
+  youneedme.homes.limit.unlimited: { default: false }
+  youneedme.warpadmin: { default: op }
+  youneedme.vanish.see: { default: op }
+  youneedme.nick.others: { default: op }
+  youneedme.spawn.others: { default: op }
+
+  # Moderation / administration - op-gated by default, never granted to everyone.
+  youneedme.eco.admin: { default: op }
+  youneedme.ban: { default: op }
+  youneedme.banip: { default: op }
+  youneedme.banlist: { default: op }
+  youneedme.unban: { default: op }
+  youneedme.unbanip: { default: op }
+  youneedme.mute: { default: op }
+  youneedme.unmute: { default: op }
+  youneedme.kick: { default: op }
+  youneedme.checkpunish: { default: op }
+  youneedme.smite: { default: op }
+  youneedme.god: { default: op }
+  youneedme.vanish: { default: op }
+  youneedme.invsee: { default: op }
+  youneedme.endersee: { default: op }
+  youneedme.sudo: { default: op }
+  youneedme.clearinventory: { default: op }
+  youneedme.setwarp: { default: op }
+  youneedme.delwarp: { default: op }
+  youneedme.setspawn: { default: op }
+  youneedme.broadcast: { default: op }
+  youneedme.spawnentity: { default: op }
+  youneedme.fly: { default: op }
+  youneedme.speed: { default: op }
+  youneedme.enchant: { default: op }
+  youneedme.unenchant: { default: op }
+  youneedme.gamemode: { default: op }
+  youneedme.gamemode.adventure: { default: op }
+  youneedme.gamemode.creative: { default: op }
+  youneedme.gamemode.survival: { default: op }
+  youneedme.gamemode.spectator: { default: op }
+  youneedme.migration: { default: op }
+  youneedme.itemid: { default: true }

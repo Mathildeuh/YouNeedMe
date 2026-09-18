@@ -1,0 +1,3 @@
+# Shop module settings. The catalog itself (categories/items/prices) lives in shop.yml at the
+# plugin's data folder root, not here - see that file for ready-to-use example categories.
+enabled: true

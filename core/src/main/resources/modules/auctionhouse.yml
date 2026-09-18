@@ -1,0 +1,6 @@
+# Auction House module.
+listing-duration-hours: 72
+# Fraction of the listing price taken as tax when a listing is created (0 = no tax).
+listing-tax-rate: 0.0
+minimum-price: 1
+expiry-sweep-interval-seconds: 300

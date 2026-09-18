@@ -1,0 +1,11 @@
+# Economy module - also exposed as a Vault Economy provider.
+starting-balance: 100.0
+minimum-balance: 0.0
+# Set to a positive number to cap balances, or leave at -1 for unlimited.
+maximum-balance: -1
+
+currency:
+  symbol: "$"
+  singular: dollar
+  plural: dollars
+  decimal-places: 2

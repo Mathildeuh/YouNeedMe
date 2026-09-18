@@ -3,12 +3,34 @@ package fr.mathildeuh.youneedme;
 import fr.mathildeuh.youneedme.api.scheduler.SchedulerAdapter;
 import fr.mathildeuh.youneedme.api.storage.DataStorage;
 import fr.mathildeuh.youneedme.config.ConfigManager;
+import fr.mathildeuh.youneedme.expansions.ExpansionManager;
+import fr.mathildeuh.youneedme.integrations.luckperms.LuckPermsIntegration;
+import fr.mathildeuh.youneedme.integrations.placeholderapi.PlaceholderApiIntegration;
+import fr.mathildeuh.youneedme.integrations.vault.VaultIntegration;
 import fr.mathildeuh.youneedme.lang.LanguageManager;
+import fr.mathildeuh.youneedme.listener.PlayerLifecycleListener;
+import fr.mathildeuh.youneedme.modules.admin.AdminModule;
+import fr.mathildeuh.youneedme.modules.auctionhouse.AuctionHouseModule;
+import fr.mathildeuh.youneedme.modules.discord.DiscordModule;
+import fr.mathildeuh.youneedme.modules.economy.EconomyModule;
+import fr.mathildeuh.youneedme.modules.homes.HomesModule;
+import fr.mathildeuh.youneedme.modules.kits.KitsModule;
+import fr.mathildeuh.youneedme.modules.migration.MigrationModule;
+import fr.mathildeuh.youneedme.modules.moderation.ModerationModule;
+import fr.mathildeuh.youneedme.modules.navigation.NavigationModule;
+import fr.mathildeuh.youneedme.modules.nickname.NicknameModule;
+import fr.mathildeuh.youneedme.modules.rtp.RtpModule;
+import fr.mathildeuh.youneedme.modules.scoreboard.ScoreboardModule;
+import fr.mathildeuh.youneedme.modules.shop.ShopModule;
+import fr.mathildeuh.youneedme.modules.tpa.TpaModule;
+import fr.mathildeuh.youneedme.modules.utility.UtilityModule;
+import fr.mathildeuh.youneedme.modules.warps.WarpsModule;
 import fr.mathildeuh.youneedme.scheduler.ServerEnvironment;
 import fr.mathildeuh.youneedme.scheduler.impl.BukkitSchedulerAdapter;
 import fr.mathildeuh.youneedme.scheduler.impl.FoliaSchedulerAdapter;
 import fr.mathildeuh.youneedme.storage.StorageManager;
 import fr.mathildeuh.youneedme.util.ResourceExtractor;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +40,8 @@ public final class YouNeedMe extends JavaPlugin {
     private ConfigManager configManager;
     private LanguageManager languageManager;
     private StorageManager storageManager;
+    private final Services services = new Services();
+    private final ExpansionManager expansionManager = new ExpansionManager(this);
 
     @Override
     public void onLoad() {
@@ -61,6 +85,36 @@ public final class YouNeedMe extends JavaPlugin {
                     getServer()
                             .getServicesManager()
                             .register(DataStorage.class, storage, this, ServicePriority.Normal);
+                    services.storage = storage;
+
+                    services.economy = EconomyModule.enable(this, storage.economy());
+                    VaultIntegration.enable(this, services.economy);
+                    services.homes = HomesModule.enable(this, storage.homes());
+                    services.warps = WarpsModule.enable(this, storage.warps());
+                    services.kits = KitsModule.enable(this, storage.kits());
+                    services.auctionHouse =
+                            AuctionHouseModule.enable(this, storage.auctions(), services.economy);
+                    services.shop = ShopModule.enable(this, storage.shop(), services.economy);
+                    services.moderation = ModerationModule.enable(this, storage.punishments());
+                    services.scoreboard = ScoreboardModule.enable(this);
+                    services.nicknames = NicknameModule.enable(this, storage.playerProfiles());
+                    services.tpa = TpaModule.enable(this);
+                    services.luckPerms = LuckPermsIntegration.enable(this);
+                    PlaceholderApiIntegration.enable(this);
+
+                    RtpModule.enable(this);
+                    NavigationModule.enable(this);
+                    UtilityModule.enable(this);
+                    DiscordModule.enable(this);
+                    MigrationModule.enable(this);
+                    AdminModule.enable(this);
+
+                    Bukkit.getPluginManager().registerEvents(services.warmups, this);
+                    Bukkit.getPluginManager()
+                            .registerEvents(new PlayerLifecycleListener(this), this);
+
+                    expansionManager.loadAndEnableAll();
+
                     getLogger().info("YouNeedMe is ready.");
                 });
     }
@@ -76,6 +130,7 @@ public final class YouNeedMe extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        expansionManager.disableAll();
         if (storageManager != null) {
             storageManager.shutdown().join();
         }
@@ -95,5 +150,9 @@ public final class YouNeedMe extends JavaPlugin {
 
     public StorageManager storageManager() {
         return storageManager;
+    }
+
+    public Services services() {
+        return services;
     }
 }
