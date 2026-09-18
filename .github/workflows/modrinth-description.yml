@@ -1,0 +1,41 @@
+name: sync-modrinth-description
+
+# Modrinth's own publish step (release-please.yml) only ever sets a VERSION's changelog - the
+# PROJECT page body (the long-form description shown on modrinth.com/plugin/youneedme) is a
+# separate field mc-publish never touches. This workflow keeps that field in sync with
+# docs/modrinth-description.md via the Modrinth API instead of it having to be edited by hand on
+# the website.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/modrinth-description.md
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Push description to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          if [ -z "$MODRINTH_TOKEN" ]; then
+            echo "MODRINTH_TOKEN secret is not set - see docs/MODRINTH_SETUP.md. Skipping." >&2
+            exit 1
+          fi
+          body=$(jq -Rs . < docs/modrinth-description.md)
+          http_status=$(curl -sS -o response.json -w "%{http_code}" \
+            -X PATCH "https://api.modrinth.com/v2/project/youneedme" \
+            -H "Authorization: $MODRINTH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": $body}")
+          cat response.json
+          if [ "$http_status" -ge 300 ]; then
+            echo "Modrinth API returned HTTP $http_status" >&2
+            exit 1
+          fi
