@@ -300,6 +300,7 @@
   "warp.cancelled_movement": "<prefix> <color:#FF0000>Warp annulé à cause d'un mouvement.</color>",
   "warp.charged": "<prefix> <color:#FFF200><color:#FFFFFF><amount></color> facturés pour le warp.</color>",
   "warp.insufficient_funds": "<prefix> <color:#FF0000>Vous avez besoin de <color:#FFFFFF><cost></color> pour utiliser ce warp.</color>",
+  "warp.confirm_cost": "<prefix> <color:#FFF200>Le warp '<color:#FFFFFF><warp></color>' coûte <color:#FFFFFF><cost></color>. <click:run_command:'/warp <warp> confirm'><color:#00FF00><bold>[Confirmer]</bold></color></click></color>",
   "warp.blocked_world": "<prefix> <color:#FF0000>Vous ne pouvez pas warper depuis ce monde.</color>",
   "warp.no_warps": "<prefix> <color:#FF0000>Aucun warp disponible.</color>",
   "warp.list_header": "<prefix> <color:#FFF200>Warps Disponibles :</color>",

@@ -27,6 +27,7 @@ final class WarpCommand extends YnmCommand {
             return;
         }
         String name = args[0];
+        boolean confirmed = args.length > 1 && "confirm".equalsIgnoreCase(args[1]);
         services()
                 .warps
                 .get(name)
@@ -55,6 +56,19 @@ final class WarpCommand extends YnmCommand {
                                                                                         .getUniqueId(),
                                                                                 "warp")
                                                                 / 1000)));
+                                return;
+                            }
+                            if (warp.cost() > 0 && !confirmed) {
+                                send(
+                                        sender,
+                                        "warp.confirm_cost",
+                                        Placeholder.unparsed("warp", name),
+                                        Placeholder.unparsed(
+                                                "cost",
+                                                services()
+                                                        .economy
+                                                        .currency("default")
+                                                        .format(warp.cost())));
                                 return;
                             }
                             if (warp.cost() > 0) {
