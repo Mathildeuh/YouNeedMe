@@ -8,6 +8,22 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.1.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.0.0...v1.1.0) (2026-09-18)
+
+
+### Features
+
+* **core:** base project ([f6f5ba4](https://github.com/Mathildeuh/YouNeedMe/commit/f6f5ba48ad9b8594985d0e96a7a31e3793820be5))
+* restructure into multi-module (api/core/expansions) + foundations ([219fbe5](https://github.com/Mathildeuh/YouNeedMe/commit/219fbe510691026f01dd73afb61ce88a87b29b77))
+* third-party integrations, expansion loader, migration importers, docs, CI/CD, tests ([5dfed09](https://github.com/Mathildeuh/YouNeedMe/commit/5dfed09d50bf1a91ad3b6654ce92627da6a22582))
+* wire every remaining module and add third-party integrations ([26f253c](https://github.com/Mathildeuh/YouNeedMe/commit/26f253c745561cefe61a71c08186d3ddbc346862))
+
+
+### Bug Fixes
+
+* checkstyleMain crashed - JavadocMethod properties don't exist on Checkstyle 14 ([7e17ce0](https://github.com/Mathildeuh/YouNeedMe/commit/7e17ce0a51986f1aced2b0ddccc47c31c58161e4))
+* mark gradlew executable - CI failed with 'Permission denied' otherwise ([1a88079](https://github.com/Mathildeuh/YouNeedMe/commit/1a88079ab80d2bf8013b4c4a5d7725e0a97d67e2))
+
 ## [1.0.0] - Unreleased
 
 ### Added
