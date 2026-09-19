@@ -253,7 +253,7 @@ final class UserCommand extends YnmCommand {
                                     sender,
                                     "user.header",
                                     Placeholder.unparsed("player", profile.lastKnownUsername()));
-                            if (section.equals("profile") || section.equals("all")) {
+                            if ("profile".equals(section) || "all".equals(section)) {
                                 send(sender, "user.section.profile");
                                 send(
                                         sender,
@@ -288,7 +288,7 @@ final class UserCommand extends YnmCommand {
                                                 java.time.Instant.ofEpochMilli(profile.lastSeenAt())
                                                         .toString()));
                             }
-                            if (section.equals("states") || section.equals("all")) {
+                            if ("states".equals(section) || "all".equals(section)) {
                                 send(sender, "user.section.states");
                                 send(sender, "user.states.fly", Placeholder.unparsed("value", "-"));
                                 send(
@@ -301,7 +301,7 @@ final class UserCommand extends YnmCommand {
                                                                 .vanished
                                                                 .contains(target.getUniqueId()))));
                             }
-                            if (section.equals("punishments") || section.equals("all")) {
+                            if ("punishments".equals(section) || "all".equals(section)) {
                                 send(sender, "user.section.punishments");
                                 services()
                                         .moderation
@@ -339,7 +339,7 @@ final class UserCommand extends YnmCommand {
                                                     }
                                                 });
                             }
-                            if (section.equals("locations") || section.equals("all")) {
+                            if ("locations".equals(section) || "all".equals(section)) {
                                 send(sender, "user.section.locations");
                                 if (profile.lastLocation() != null) {
                                     send(

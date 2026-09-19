@@ -16,14 +16,13 @@ import org.mockbukkit.mockbukkit.plugin.PluginMock;
 class TeleportWarmupTest {
 
     private ServerMock server;
-    private PluginMock plugin;
     private TeleportWarmup warmup;
     private BukkitSchedulerAdapter scheduler;
 
     @BeforeEach
     void setUp() {
         server = MockBukkit.mock();
-        plugin = MockBukkit.createMockPlugin();
+        PluginMock plugin = MockBukkit.createMockPlugin();
         warmup = new TeleportWarmup();
         server.getPluginManager().registerEvents(warmup, plugin);
         scheduler = new BukkitSchedulerAdapter(plugin);

@@ -306,55 +306,53 @@ public final class KitGui implements Listener {
                                                 .kit(kitId)
                                                 .ifPresent(
                                                         k ->
-                                                                player.sendMessage(
-                                                                        plugin.lang()
-                                                                                .render(
-                                                                                        player,
-                                                                                        "kit.max_claims_reached",
-                                                                                        Placeholder
-                                                                                                .unparsed(
-                                                                                                        "max",
-                                                                                                        String
-                                                                                                                .valueOf(
-                                                                                                                        k
-                                                                                                                                .maxClaims())),
-                                                                                        Placeholder
-                                                                                                .unparsed(
-                                                                                                        "kit",
-                                                                                                        kitId))));
+                                                                sendMaxClaimsMessage(
+                                                                        player,
+                                                                        kitId,
+                                                                        k.maxClaims()));
                                 case ON_COOLDOWN ->
                                         plugin.services()
                                                 .kits
                                                 .cooldownRemaining(player.getUniqueId(), kitId)
                                                 .thenAccept(
                                                         remaining ->
-                                                                plugin.scheduler()
-                                                                        .runGlobal(
-                                                                                () ->
-                                                                                        player
-                                                                                                .sendMessage(
-                                                                                                        plugin.lang()
-                                                                                                                .render(
-                                                                                                                        player,
-                                                                                                                        "kit.cooldown_active",
-                                                                                                                        Placeholder
-                                                                                                                                .unparsed(
-                                                                                                                                        "kit",
-                                                                                                                                        kitId),
-                                                                                                                        Placeholder
-                                                                                                                                .unparsed(
-                                                                                                                                        "time",
-                                                                                                                                        TimeParser
-                                                                                                                                                .format(
-                                                                                                                                                        remaining
-                                                                                                                                                                * 1000))))));
+                                                                sendCooldownMessage(
+                                                                        player, kitId, remaining));
                                 case INVENTORY_FULL ->
                                         player.sendMessage(
                                                 plugin.lang()
                                                         .render(player, "shop.inventory-full"));
+                                default -> {}
                             }
                             open(player, page);
                         });
+    }
+
+    private void sendMaxClaimsMessage(Player player, String kitId, int maxClaims) {
+        player.sendMessage(
+                plugin.lang()
+                        .render(
+                                player,
+                                "kit.max_claims_reached",
+                                Placeholder.unparsed("max", String.valueOf(maxClaims)),
+                                Placeholder.unparsed("kit", kitId)));
+    }
+
+    private void sendCooldownMessage(Player player, String kitId, long remainingSeconds) {
+        plugin.scheduler()
+                .runGlobal(
+                        () ->
+                                player.sendMessage(
+                                        plugin.lang()
+                                                .render(
+                                                        player,
+                                                        "kit.cooldown_active",
+                                                        Placeholder.unparsed("kit", kitId),
+                                                        Placeholder.unparsed(
+                                                                "time",
+                                                                TimeParser.format(
+                                                                        remainingSeconds
+                                                                                * 1000)))));
     }
 
     private record Entry(Kit kit, KitClaimState state, long cooldownRemaining) {}

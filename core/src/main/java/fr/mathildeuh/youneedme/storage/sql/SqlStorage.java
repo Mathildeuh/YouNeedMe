@@ -124,10 +124,10 @@ public final class SqlStorage implements DataStorage {
                         for (String ddl : SqlSchema.additiveMigrations(dialect)) {
                             try {
                                 statement.execute(ddl);
-                            } catch (java.sql.SQLException expectedOnAlreadyMigratedInstalls) {
-                                // Column already exists (fresh install created it via
-                                // SqlSchema#statements, or a previous run already added it) - this
-                                // path is inherently best-effort, see additiveMigrations' javadoc.
+                            } catch (java.sql.SQLException expected) {
+                                // expected on already-migrated installs: column already exists
+                                // (fresh install created it via SqlSchema#statements, or a
+                                // previous run already added it) - see additiveMigrations' javadoc.
                             }
                         }
                     }

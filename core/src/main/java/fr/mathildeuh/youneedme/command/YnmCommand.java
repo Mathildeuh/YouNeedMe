@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +66,13 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
             return List.of();
         }
         try {
-            return tabComplete(sender, args);
+            List<String> options = tabComplete(sender, args);
+            if (args.length == 0) {
+                return options;
+            }
+            List<String> matches = new java.util.ArrayList<>();
+            StringUtil.copyPartialMatches(args[args.length - 1], options, matches);
+            return matches;
         } catch (Exception e) {
             return List.of();
         }

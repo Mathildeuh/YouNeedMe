@@ -86,7 +86,8 @@ public final class ExpansionManager {
             return;
         }
 
-        URLClassLoader classLoader;
+        URLClassLoader classLoader; // NOPMD - lifetime is tied to the expansion, closed via
+        // closeQuietly() below on failure or on disable, not within this method
         Expansion instance;
         try {
             classLoader =
@@ -188,7 +189,7 @@ public final class ExpansionManager {
         try {
             classLoader.close();
         } catch (IOException ignored) {
-            // Best-effort cleanup only.
+            // ignored - best-effort cleanup only.
         }
     }
 }

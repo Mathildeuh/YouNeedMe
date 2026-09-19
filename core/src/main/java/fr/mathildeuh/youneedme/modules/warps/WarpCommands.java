@@ -380,152 +380,114 @@ final class WarpAdminCommand extends YnmCommand {
                                 return;
                             }
                             switch (sub) {
-                                case "setperm" -> {
-                                    String perm = args.length > 2 ? args[2] : null;
-                                    services()
-                                            .warps
-                                            .update(
-                                                    warp.withPermission(
-                                                            "none".equalsIgnoreCase(perm)
-                                                                    ? null
-                                                                    : perm))
-                                            .thenAccept(
-                                                    w ->
-                                                            send(
-                                                                    sender,
-                                                                    perm == null
-                                                                                    || "none"
-                                                                                            .equalsIgnoreCase(
-                                                                                                    perm)
-                                                                            ? "warpadmin.perm_removed"
-                                                                            : "warpadmin.perm_set",
-                                                                    Placeholder.unparsed(
-                                                                            "warp", name),
-                                                                    Placeholder.unparsed(
-                                                                            "perm",
-                                                                            String.valueOf(perm))));
-                                }
-                                case "setcost" -> {
-                                    double cost = args.length > 2 ? parseDouble(args[2]) : 0;
-                                    services()
-                                            .warps
-                                            .update(warp.withCost(cost))
-                                            .thenAccept(
-                                                    w ->
-                                                            send(
-                                                                    sender,
-                                                                    "warpadmin.cost_set",
-                                                                    Placeholder.unparsed(
-                                                                            "warp", name),
-                                                                    Placeholder.unparsed(
-                                                                            "cost",
-                                                                            String.valueOf(cost))));
-                                }
-                                case "setdesc" -> {
-                                    String desc =
-                                            args.length > 2
-                                                    ? String.join(
-                                                            " ",
-                                                            java.util.Arrays.asList(args)
-                                                                    .subList(2, args.length))
-                                                    : "";
-                                    services()
-                                            .warps
-                                            .update(warp.withDescription(desc))
-                                            .thenAccept(
-                                                    w ->
-                                                            send(
-                                                                    sender,
-                                                                    "warpadmin.desc_set",
-                                                                    Placeholder.unparsed(
-                                                                            "warp", name)));
-                                }
-                                case "setcategory" -> {
-                                    String category = args.length > 2 ? args[2] : null;
-                                    services()
-                                            .warps
-                                            .update(warp.withCategory(category))
-                                            .thenAccept(
-                                                    w ->
-                                                            send(
-                                                                    sender,
-                                                                    "warpadmin.category_set",
-                                                                    Placeholder.unparsed(
-                                                                            "warp", name),
-                                                                    Placeholder.unparsed(
-                                                                            "category",
-                                                                            String.valueOf(
-                                                                                    category))));
-                                }
-                                case "hide" ->
-                                        services()
-                                                .warps
-                                                .update(warp.withHidden(true))
-                                                .thenAccept(
-                                                        w ->
-                                                                send(
-                                                                        sender,
-                                                                        "warpadmin.hidden",
-                                                                        Placeholder.unparsed(
-                                                                                "warp", name)));
-                                case "unhide" ->
-                                        services()
-                                                .warps
-                                                .update(warp.withHidden(false))
-                                                .thenAccept(
-                                                        w ->
-                                                                send(
-                                                                        sender,
-                                                                        "warpadmin.unhidden",
-                                                                        Placeholder.unparsed(
-                                                                                "warp", name)));
-                                case "move" -> {
-                                    Player player = player(sender);
-                                    services()
-                                            .warps
-                                            .update(
-                                                    warp.withPosition(
-                                                            Position.of(player.getLocation())))
-                                            .thenAccept(
-                                                    w ->
-                                                            send(
-                                                                    sender,
-                                                                    "warpadmin.moved",
-                                                                    Placeholder.unparsed(
-                                                                            "warp", name)));
-                                }
-                                case "info" ->
-                                        send(
-                                                sender,
-                                                "warpadmin.info",
-                                                Placeholder.unparsed("warp", warp.name()),
-                                                Placeholder.unparsed(
-                                                        "world", warp.position().worldName()),
-                                                Placeholder.unparsed(
-                                                        "x",
-                                                        String.valueOf((int) warp.position().x())),
-                                                Placeholder.unparsed(
-                                                        "y",
-                                                        String.valueOf((int) warp.position().y())),
-                                                Placeholder.unparsed(
-                                                        "z",
-                                                        String.valueOf((int) warp.position().z())),
-                                                Placeholder.unparsed(
-                                                        "category",
-                                                        String.valueOf(warp.category())),
-                                                Placeholder.unparsed(
-                                                        "cost", String.valueOf(warp.cost())),
-                                                Placeholder.unparsed(
-                                                        "permission",
-                                                        String.valueOf(warp.permission())),
-                                                Placeholder.unparsed(
-                                                        "hidden", String.valueOf(warp.hidden())),
-                                                Placeholder.unparsed(
-                                                        "description",
-                                                        String.valueOf(warp.description())));
+                                case "setperm" -> setPerm(sender, warp, name, args);
+                                case "setcost" -> setCost(sender, warp, name, args);
+                                case "setdesc" -> setDesc(sender, warp, name, args);
+                                case "setcategory" -> setCategory(sender, warp, name, args);
+                                case "hide" -> setHidden(sender, warp, name, true);
+                                case "unhide" -> setHidden(sender, warp, name, false);
+                                case "move" -> move(sender, warp, name);
+                                case "info" -> sendInfo(sender, warp);
                                 default -> send(sender, "command.usage.warpadmin");
                             }
                         });
+    }
+
+    private void setPerm(CommandSender sender, Warp warp, String name, String[] args) {
+        String perm = args.length > 2 ? args[2] : null;
+        boolean removing = perm == null || "none".equalsIgnoreCase(perm);
+        services()
+                .warps
+                .update(warp.withPermission(removing ? null : perm))
+                .thenAccept(
+                        w ->
+                                send(
+                                        sender,
+                                        removing ? "warpadmin.perm_removed" : "warpadmin.perm_set",
+                                        Placeholder.unparsed("warp", name),
+                                        Placeholder.unparsed("perm", String.valueOf(perm))));
+    }
+
+    private void setCost(CommandSender sender, Warp warp, String name, String[] args) {
+        double cost = args.length > 2 ? parseDouble(args[2]) : 0;
+        services()
+                .warps
+                .update(warp.withCost(cost))
+                .thenAccept(
+                        w ->
+                                send(
+                                        sender,
+                                        "warpadmin.cost_set",
+                                        Placeholder.unparsed("warp", name),
+                                        Placeholder.unparsed("cost", String.valueOf(cost))));
+    }
+
+    private void setDesc(CommandSender sender, Warp warp, String name, String[] args) {
+        String desc =
+                args.length > 2
+                        ? String.join(" ", java.util.Arrays.asList(args).subList(2, args.length))
+                        : "";
+        services()
+                .warps
+                .update(warp.withDescription(desc))
+                .thenAccept(
+                        w ->
+                                send(
+                                        sender,
+                                        "warpadmin.desc_set",
+                                        Placeholder.unparsed("warp", name)));
+    }
+
+    private void setCategory(CommandSender sender, Warp warp, String name, String[] args) {
+        String category = args.length > 2 ? args[2] : null;
+        services()
+                .warps
+                .update(warp.withCategory(category))
+                .thenAccept(
+                        w ->
+                                send(
+                                        sender,
+                                        "warpadmin.category_set",
+                                        Placeholder.unparsed("warp", name),
+                                        Placeholder.unparsed(
+                                                "category", String.valueOf(category))));
+    }
+
+    private void setHidden(CommandSender sender, Warp warp, String name, boolean hidden) {
+        services()
+                .warps
+                .update(warp.withHidden(hidden))
+                .thenAccept(
+                        w ->
+                                send(
+                                        sender,
+                                        hidden ? "warpadmin.hidden" : "warpadmin.unhidden",
+                                        Placeholder.unparsed("warp", name)));
+    }
+
+    private void move(CommandSender sender, Warp warp, String name) {
+        Player player = player(sender);
+        services()
+                .warps
+                .update(warp.withPosition(Position.of(player.getLocation())))
+                .thenAccept(
+                        w -> send(sender, "warpadmin.moved", Placeholder.unparsed("warp", name)));
+    }
+
+    private void sendInfo(CommandSender sender, Warp warp) {
+        send(
+                sender,
+                "warpadmin.info",
+                Placeholder.unparsed("warp", warp.name()),
+                Placeholder.unparsed("world", warp.position().worldName()),
+                Placeholder.unparsed("x", String.valueOf((int) warp.position().x())),
+                Placeholder.unparsed("y", String.valueOf((int) warp.position().y())),
+                Placeholder.unparsed("z", String.valueOf((int) warp.position().z())),
+                Placeholder.unparsed("category", String.valueOf(warp.category())),
+                Placeholder.unparsed("cost", String.valueOf(warp.cost())),
+                Placeholder.unparsed("permission", String.valueOf(warp.permission())),
+                Placeholder.unparsed("hidden", String.valueOf(warp.hidden())),
+                Placeholder.unparsed("description", String.valueOf(warp.description())));
     }
 
     private static double parseDouble(String raw) {

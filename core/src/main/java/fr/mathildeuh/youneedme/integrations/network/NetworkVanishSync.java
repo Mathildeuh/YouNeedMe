@@ -10,7 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.RedisClient;
 import redis.clients.jedis.UnifiedJedis;
+import redis.clients.jedis.executors.RetryableCommandExecutor;
 import redis.clients.jedis.providers.PooledConnectionProvider;
 
 /**
@@ -58,10 +60,16 @@ public final class NetworkVanishSync {
             if (!password.isBlank()) {
                 configBuilder.password(password);
             }
-            var provider =
+            var provider = // NOPMD - lifetime owned by `client` below, closed via client.close()
                     new PooledConnectionProvider(
                             new HostAndPort(host, port), configBuilder.build());
-            this.client = new UnifiedJedis(provider, 3, java.time.Duration.ofSeconds(5));
+            this.client =
+                    RedisClient.builder()
+                            .connectionProvider(provider)
+                            .commandExecutor(
+                                    new RetryableCommandExecutor(
+                                            provider, 3, java.time.Duration.ofSeconds(5)))
+                            .build();
             seedExistingVanished();
             this.subscription =
                     new JedisPubSub() {
@@ -95,8 +103,8 @@ public final class NetworkVanishSync {
             try {
                 plugin.services().vanished.add(UUID.fromString(raw));
             } catch (IllegalArgumentException ignored) {
-                // Stale/corrupt entry from an incompatible publisher - skip rather than fail
-                // the whole sync over one bad row.
+                // ignored - stale/corrupt entry from an incompatible publisher, skip rather than
+                // fail the whole sync over one bad row.
             }
         }
     }

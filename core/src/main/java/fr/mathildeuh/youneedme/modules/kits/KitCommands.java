@@ -181,6 +181,7 @@ final class KitCommand extends YnmCommand {
                                                                                         remaining
                                                                                                 * 1000))));
                                 case INVENTORY_FULL -> send(sender, "shop.inventory-full");
+                                default -> {}
                             }
                         });
     }

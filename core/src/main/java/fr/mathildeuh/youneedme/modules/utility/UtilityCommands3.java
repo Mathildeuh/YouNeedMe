@@ -116,6 +116,8 @@ final class TrashCommand extends YnmCommand implements Listener {
     }
 
     @EventHandler
+    @SuppressWarnings(
+            "PMD.PublicMemberInNonPublicType") // Bukkit requires event handlers to be public
     public void onClose(InventoryCloseEvent event) {
         if (event.getView()
                 .title()

@@ -4,6 +4,7 @@ import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.api.economy.EconomyService;
 import fr.mathildeuh.youneedme.api.moderation.Punishment;
 import fr.mathildeuh.youneedme.api.moderation.PunishmentType;
+import fr.mathildeuh.youneedme.api.tickets.Ticket;
 import fr.mathildeuh.youneedme.util.TimeParser;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public final class AdminDashboardGui implements Listener {
                 plugin.services().moderation.activePunishments(PunishmentType.BAN, 1, 5);
         CompletableFuture<List<Punishment>> activeMutes =
                 plugin.services().moderation.activePunishments(PunishmentType.MUTE, 1, 5);
-        CompletableFuture.allOf(topBalances, activeBans, activeMutes)
+        CompletableFuture<List<Ticket>> openTickets = plugin.services().tickets.listOpen();
+        CompletableFuture.allOf(topBalances, activeBans, activeMutes, openTickets)
                 .thenAccept(
                         v ->
                                 plugin.scheduler()
@@ -61,14 +63,16 @@ public final class AdminDashboardGui implements Listener {
                                                                 player,
                                                                 topBalances.join(),
                                                                 activeBans.join(),
-                                                                activeMutes.join())));
+                                                                activeMutes.join(),
+                                                                openTickets.join())));
     }
 
     private void render(
             Player player,
             List<EconomyService.BalanceEntry> topBalances,
             List<Punishment> activeBans,
-            List<Punishment> activeMutes) {
+            List<Punishment> activeMutes,
+            List<Ticket> openTickets) {
         Inventory inventory =
                 Bukkit.createInventory(
                         new Holder(),
@@ -84,6 +88,7 @@ public final class AdminDashboardGui implements Listener {
         inventory.setItem(21, launchIcon(Material.GOLD_INGOT, "Auction House", "ah"));
         inventory.setItem(22, launchIcon(Material.BOOK, "Ban List", "banlist"));
         inventory.setItem(23, launchIcon(Material.PAPER, "Balance Top", "baltop"));
+        inventory.setItem(24, ticketQueueIcon(openTickets));
         player.openInventory(inventory);
     }
 
@@ -183,6 +188,24 @@ public final class AdminDashboardGui implements Listener {
         meta.displayName(noItalic(Component.text(name, NamedTextColor.WHITE, TextDecoration.BOLD)));
         meta.lore(List.of(noItalic(Component.text("Click to open", NamedTextColor.GRAY))));
         meta.getPersistentDataContainer().set(commandKey, PersistentDataType.STRING, command);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    private ItemStack ticketQueueIcon(List<Ticket> openTickets) {
+        ItemStack stack = new ItemStack(Material.WRITABLE_BOOK);
+        ItemMeta meta = stack.getItemMeta();
+        meta.displayName(
+                noItalic(
+                        Component.text("Ticket Queue", NamedTextColor.WHITE, TextDecoration.BOLD)));
+        meta.lore(
+                List.of(
+                        noItalic(
+                                Component.text(
+                                        openTickets.size() + " open ticket(s)",
+                                        NamedTextColor.GRAY)),
+                        noItalic(Component.text("Click to open", NamedTextColor.GRAY))));
+        meta.getPersistentDataContainer().set(commandKey, PersistentDataType.STRING, "tickets");
         stack.setItemMeta(meta);
         return stack;
     }

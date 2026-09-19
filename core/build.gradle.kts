@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.mongodb.driver.sync)
     implementation(libs.jedis)
     implementation(libs.bstats.bukkit)
+    implementation(libs.slf4j.jdk14)
 
     testImplementation(project(":api"))
     // Pinned to the exact build MockBukkit 4.116.1 was tested against - the floating

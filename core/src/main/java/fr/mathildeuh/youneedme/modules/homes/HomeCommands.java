@@ -126,7 +126,6 @@ final class HomeCommand extends YnmCommand {
             send(sender, "home.teleport.already_pending");
             return;
         }
-        long cooldownKey = 0;
         if (services().cooldowns.isOnCooldown(player.getUniqueId(), "home")) {
             send(
                     sender,

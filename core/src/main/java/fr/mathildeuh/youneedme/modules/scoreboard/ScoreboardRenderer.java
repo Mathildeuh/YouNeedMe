@@ -68,7 +68,7 @@ public final class ScoreboardRenderer {
 
     private void render(Player player, String title, List<String> lines) {
         Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard == Bukkit.getScoreboardManager().getMainScoreboard()) {
+        if (scoreboard.equals(Bukkit.getScoreboardManager().getMainScoreboard())) {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(scoreboard);
         }

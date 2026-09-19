@@ -34,6 +34,7 @@ public final class ItemConfigCodec {
     /**
      * @return the item, or {@code null} if {@code section} has no (valid) {@code material}.
      */
+    @SuppressWarnings("UnstableApiUsage") // only replacement for the deprecated int-based API
     public static @Nullable ItemStack load(ConfigurationSection section) {
         Material material = Material.matchMaterial(section.getString("material", ""));
         if (material == null) {
@@ -72,8 +73,8 @@ public final class ItemConfigCodec {
         for (String flagName : section.getStringList("flags")) {
             try {
                 meta.addItemFlags(ItemFlag.valueOf(flagName.toUpperCase(Locale.ROOT)));
-            } catch (IllegalArgumentException e) {
-                // Unknown flag name in config - skip it rather than fail the whole item.
+            } catch (IllegalArgumentException ignored) {
+                // ignored - unknown flag name in config, skip it rather than fail the whole item.
             }
         }
 
@@ -116,6 +117,7 @@ public final class ItemConfigCodec {
      * Same data {@link #save} writes, as a plain (no {@link ConfigurationSection} involved) map -
      * what a config writer builds a YAML {@code items:} list out of, one of these per entry.
      */
+    @SuppressWarnings("UnstableApiUsage") // only replacement for the deprecated int-based API
     public static Map<String, Object> toMap(ItemStack item) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("material", item.getType().name());

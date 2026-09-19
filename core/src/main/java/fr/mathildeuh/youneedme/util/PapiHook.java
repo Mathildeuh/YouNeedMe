@@ -13,26 +13,33 @@ public final class PapiHook {
 
     private static final boolean PRESENT =
             Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-    private static Method setPlaceholdersMethod;
+    private static final Method SET_PLACEHOLDERS_METHOD = resolveSetPlaceholdersMethod();
 
     private PapiHook() {}
+
+    private static Method resolveSetPlaceholdersMethod() {
+        if (!PRESENT) {
+            return null;
+        }
+        try {
+            Class<?> papiClass = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+            return papiClass.getMethod(
+                    "setPlaceholders", org.bukkit.OfflinePlayer.class, String.class);
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
 
     public static boolean isPresent() {
         return PRESENT;
     }
 
     public static String apply(Player player, String text) {
-        if (!PRESENT) {
+        if (!PRESENT || SET_PLACEHOLDERS_METHOD == null) {
             return text;
         }
         try {
-            if (setPlaceholdersMethod == null) {
-                Class<?> papiClass = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
-                setPlaceholdersMethod =
-                        papiClass.getMethod(
-                                "setPlaceholders", org.bukkit.OfflinePlayer.class, String.class);
-            }
-            return (String) setPlaceholdersMethod.invoke(null, player, text);
+            return (String) SET_PLACEHOLDERS_METHOD.invoke(null, player, text);
         } catch (ReflectiveOperationException e) {
             return text;
         }

@@ -119,12 +119,11 @@ final class BanIpCommand extends YnmCommand {
             return;
         }
         String ip;
-        Player onlineTarget = null;
         String targetLabel = args[0];
         if (IP_PATTERN.matcher(args[0]).matches()) {
             ip = args[0];
         } else {
-            onlineTarget = Bukkit.getPlayerExact(args[0]);
+            Player onlineTarget = Bukkit.getPlayerExact(args[0]);
             if (onlineTarget == null || onlineTarget.getAddress() == null) {
                 send(sender, "banip.no_stored_ip", Placeholder.unparsed("player", args[0]));
                 return;
@@ -139,7 +138,6 @@ final class BanIpCommand extends YnmCommand {
                                         plugin.lang().defaultLocale(), "banip.default_reason"));
         UUID issuedBy = sender instanceof Player p ? p.getUniqueId() : null;
         String finalIp = ip;
-        Player finalOnlineTarget = onlineTarget;
         services()
                 .moderation
                 .banIp(ip, issuedBy, parsed.reason(), parsed.durationMillis())

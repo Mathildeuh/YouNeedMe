@@ -12,6 +12,13 @@ final class SqlSchema {
     static List<String> statements(SqlDialect dialect) {
         String id = dialect.idColumnDefinition();
         String bool = dialect.booleanType();
+        return java.util.stream.Stream.concat(
+                        coreTableStatements(dialect, id, bool).stream(),
+                        featureTableStatements(dialect, id, bool).stream())
+                .toList();
+    }
+
+    private static List<String> coreTableStatements(SqlDialect dialect, String id, String bool) {
         return List.of(
                 """
                 CREATE TABLE IF NOT EXISTS ynm_player_profiles (
@@ -107,7 +114,11 @@ final class SqlSchema {
                     last_claimed_at BIGINT NOT NULL DEFAULT 0,
                     PRIMARY KEY (player, kit_id)
                 )
-                """,
+                """);
+    }
+
+    private static List<String> featureTableStatements(SqlDialect dialect, String id, String bool) {
+        return List.of(
                 """
                 CREATE TABLE IF NOT EXISTS ynm_punishments (
                     id %s,

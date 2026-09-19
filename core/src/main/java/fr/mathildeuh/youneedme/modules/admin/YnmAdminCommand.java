@@ -3,7 +3,6 @@ package fr.mathildeuh.youneedme.modules.admin;
 import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.command.YnmCommand;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,13 +91,14 @@ public final class YnmAdminCommand extends YnmCommand {
                 plugin.getDataFolder()
                         .toPath()
                         .resolve("dump-" + System.currentTimeMillis() + ".txt");
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(96);
         builder.append("YouNeedMe version: ")
                 .append(plugin.getPluginMeta().getVersion())
-                .append('\n');
-        builder.append("Server: ").append(plugin.getServer().getVersion()).append('\n');
-        builder.append("Storage: ").append(services().storage.type()).append('\n');
-        builder.append("Online players: ")
+                .append("\nServer: ")
+                .append(plugin.getServer().getVersion())
+                .append("\nStorage: ")
+                .append(services().storage.type())
+                .append("\nOnline players: ")
                 .append(plugin.getServer().getOnlinePlayers().size())
                 .append('\n');
         try {
@@ -221,8 +221,7 @@ public final class YnmAdminCommand extends YnmCommand {
                                 String name = "backup-" + System.currentTimeMillis() + ".zip";
                                 Path zipPath = backupsDir.resolve(name);
                                 try (ZipOutputStream zip =
-                                        new ZipOutputStream(
-                                                new FileOutputStream(zipPath.toFile()))) {
+                                        new ZipOutputStream(Files.newOutputStream(zipPath))) {
                                     File dataFolder = plugin.getDataFolder();
                                     zipDirectory(zip, dataFolder, dataFolder.toPath(), backupsDir);
                                 }

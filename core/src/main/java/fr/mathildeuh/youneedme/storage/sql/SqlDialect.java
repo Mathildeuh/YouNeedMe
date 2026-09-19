@@ -83,7 +83,7 @@ public enum SqlDialect {
                 if (!update.isEmpty()) {
                     update.append(", ");
                 }
-                update.append(column).append(" = VALUES(").append(column).append(")");
+                update.append(column).append(" = VALUES(").append(column).append(')');
             }
             return insert + " ON DUPLICATE KEY UPDATE " + update;
         }

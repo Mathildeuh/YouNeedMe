@@ -5,6 +5,7 @@ import fr.mathildeuh.youneedme.api.model.Warp;
 import fr.mathildeuh.youneedme.api.storage.WarpRepository;
 import fr.mathildeuh.youneedme.api.warps.WarpService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public final class WarpServiceImpl implements WarpService {
 
     private final WarpRepository repository;
-    private final ConcurrentHashMap<String, Warp> cache = new ConcurrentHashMap<>();
+    private final Map<String, Warp> cache = new ConcurrentHashMap<>();
 
     public WarpServiceImpl(WarpRepository repository) {
         this.repository = repository;

@@ -98,7 +98,7 @@ public final class LanguageManager {
             return loaded == null ? new LinkedHashMap<>() : new LinkedHashMap<>(loaded);
         } catch (IOException e) {
             logger.warning("Failed to load language file " + path + ": " + e.getMessage());
-            return null;
+            return null; // NOPMD - null means "failed to read", distinct from an empty file
         }
     }
 

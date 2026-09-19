@@ -2,6 +2,7 @@ package fr.mathildeuh.youneedme.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,7 +49,7 @@ class ItemConfigCodecTest {
 
         ItemStack item = ItemConfigCodec.load(section(yaml));
 
-        assertTrue(item != null);
+        assertNotNull(item);
         assertEquals(Material.DIAMOND_SWORD, item.getType());
         var meta = item.getItemMeta();
         assertEquals("Excalibur", ItemConfigCodec.plainName(item));

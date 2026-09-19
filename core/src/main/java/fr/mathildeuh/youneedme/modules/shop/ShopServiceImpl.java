@@ -187,7 +187,7 @@ public final class ShopServiceImpl implements ShopService {
                 // getStorageContents() returns a fresh copy each call - mutating that copy (as
                 // this used to) never touched the real inventory. contents IS the array written
                 // back below, so it must be nulled here instead.
-                contents[i] = null;
+                contents[i] = null; // NOPMD - removing the sold item from the slot is the point
             }
         }
         if (wholeInventory) {

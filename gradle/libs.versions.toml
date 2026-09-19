@@ -23,6 +23,11 @@ mariadb-java-client = "3.5.10"
 postgresql = "42.7.13"
 mongodb-driver-sync = "5.12.0"
 jedis = "8.1.0-beta1"
+# The Mongo/MariaDB drivers pull slf4j-api transitively; without a bound provider, SLF4J 2.x
+# prints a one-shot "No SLF4J providers were found" warning straight to System.err at startup
+# (which Paper then nags plugin authors about) - jdk14 routes those logs through java.util.logging
+# instead, same as everything else on the server console.
+slf4j-jdk14 = "2.0.17"
 gson = "2.14.0"
 bstats-bukkit = "3.2.1"
 
@@ -52,6 +57,7 @@ mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodb-driver-sync" }
 jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+slf4j-jdk14 = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j-jdk14" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
 

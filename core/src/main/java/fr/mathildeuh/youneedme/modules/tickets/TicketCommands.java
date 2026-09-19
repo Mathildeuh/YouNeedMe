@@ -264,7 +264,7 @@ final class TicketCommand extends YnmCommand {
                                                                     Placeholder.unparsed(
                                                                             "id",
                                                                             String.valueOf(id)));
-                                                            notifyReply(id, player, message, staff);
+                                                            notifyReply(id, message, staff);
                                                         }
                                                         case CLOSED ->
                                                                 send(player, "ticket.reply.closed");
@@ -272,12 +272,13 @@ final class TicketCommand extends YnmCommand {
                                                                 send(
                                                                         player,
                                                                         "ticket.view.not_found");
+                                                        default -> {}
                                                     }
                                                 }))
                 .exceptionally(reportAsyncFailure(player, "ticket"));
     }
 
-    private void notifyReply(long id, Player author, String message, boolean staffReply) {
+    private void notifyReply(long id, String message, boolean staffReply) {
         services()
                 .tickets
                 .find(id)
@@ -353,6 +354,7 @@ final class TicketCommand extends YnmCommand {
                                                                 send(
                                                                         player,
                                                                         "ticket.view.not_found");
+                                                        default -> {}
                                                     }
                                                 }))
                 .exceptionally(reportAsyncFailure(player, "ticket"));
@@ -396,6 +398,7 @@ final class TicketCommand extends YnmCommand {
                                                                 send(
                                                                         player,
                                                                         "ticket.view.not_found");
+                                                        default -> {}
                                                     }
                                                 }))
                 .exceptionally(reportAsyncFailure(player, "ticket"));

@@ -20,7 +20,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: PAPER
-      VERSION: "1.21.10"
+      VERSION: "26.3"
       MEMORY: "2G"
       ONLINE_MODE: "FALSE"
     ports:
@@ -30,7 +30,7 @@ services:
       - ./build/libs:/plugins-source:ro
     entrypoint: >
       sh -c "mkdir -p /data/plugins &&
-             cp /plugins-source/YouNeedMe-*.jar /data/plugins/ &&
+             cp /plugins-source/YouNeedMe.jar /data/plugins/ &&
              exec /start"
     depends_on:
       - mariadb

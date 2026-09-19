@@ -1,5 +1,7 @@
 package fr.mathildeuh.youneedme.scheduler;
 
+import net.kyori.adventure.key.Key;
+
 /** Detects, once at startup, which scheduling model the running server actually supports. */
 public final class ServerEnvironment {
 
@@ -23,16 +25,11 @@ public final class ServerEnvironment {
                     Class.forName("io.papermc.paper.ServerBuildInfo")
                             .getMethod("buildInfo")
                             .invoke(null);
-            Object key =
-                    Class.forName("net.kyori.adventure.key.Key")
-                            .getMethod("key", String.class, String.class)
-                            .invoke(null, "papermc", "folia");
+            Key key = Key.key("papermc", "folia");
             Object isCompatible =
                     buildInfo
                             .getClass()
-                            .getMethod(
-                                    "isBrandCompatible",
-                                    Class.forName("net.kyori.adventure.key.Key"))
+                            .getMethod("isBrandCompatible", Key.class)
                             .invoke(buildInfo, key);
             return Boolean.TRUE.equals(isCompatible);
         } catch (ReflectiveOperationException | LinkageError e) {

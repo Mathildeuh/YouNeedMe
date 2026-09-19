@@ -39,7 +39,6 @@ public final class TpaModule {
     private final Map<UUID, Request> incomingByTarget = new ConcurrentHashMap<>();
     private final Map<UUID, Map<UUID, Request>> outgoingBySender = new ConcurrentHashMap<>();
     private final Set<UUID> toggledOff = ConcurrentHashMap.newKeySet();
-    private final Set<UUID> lastRequestSender = ConcurrentHashMap.newKeySet();
     private final Map<UUID, Set<UUID>> ignoring = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> lastIncomingSender = new ConcurrentHashMap<>();
 

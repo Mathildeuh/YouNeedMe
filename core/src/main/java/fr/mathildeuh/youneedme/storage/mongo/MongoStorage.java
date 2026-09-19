@@ -1073,7 +1073,7 @@ public final class MongoStorage
 
     private static Document toDocument(Position position) {
         if (position == null) {
-            return null;
+            return null; // NOPMD - a null Position genuinely means "no position stored"
         }
         return new Document("world", position.worldName())
                 .append("x", position.x())

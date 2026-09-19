@@ -78,12 +78,13 @@ public final class UpdateChecker implements Listener {
                                         + "). Get it from"
                                         + " https://github.com/Mathildeuh/YouNeedMe/releases/latest");
             }
-        } catch (IOException | InterruptedException | RuntimeException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             plugin.getLogger()
                     .log(Level.FINE, "Update check failed (non-fatal): " + e.getMessage());
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (IOException | RuntimeException e) {
+            plugin.getLogger()
+                    .log(Level.FINE, "Update check failed (non-fatal): " + e.getMessage());
         }
     }
 

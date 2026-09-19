@@ -223,6 +223,11 @@ public final class ShopEditorGui implements Listener {
         List<Component> existingLore = meta.lore();
         List<Component> lore =
                 existingLore != null ? new ArrayList<>(existingLore) : new ArrayList<>();
+        lore.removeIf(
+                line ->
+                        PlainTextComponentSerializer.plainText()
+                                .serialize(line)
+                                .startsWith("Buy: "));
         lore.add(
                 Component.text(
                         "Buy: "
@@ -419,69 +424,92 @@ public final class ShopEditorGui implements Listener {
                 "Buy Price",
                 "Buy price ('none' to disable buying)",
                 currentBuy == null ? "none" : String.valueOf(currentBuy),
-                buyText -> {
-                    Double buy = parsePriceOrNull(buyText);
-                    Double currentSell = readDouble(item, sellPriceKey);
-                    plugin.scheduler()
-                            .runGlobal(
-                                    () ->
-                                            DialogInputPrompt.open(
-                                                    player,
-                                                    "Sell Price",
-                                                    "Sell price ('none' to disable selling)",
-                                                    currentSell == null
-                                                            ? "none"
-                                                            : String.valueOf(currentSell),
-                                                    sellText -> {
-                                                        Double sell = parsePriceOrNull(sellText);
-                                                        int currentStock =
-                                                                readInt(item, stockKey, -1);
-                                                        plugin.scheduler()
-                                                                .runGlobal(
-                                                                        () ->
-                                                                                DialogInputPrompt
-                                                                                        .open(
-                                                                                                player,
-                                                                                                "Stock",
-                                                                                                "Stock"
-                                                                                                    + " ('none'"
-                                                                                                    + " for unlimited)",
-                                                                                                currentStock
-                                                                                                                < 0
-                                                                                                        ? "none"
-                                                                                                        : String
-                                                                                                                .valueOf(
-                                                                                                                        currentStock),
-                                                                                                stockText -> {
-                                                                                                    int
-                                                                                                            stock =
-                                                                                                                    "none"
-                                                                                                                                    .equalsIgnoreCase(
-                                                                                                                                            stockText
-                                                                                                                                                    .trim())
-                                                                                                                            ? -1
-                                                                                                                            : parseIntOrDefault(
-                                                                                                                                    stockText,
-                                                                                                                                    -1);
-                                                                                                    stampPricing(
-                                                                                                            item,
-                                                                                                            buy,
-                                                                                                            sell,
-                                                                                                            stock);
-                                                                                                    plugin.scheduler()
-                                                                                                            .runGlobal(
-                                                                                                                    () -> {
-                                                                                                                        inventory
-                                                                                                                                .setItem(
-                                                                                                                                        slot,
-                                                                                                                                        item);
-                                                                                                                        openCategoryEditor(
-                                                                                                                                player,
-                                                                                                                                categoryId);
-                                                                                                                    });
-                                                                                                }));
-                                                    }));
-                });
+                buyText ->
+                        promptSellPrice(
+                                player,
+                                categoryId,
+                                inventory,
+                                slot,
+                                item,
+                                parsePriceOrNull(buyText)));
+    }
+
+    private void promptSellPrice(
+            Player player,
+            String categoryId,
+            Inventory inventory,
+            int slot,
+            ItemStack item,
+            @Nullable Double buy) {
+        Double currentSell = readDouble(item, sellPriceKey);
+        plugin.scheduler()
+                .runGlobal(
+                        () ->
+                                DialogInputPrompt.open(
+                                        player,
+                                        "Sell Price",
+                                        "Sell price ('none' to disable selling)",
+                                        currentSell == null ? "none" : String.valueOf(currentSell),
+                                        sellText ->
+                                                promptStock(
+                                                        player,
+                                                        categoryId,
+                                                        inventory,
+                                                        slot,
+                                                        item,
+                                                        buy,
+                                                        parsePriceOrNull(sellText))));
+    }
+
+    private void promptStock(
+            Player player,
+            String categoryId,
+            Inventory inventory,
+            int slot,
+            ItemStack item,
+            @Nullable Double buy,
+            @Nullable Double sell) {
+        int currentStock = readInt(item, stockKey, -1);
+        plugin.scheduler()
+                .runGlobal(
+                        () ->
+                                DialogInputPrompt.open(
+                                        player,
+                                        "Stock",
+                                        "Stock ('none' for unlimited)",
+                                        currentStock < 0 ? "none" : String.valueOf(currentStock),
+                                        stockText ->
+                                                applyPricing(
+                                                        player,
+                                                        categoryId,
+                                                        inventory,
+                                                        slot,
+                                                        item,
+                                                        buy,
+                                                        sell,
+                                                        parseStock(stockText))));
+    }
+
+    private int parseStock(String stockText) {
+        return "none".equalsIgnoreCase(stockText.trim()) ? -1 : parseIntOrDefault(stockText, -1);
+    }
+
+    private void applyPricing(
+            Player player,
+            String categoryId,
+            Inventory inventory,
+            int slot,
+            ItemStack item,
+            @Nullable Double buy,
+            @Nullable Double sell,
+            int stock) {
+        stampPricing(item, buy, sell, stock);
+        plugin.scheduler()
+                .runGlobal(
+                        () -> {
+                            inventory.setItem(slot, item);
+                            openCategoryEditor(player, categoryId);
+                        });
     }
 
     private @Nullable Double readDouble(ItemStack item, NamespacedKey key) {

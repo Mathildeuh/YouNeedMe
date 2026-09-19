@@ -18,8 +18,7 @@ class KeyedMutexTest {
     void actionsForTheSameKeyNeverOverlap() throws InterruptedException {
         KeyedMutex<String> mutex = new KeyedMutex<>();
         List<String> events = new CopyOnWriteArrayList<>();
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        try {
+        try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
             int taskCount = 20;
             CountDownLatch done = new CountDownLatch(taskCount);
             for (int i = 0; i < taskCount; i++) {
@@ -39,8 +38,6 @@ class KeyedMutexTest {
                                         .whenComplete((v, ex) -> done.countDown()));
             }
             assertTrue(done.await(10, TimeUnit.SECONDS), "all tasks should finish within 10s");
-        } finally {
-            executor.shutdown();
         }
 
         // Since every "start-N"/"end-N" pair for the same task is added back-to-back inside one

@@ -219,7 +219,7 @@ public final class TicketServiceImpl implements TicketService {
                         messages -> {
                             try {
                                 Files.createDirectories(transcriptsDir);
-                                StringBuilder builder = new StringBuilder();
+                                StringBuilder builder = new StringBuilder(96);
                                 builder.append("Ticket #")
                                         .append(ticket.id())
                                         .append(" - ")
@@ -228,11 +228,9 @@ public final class TicketServiceImpl implements TicketService {
                                                 ticket.category() == null
                                                         ? ""
                                                         : " [" + ticket.category() + "]")
-                                        .append('\n')
-                                        .append("Opened: ")
+                                        .append("\nOpened: ")
                                         .append(Instant.ofEpochMilli(ticket.createdAt()))
-                                        .append('\n')
-                                        .append("Closed by: ")
+                                        .append("\nClosed by: ")
                                         .append(ticket.closedByUsername())
                                         .append('\n')
                                         .append("-".repeat(40))
