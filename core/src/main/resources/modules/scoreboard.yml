@@ -2,10 +2,23 @@
 # managing its own scoreboard, to avoid two plugins fighting over the sidebar.
 enabled: true
 refresh-interval-ticks: 20
+# How often an animated title/line advances to its next frame, in ticks. Rounded down to the
+# nearest multiple of refresh-interval-ticks (the scoreboard can never visually update faster than
+# it refreshes) - defaults to refresh-interval-ticks, i.e. advance one frame every refresh.
+animation-interval-ticks: 20
+
+# `title` and any entry in `lines` can be either a single string (static) or a YAML list of
+# strings, cycled through in order as animation frames. Example animated title:
+# title:
+#   - "<gold><bold>YouNeedMe"
+#   - "<yellow><bold>YouNeedMe"
 title: "<gold><bold>YouNeedMe"
 lines:
   - ""
   - "<gray>Player: <white>{player}"
   - "<gray>Online: <white>{online}/{max}"
   - ""
+  # Example animated line - a simple scrolling/blinking effect:
+  # - - "<yellow>play.example.com"
+  #   - "<gold>play.example.com"
   - "<yellow>play.example.com"
