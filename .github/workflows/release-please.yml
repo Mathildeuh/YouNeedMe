@@ -16,6 +16,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
+      body: ${{ steps.release.outputs.body }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v4
@@ -71,7 +72,10 @@ jobs:
           modrinth-version: ${{ needs.release-please.outputs.tag_name }}
           modrinth-version-type: release
           files: build/libs/YouNeedMe.jar
-          modrinth-changelog-file: CHANGELOG.md
+          # modrinth-changelog-file: CHANGELOG.md used the WHOLE file (every version ever released)
+          # as this version's changelog - release-please's own `body` output is scoped to just this
+          # release, which is what a version's changelog on Modrinth is supposed to show.
+          modrinth-changelog: ${{ needs.release-please.outputs.body }}
           modrinth-loaders: |
             paper
             purpur
