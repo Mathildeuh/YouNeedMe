@@ -157,7 +157,28 @@ final class SqlSchema {
                     stock INT NOT NULL,
                     PRIMARY KEY (category_id, item_id)
                 )
-                """);
+                """,
+                """
+                CREATE TABLE IF NOT EXISTS ynm_player_shops (
+                    id %s,
+                    owner VARCHAR(36) NOT NULL,
+                    owner_username VARCHAR(16) NOT NULL,
+                    sign_world VARCHAR(64) NOT NULL,
+                    sign_x INT NOT NULL,
+                    sign_y INT NOT NULL,
+                    sign_z INT NOT NULL,
+                    chest_world VARCHAR(64) NOT NULL,
+                    chest_x INT NOT NULL,
+                    chest_y INT NOT NULL,
+                    chest_z INT NOT NULL,
+                    item TEXT NOT NULL,
+                    buy_price DOUBLE PRECISION,
+                    sell_price DOUBLE PRECISION
+                )
+                """
+                        .formatted(id),
+                "CREATE INDEX IF NOT EXISTS idx_ynm_player_shops_owner ON ynm_player_shops"
+                        + " (owner)");
     }
 
     /**

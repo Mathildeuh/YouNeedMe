@@ -181,3 +181,6 @@ permissions:
   youneedme.gamemode.spectator: { default: op }
   youneedme.migration: { default: op }
   youneedme.itemid: { default: true }
+  youneedme.playershop.create: { default: true }
+  youneedme.playershop.use: { default: true }
+  youneedme.playershop.remove.others: { default: op }

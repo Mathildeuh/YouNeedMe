@@ -40,4 +40,6 @@ public interface DataStorage {
     AuctionRepository auctions();
 
     ShopRepository shop();
+
+    PlayerShopRepository playerShops();
 }

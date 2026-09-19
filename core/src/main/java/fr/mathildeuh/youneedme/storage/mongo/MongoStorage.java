@@ -52,7 +52,8 @@ public final class MongoStorage
                 KitRepository,
                 PunishmentRepository,
                 AuctionRepository,
-                ShopRepository {
+                ShopRepository,
+                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository {
 
     private final String connectionString;
     private final String databaseName;
@@ -71,6 +72,7 @@ public final class MongoStorage
     private MongoCollection<Document> punishments;
     private MongoCollection<Document> auctions;
     private MongoCollection<Document> shopStock;
+    private MongoCollection<Document> playerShops;
     private MongoCollection<Document> counters;
 
     public MongoStorage(String connectionString, String databaseName, int poolSize) {
@@ -107,6 +109,7 @@ public final class MongoStorage
                     punishments = database.getCollection("punishments");
                     auctions = database.getCollection("auctions");
                     shopStock = database.getCollection("shop_stock");
+                    playerShops = database.getCollection("player_shops");
                     counters = database.getCollection("counters");
                 });
     }
@@ -148,6 +151,7 @@ public final class MongoStorage
                     shopStock.createIndex(
                             Indexes.ascending("categoryId", "itemId"),
                             new IndexOptions().unique(true));
+                    playerShops.createIndex(Indexes.ascending("owner"));
                 },
                 executor);
     }
@@ -200,6 +204,11 @@ public final class MongoStorage
 
     @Override
     public ShopRepository shop() {
+        return this;
+    }
+
+    @Override
+    public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
         return this;
     }
 
@@ -1058,5 +1067,92 @@ public final class MongoStorage
                 doc.getDouble("z"),
                 doc.getDouble("yaw").floatValue(),
                 doc.getDouble("pitch").floatValue());
+    }
+
+    // --- PlayerShopRepository --------------------------------------------------------------------
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.playershop.PlayerShop> save(
+            fr.mathildeuh.youneedme.api.playershop.PlayerShop shop) {
+        return supplyAsync(
+                () -> {
+                    long id = nextSequence("player_shops");
+                    var assigned = withId(shop, id);
+                    playerShops.insertOne(toDocument(assigned));
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<Void> delete(long id) {
+        return runAsync(
+                () -> playerShops.deleteOne(com.mongodb.client.model.Filters.eq("_id", id)));
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.playershop.PlayerShop>>
+            findAllShops() {
+        return supplyAsync(
+                () -> {
+                    List<fr.mathildeuh.youneedme.api.playershop.PlayerShop> result =
+                            new ArrayList<>();
+                    for (Document doc : playerShops.find()) {
+                        result.add(mapPlayerShop(doc));
+                    }
+                    return result;
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.playershop.PlayerShop>>
+            findShopsByOwner(UUID owner) {
+        return supplyAsync(
+                () -> {
+                    List<fr.mathildeuh.youneedme.api.playershop.PlayerShop> result =
+                            new ArrayList<>();
+                    for (Document doc :
+                            playerShops.find(
+                                    com.mongodb.client.model.Filters.eq(
+                                            "owner", owner.toString()))) {
+                        result.add(mapPlayerShop(doc));
+                    }
+                    return result;
+                });
+    }
+
+    private static Document toDocument(fr.mathildeuh.youneedme.api.playershop.PlayerShop shop) {
+        return new Document("_id", shop.id())
+                .append("owner", shop.owner().toString())
+                .append("ownerUsername", shop.ownerLastKnownUsername())
+                .append("signLocation", toDocument(shop.signLocation()))
+                .append("chestLocation", toDocument(shop.chestLocation()))
+                .append("item", ItemStackCodec.encode(shop.item()))
+                .append("buyPrice", shop.buyPrice())
+                .append("sellPrice", shop.sellPrice());
+    }
+
+    private static fr.mathildeuh.youneedme.api.playershop.PlayerShop mapPlayerShop(Document doc) {
+        return new fr.mathildeuh.youneedme.api.playershop.PlayerShop(
+                doc.getLong("_id"),
+                UUID.fromString(doc.getString("owner")),
+                doc.getString("ownerUsername"),
+                fromDocument((Document) doc.get("signLocation")),
+                fromDocument((Document) doc.get("chestLocation")),
+                ItemStackCodec.decode(doc.getString("item")),
+                doc.getDouble("buyPrice"),
+                doc.getDouble("sellPrice"));
+    }
+
+    private static fr.mathildeuh.youneedme.api.playershop.PlayerShop withId(
+            fr.mathildeuh.youneedme.api.playershop.PlayerShop shop, long id) {
+        return new fr.mathildeuh.youneedme.api.playershop.PlayerShop(
+                id,
+                shop.owner(),
+                shop.ownerLastKnownUsername(),
+                shop.signLocation(),
+                shop.chestLocation(),
+                shop.item(),
+                shop.buyPrice(),
+                shop.sellPrice());
     }
 }

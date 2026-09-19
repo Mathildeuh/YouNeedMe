@@ -19,6 +19,7 @@ import fr.mathildeuh.youneedme.modules.migration.MigrationModule;
 import fr.mathildeuh.youneedme.modules.moderation.ModerationModule;
 import fr.mathildeuh.youneedme.modules.navigation.NavigationModule;
 import fr.mathildeuh.youneedme.modules.nickname.NicknameModule;
+import fr.mathildeuh.youneedme.modules.playershop.PlayerShopModule;
 import fr.mathildeuh.youneedme.modules.rtp.RtpModule;
 import fr.mathildeuh.youneedme.modules.scoreboard.ScoreboardModule;
 import fr.mathildeuh.youneedme.modules.shop.ShopModule;
@@ -96,6 +97,7 @@ public final class YouNeedMe extends JavaPlugin {
                     services.auctionHouse =
                             AuctionHouseModule.enable(this, storage.auctions(), services.economy);
                     services.shop = ShopModule.enable(this, storage.shop(), services.economy);
+                    services.playerShops = PlayerShopModule.enable(this, storage.playerShops());
                     services.moderation = ModerationModule.enable(this, storage.punishments());
                     services.scoreboard = ScoreboardModule.enable(this);
                     services.nicknames = NicknameModule.enable(this, storage.playerProfiles());

@@ -20,6 +20,7 @@ public final class ConfigManager {
         "economy",
         "shop",
         "auctionhouse",
+        "playershop",
         "homes",
         "warps",
         "rtp",

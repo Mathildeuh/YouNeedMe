@@ -1,0 +1,7 @@
+# Player shops module (chest + sign, ChestShop-style).
+enabled: true
+# The first sign line a player writes to turn a sign+chest into a shop. Not localized on purpose -
+# it's a keyword the player types, not plugin output.
+trigger-line: "[Shop]"
+# 0 = unlimited.
+max-shops-per-player: 0

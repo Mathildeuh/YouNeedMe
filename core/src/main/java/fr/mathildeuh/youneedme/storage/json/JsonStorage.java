@@ -62,7 +62,8 @@ public final class JsonStorage
                 KitRepository,
                 PunishmentRepository,
                 AuctionRepository,
-                ShopRepository {
+                ShopRepository,
+                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository {
 
     private static final TypeAdapter<UUID> UUID_ADAPTER =
             new TypeAdapter<>() {
@@ -110,8 +111,11 @@ public final class JsonStorage
     private final List<Punishment> punishments = new ArrayList<>();
     private final List<AuctionListing> auctions = new ArrayList<>();
     private final Map<String, Map<String, Integer>> shopStock = new ConcurrentHashMap<>();
+    private final List<fr.mathildeuh.youneedme.api.playershop.PlayerShop> playerShops =
+            new ArrayList<>();
     private final AtomicLong punishmentIdSeq = new AtomicLong();
     private final AtomicLong auctionIdSeq = new AtomicLong();
+    private final AtomicLong playerShopIdSeq = new AtomicLong();
 
     public JsonStorage(Path root) {
         this.root = root;
@@ -181,6 +185,8 @@ public final class JsonStorage
                         punishments.addAll(
                                 loadList(file("punishments.json"), punishmentListType()));
                         auctions.addAll(loadList(file("auctions.json"), auctionListType()));
+                        playerShops.addAll(
+                                loadList(file("player_shops.json"), playerShopListType()));
                         punishments.stream()
                                 .mapToLong(Punishment::id)
                                 .max()
@@ -189,6 +195,10 @@ public final class JsonStorage
                                 .mapToLong(AuctionListing::id)
                                 .max()
                                 .ifPresent(max -> auctionIdSeq.set(max));
+                        playerShops.stream()
+                                .mapToLong(fr.mathildeuh.youneedme.api.playershop.PlayerShop::id)
+                                .max()
+                                .ifPresent(max -> playerShopIdSeq.set(max));
                     } catch (IOException e) {
                         throw new StorageException("Failed to load JSON storage from " + root, e);
                     }
@@ -227,6 +237,11 @@ public final class JsonStorage
 
     @Override
     public AuctionRepository auctions() {
+        return this;
+    }
+
+    @Override
+    public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
         return this;
     }
 
@@ -886,6 +901,65 @@ public final class JsonStorage
 
     private static Type auctionListType() {
         return com.google.gson.reflect.TypeToken.getParameterized(List.class, AuctionListing.class)
+                .getType();
+    }
+
+    // --- PlayerShopRepository --------------------------------------------------------------------
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.playershop.PlayerShop> save(
+            fr.mathildeuh.youneedme.api.playershop.PlayerShop shop) {
+        return supplyAsync(
+                () -> {
+                    var assigned =
+                            shop.id() != 0 ? shop : withId(shop, playerShopIdSeq.incrementAndGet());
+                    playerShops.add(assigned);
+                    saveList(file("player_shops.json"), playerShops);
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<Void> delete(long id) {
+        return runAsync(
+                () -> {
+                    playerShops.removeIf(s -> s.id() == id);
+                    saveList(file("player_shops.json"), playerShops);
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.playershop.PlayerShop>>
+            findAllShops() {
+        return supplyAsync(() -> new ArrayList<>(playerShops));
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.playershop.PlayerShop>>
+            findShopsByOwner(UUID owner) {
+        return supplyAsync(
+                () ->
+                        playerShops.stream()
+                                .filter(s -> s.owner().equals(owner))
+                                .collect(Collectors.toList()));
+    }
+
+    private static fr.mathildeuh.youneedme.api.playershop.PlayerShop withId(
+            fr.mathildeuh.youneedme.api.playershop.PlayerShop shop, long id) {
+        return new fr.mathildeuh.youneedme.api.playershop.PlayerShop(
+                id,
+                shop.owner(),
+                shop.ownerLastKnownUsername(),
+                shop.signLocation(),
+                shop.chestLocation(),
+                shop.item(),
+                shop.buyPrice(),
+                shop.sellPrice());
+    }
+
+    private static Type playerShopListType() {
+        return com.google.gson.reflect.TypeToken.getParameterized(
+                        List.class, fr.mathildeuh.youneedme.api.playershop.PlayerShop.class)
                 .getType();
     }
 }

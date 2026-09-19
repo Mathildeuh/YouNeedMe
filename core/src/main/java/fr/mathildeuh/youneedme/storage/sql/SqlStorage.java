@@ -36,6 +36,7 @@ public final class SqlStorage implements DataStorage {
     private PunishmentRepository punishments;
     private AuctionRepository auctions;
     private ShopRepository shop;
+    private fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops;
 
     public SqlStorage(SqlDialect dialect, SqlConnectionConfig config) {
         this.dialect = dialect;
@@ -88,6 +89,7 @@ public final class SqlStorage implements DataStorage {
                     this.punishments = new SqlPunishmentRepository(sql);
                     this.auctions = new SqlAuctionRepository(sql);
                     this.shop = new SqlShopRepository(sql, dialect);
+                    this.playerShops = new SqlPlayerShopRepository(sql);
                 });
     }
 
@@ -193,6 +195,11 @@ public final class SqlStorage implements DataStorage {
     @Override
     public ShopRepository shop() {
         return shop;
+    }
+
+    @Override
+    public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
+        return playerShops;
     }
 
     public int activeConnections() {

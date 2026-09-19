@@ -9,6 +9,7 @@ import fr.mathildeuh.youneedme.modules.homes.HomeServiceImpl;
 import fr.mathildeuh.youneedme.modules.kits.KitServiceImpl;
 import fr.mathildeuh.youneedme.modules.moderation.ModerationServiceImpl;
 import fr.mathildeuh.youneedme.modules.nickname.NicknameServiceImpl;
+import fr.mathildeuh.youneedme.modules.playershop.PlayerShopServiceImpl;
 import fr.mathildeuh.youneedme.modules.scoreboard.ScoreboardServiceImpl;
 import fr.mathildeuh.youneedme.modules.shop.ShopServiceImpl;
 import fr.mathildeuh.youneedme.modules.tpa.TpaModule;
@@ -31,6 +32,7 @@ public final class Services {
     public KitServiceImpl kits;
     public AuctionHouseServiceImpl auctionHouse;
     public ShopServiceImpl shop;
+    public PlayerShopServiceImpl playerShops;
     public ModerationServiceImpl moderation;
     public ScoreboardServiceImpl scoreboard;
     public NicknameServiceImpl nicknames;
