@@ -88,21 +88,23 @@ jobs:
           modrinth-game-versions: ">=1.21"
           modrinth-game-version-filter: releases
 
-      # HangarMC/hangar-publish-action does not exist (the repo returns 404) - the original scaffold
-      # invented it. benwoo1110/hangar-upload-action is the real, working action for this.
+      # Hangar's 15 MiB upload limit is lower than the shaded jar size. Publish an external
+      # version download pointing at the asset attached to this GitHub release instead.
+      # Hangar requires the URL to target the version asset directly, rather than the releases page.
       - name: Publish to Hangar
-        uses: benwoo1110/hangar-upload-action@v1
-        continue-on-error: true
+        uses: milkdrinkers/Hangar-Publish@v2
         with:
           api_token: ${{ secrets.HANGAR_API_KEY }}
           slug: YouNeedMe
           version: ${{ needs.release-please.outputs.tag_name }}
           channel: Release
+          description: ${{ needs.release-please.outputs.body }}
           files: |
             [
               {
-                "path": "build/libs/YouNeedMe.jar",
-                "platforms": ["PAPER"]
+                "platforms": ["PAPER"],
+                "url": true,
+                "externalUrl": "https://github.com/Mathildeuh/YouNeedMe/releases/download/${{ needs.release-please.outputs.tag_name }}/YouNeedMe.jar"
               }
             ]
 
