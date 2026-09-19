@@ -128,6 +128,21 @@ subprojects {
         "testImplementation"(catalog.junit.jupiter)
         "testImplementation"(catalog.mockito.core)
         "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
+
+        // Keep transitive dependencies supplied by Paper's Maven resolver on patched versions.
+        // These libraries are not bundled in the production plugin jar, but they are present on
+        // the compile/test classpaths and are therefore part of the dependency graph.
+        constraints {
+            add("compileOnly", "org.apache.logging.log4j:log4j-api:2.26.1") {
+                because("CVE-2026-49844")
+            }
+            add("compileOnly", "org.codehaus.plexus:plexus-utils:3.6.1") {
+                because("CVE-2025-67030")
+            }
+            add("compileOnly", "org.apache.commons:commons-lang3:3.18.0") {
+                because("CVE-2025-48924")
+            }
+        }
     }
 }
 
