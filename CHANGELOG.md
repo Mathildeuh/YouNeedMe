@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.0...v1.9.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* preserve scoreboard ownership ([bc1a745](https://github.com/Mathildeuh/YouNeedMe/commit/bc1a74591f3160300a541e39b73471efe8df4276))
+
 ## [1.9.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.2...v1.9.0) (2026-09-19)
 
 
