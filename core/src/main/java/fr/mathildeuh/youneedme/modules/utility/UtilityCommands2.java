@@ -141,7 +141,7 @@ final class RenameCommand extends YnmCommand {
             return;
         }
         String name = String.join(" ", args);
-        int maxLength = plugin.configManager().main().getInt("utility.rename-max-length", 32);
+        int maxLength = plugin.configManager().mainConfig().getInt("utility.rename-max-length", 32);
         if (name.length() > maxLength) {
             send(
                     sender,

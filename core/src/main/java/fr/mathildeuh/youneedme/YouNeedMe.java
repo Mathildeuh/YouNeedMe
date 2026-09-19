@@ -72,10 +72,10 @@ public final class YouNeedMe extends JavaPlugin {
         languageManager.load(
                 getClass(),
                 getDataFolder().toPath().resolve("lang"),
-                configManager.main().getString("language.default", "en_US"));
+                configManager.mainConfig().getString("language.default", "en_US"));
 
         this.storageManager = new StorageManager(getLogger(), getDataFolder().toPath());
-        var storageSection = configManager.main().getConfigurationSection("storage");
+        var storageSection = configManager.mainConfig().getConfigurationSection("storage");
         storageManager
                 .initialize(
                         storageSection == null

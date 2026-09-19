@@ -39,7 +39,7 @@ public final class UpdateChecker implements Listener {
     }
 
     public static void check(YouNeedMe plugin) {
-        if (!plugin.configManager().main().getBoolean("update-checker", true)) {
+        if (!plugin.configManager().mainConfig().getBoolean("update-checker", true)) {
             return;
         }
         UpdateChecker checker = new UpdateChecker(plugin);

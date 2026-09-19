@@ -7,8 +7,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -24,6 +24,14 @@ public final class ScoreboardRenderer {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final String OBJECTIVE_ID = "ynm_board";
+    // Unique, invisible-when-rendered legacy formatting codes used as scoreboard line "fake player"
+    // entries - a Team's prefix does the actual line rendering, this only needs to be a stable,
+    // distinct token per line. Inlined instead of org.bukkit.ChatColor#values() (deprecated) since
+    // that enum exists purely to enumerate these same code points anyway.
+    private static final String[] LINE_TOKENS = {
+        "§0", "§1", "§2", "§3", "§4", "§5", "§6", "§7", "§8", "§9", "§a", "§b", "§c", "§d", "§e",
+        "§f", "§k", "§l", "§m", "§n", "§o", "§r"
+    };
 
     private final YouNeedMe plugin;
     private final ScoreboardServiceImpl service;
@@ -66,14 +74,16 @@ public final class ScoreboardRenderer {
         }
         Objective objective = scoreboard.getObjective(OBJECTIVE_ID);
         if (objective == null) {
-            objective = scoreboard.registerNewObjective(OBJECTIVE_ID, "dummy", Component.empty());
+            objective =
+                    scoreboard.registerNewObjective(
+                            OBJECTIVE_ID, Criteria.DUMMY, Component.empty());
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
         objective.displayName(resolve(player, title));
 
-        int lineCount = Math.min(lines.size(), ChatColor.values().length);
+        int lineCount = Math.min(lines.size(), LINE_TOKENS.length);
         for (int i = 0; i < lineCount; i++) {
-            String entry = ChatColor.values()[i].toString();
+            String entry = LINE_TOKENS[i];
             Team team = scoreboard.getTeam("ynm_l" + i);
             if (team == null) {
                 team = scoreboard.registerNewTeam("ynm_l" + i);
@@ -85,7 +95,7 @@ public final class ScoreboardRenderer {
         for (String entry : List.copyOf(scoreboard.getEntries())) {
             boolean stillUsed = false;
             for (int i = 0; i < lineCount; i++) {
-                if (entry.equals(ChatColor.values()[i].toString())) {
+                if (entry.equals(LINE_TOKENS[i])) {
                     stillUsed = true;
                     break;
                 }

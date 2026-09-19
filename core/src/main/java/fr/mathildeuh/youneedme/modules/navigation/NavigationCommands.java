@@ -43,7 +43,9 @@ final class BackCommand extends YnmCommand {
                 .set(
                         player.getUniqueId(),
                         "back",
-                        plugin.configManager().main().getLong("navigation.back-cooldown-seconds", 0)
+                        plugin.configManager()
+                                        .mainConfig()
+                                        .getLong("navigation.back-cooldown-seconds", 0)
                                 * 1000L);
         send(sender, "back.success");
     }
@@ -94,7 +96,7 @@ final class SpawnCommand extends YnmCommand {
         if (args.length > 0 && sender.hasPermission("youneedme.spawn.others")) {
             Player target = org.bukkit.Bukkit.getPlayerExact(args[0]);
             Location spawn =
-                    plugin.configManager().main().getConfigurationSection("navigation.spawn")
+                    plugin.configManager().mainConfig().getConfigurationSection("navigation.spawn")
                                     != null
                             ? readSpawn(plugin)
                             : null;
@@ -118,7 +120,8 @@ final class SpawnCommand extends YnmCommand {
     }
 
     static Location readSpawn(YouNeedMe plugin) {
-        var section = plugin.configManager().main().getConfigurationSection("navigation.spawn");
+        var section =
+                plugin.configManager().mainConfig().getConfigurationSection("navigation.spawn");
         if (section == null || !section.contains("world")) {
             return null;
         }
@@ -146,7 +149,7 @@ final class SetSpawnCommand extends YnmCommand {
     protected void execute(CommandSender sender, String label, String[] args) {
         Player player = player(sender);
         Location loc = player.getLocation();
-        var config = plugin.configManager().main();
+        var config = plugin.configManager().mainConfig();
         config.set("navigation.spawn.world", loc.getWorld().getName());
         config.set("navigation.spawn.x", loc.getX());
         config.set("navigation.spawn.y", loc.getY());

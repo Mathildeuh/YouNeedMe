@@ -75,7 +75,7 @@ public final class ConfigManager {
         load();
     }
 
-    public YamlConfiguration main() {
+    public YamlConfiguration mainConfig() {
         return mainConfig;
     }
 

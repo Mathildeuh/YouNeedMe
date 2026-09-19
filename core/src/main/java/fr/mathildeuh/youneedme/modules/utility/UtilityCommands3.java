@@ -209,7 +209,7 @@ final class SpawnEntityCommand extends YnmCommand {
             send(sender, "spawnentity.invalid_amount");
             return;
         }
-        int max = plugin.configManager().main().getInt("utility.spawnentity-max-amount", 50);
+        int max = plugin.configManager().mainConfig().getInt("utility.spawnentity-max-amount", 50);
         if (amount > max) {
             amount = max;
             send(

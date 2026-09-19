@@ -402,7 +402,7 @@ final class RulesCommand extends YnmCommand {
             send(sender, "rules.reloaded");
             return;
         }
-        List<String> rules = plugin.configManager().main().getStringList("rules");
+        List<String> rules = plugin.configManager().mainConfig().getStringList("rules");
         if (rules.isEmpty()) {
             send(sender, "rules.empty");
             return;
