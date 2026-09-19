@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.5](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.4...v1.9.5) (2026-09-19)
+
+
+### Bug Fixes
+
+* clarify auction house sale flow ([db139c2](https://github.com/Mathildeuh/YouNeedMe/commit/db139c27723e8f7abc7f81c34c8e3049cba88827))
+
 ## [1.9.4](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.3...v1.9.4) (2026-09-19)
 
 
