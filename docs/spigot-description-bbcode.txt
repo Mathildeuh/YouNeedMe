@@ -1,0 +1,140 @@
+[CENTER]
+[B][SIZE=6]YouNeedMe[/SIZE][/B]
+
+[SIZE=4]An all-in-one, Essentials-style administration and utility plugin for [B]Paper, Spigot, Purpur and Folia[/B] servers.[/SIZE]
+
+It combines homes, warps, economy, shops, auction house, moderation, kits, teleportation, integrations and much more in one modern and configurable plugin.
+
+[URL=https://github.com/Mathildeuh/YouNeedMe]GitHub Repository[/URL] · [URL=https://github.com/Mathildeuh/YouNeedMe/wiki]Wiki[/URL] · [URL=https://mathildeuh.github.io/YouNeedMe/]Javadoc[/URL]
+[/CENTER]
+
+[B][SIZE=5]Features[/SIZE][/B]
+
+[B][SIZE=4]Economy & Commerce[/SIZE][/B]
+[LIST]
+[*]Built-in economy with native Vault support
+[*][B]/balance[/B], [B]/pay[/B], [B]/baltop[/B] and administration commands
+[*]Configurable server shop with categories and an in-game editor
+[*]Auction house with real bidding and anti-duplication protections
+[*]Item selling and worth commands
+[/LIST]
+
+[B][SIZE=4]Homes, Warps & Teleportation[/SIZE][/B]
+[LIST]
+[*]Multiple homes with permission-based limits
+[*]Public and categorized warps with costs and cooldowns
+[*]Safe random teleport with [B]/rtp[/B]
+[*]Complete teleport request system: [B]/tpa[/B], [B]/tpahere[/B], [B]/tpaccept[/B], [B]/tpdeny[/B], [B]/tpcancel[/B], [B]/tpaignore[/B], [B]/tpaqueue[/B] and [B]/tpatoggle[/B]
+[*]Spawn management, back and death-location teleportation
+[*]Teleportation to an offline player's last location
+[/LIST]
+
+[B][SIZE=4]Moderation & Administration[/SIZE][/B]
+[LIST]
+[*]Temporary and permanent bans
+[*]IP bans, mutes and kicks
+[*]Punishment history
+[*]Vanish and god mode
+[*]Gamemode and flight management
+[*][B]/invsee[/B] and [B]/endersee[/B]
+[*]Staff dashboard with [B]/ynm panel[/B]
+[*]Broadcast, sudo and player management tools
+[/LIST]
+
+[B][SIZE=4]Kits & Quality of Life[/SIZE][/B]
+[LIST]
+[*]Permission-based kits with cooldowns
+[*]One-time and limited kit claims
+[*]In-game kit management
+[*]Nicknames, AFK status and playtime tracking
+[*]Personal time and weather
+[*]Virtual anvil, crafting table, stonecutter and trash
+[*]Item renaming, repairing and enchantment management
+[*]Full localization support
+[*]Player support tickets
+[/LIST]
+
+[B][SIZE=4]Integrations[/SIZE][/B]
+[LIST]
+[*]Vault
+[*]LuckPerms
+[*]PlaceholderAPI
+[*]DiscordSRV and webhooks
+[*]Floodgate
+[*]TAB
+[*]Redis network synchronization
+[/LIST]
+
+[B][SIZE=4]Storage[/SIZE][/B]
+
+Choose the storage backend that fits your server:
+
+[LIST]
+[*]SQLite — enabled by default
+[*]MySQL
+[*]MariaDB
+[*]PostgreSQL
+[*]MongoDB
+[*]Flat JSON storage
+[/LIST]
+
+Switching storage backends only requires changing one configuration option.
+
+[B][SIZE=4]Folia Support[/SIZE][/B]
+
+YouNeedMe is designed with Folia compatibility in mind. Scheduled tasks use a dedicated scheduler abstraction instead of directly relying on Bukkit's scheduler.
+
+The built-in sidebar scoreboard is automatically disabled on Folia because Folia does not currently support Bukkit's scoreboard API. A Folia-compatible scoreboard plugin can be used instead.
+
+[B][SIZE=5]Integrations & Placeholders[/SIZE][/B]
+
+YouNeedMe integrates with popular server plugins and exposes its own PlaceholderAPI expansion.
+
+Available placeholders include:
+
+[LIST]
+[*]Balance
+[*]Homes
+[*]Nickname
+[*]AFK status
+[*]Vanish status
+[*]Playtime
+[*]LuckPerms group
+[*]Prefixes and suffixes
+[/LIST]
+
+[B][SIZE=5]Installation[/SIZE][/B]
+
+[LIST=1]
+[*]Download the latest version from [URL=https://github.com/Mathildeuh/YouNeedMe/releases/latest]GitHub Releases[/URL].
+[*]Put [B]YouNeedMe.jar[/B] in your server's [B]plugins[/B] folder.
+[*]Restart your server.
+[*]Configure [B]plugins/YouNeedMe/config.yml[/B].
+[*]Customize modules in [B]plugins/YouNeedMe/modules/[/B].
+[*]Run [B]/ynm reload[/B].
+[/LIST]
+
+No database setup is required to get started. YouNeedMe uses SQLite by default.
+
+[B][SIZE=5]Requirements[/SIZE][/B]
+
+[LIST]
+[*]Java 21 or newer
+[*]Paper, Spigot, Purpur, Folia or a compatible fork
+[*]Minecraft 26.2 or newer
+[/LIST]
+
+[B][SIZE=5]Links[/SIZE][/B]
+
+[LIST]
+[*][URL=https://github.com/Mathildeuh/YouNeedMe]Source code[/URL]
+[*][URL=https://github.com/Mathildeuh/YouNeedMe/issues]Issue tracker[/URL]
+[*][URL=https://github.com/Mathildeuh/YouNeedMe/wiki]Wiki[/URL]
+[*][URL=https://mathildeuh.github.io/YouNeedMe/]Javadoc[/URL]
+[*][URL=https://modrinth.com/plugin/youneedme]Modrinth[/URL]
+[*][URL=https://hangar.papermc.io/Mathildeuh/youneedme]Hangar[/URL]
+[/LIST]
+
+[B][SIZE=5]License[/SIZE][/B]
+
+YouNeedMe is licensed under the [B]Apache License 2.0[/B].

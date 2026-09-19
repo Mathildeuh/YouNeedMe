@@ -19,8 +19,8 @@ services:
     image: itzg/minecraft-server:latest
     environment:
       EULA: "TRUE"
-      TYPE: PAPER
-      VERSION: "26.3"
+      TYPE: FOLIA
+      VERSION: "26.2"
       MEMORY: "2G"
       ONLINE_MODE: "FALSE"
     ports:
