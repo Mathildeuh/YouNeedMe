@@ -41,6 +41,8 @@ nothing breaks on a regionised server.
   supported.
 - Minecraft 26.2 and newer; Folia is supported through the same scheduler abstraction used by
   the rest of the plugin.
+- The built-in sidebar scoreboard is disabled on Folia because Folia does not support Bukkit's
+  scoreboard API yet. Use a Folia-compatible scoreboard plugin if you need a sidebar there.
 
 ## Why YouNeedMe over a stack of separate plugins
 

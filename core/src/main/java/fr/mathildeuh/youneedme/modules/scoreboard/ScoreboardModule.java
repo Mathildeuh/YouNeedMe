@@ -3,6 +3,7 @@ package fr.mathildeuh.youneedme.modules.scoreboard;
 import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.api.scoreboard.ScoreboardService;
 import fr.mathildeuh.youneedme.command.CommandRegistrar;
+import fr.mathildeuh.youneedme.scheduler.ServerEnvironment;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 
@@ -12,9 +13,16 @@ public final class ScoreboardModule {
 
     public static ScoreboardServiceImpl enable(YouNeedMe plugin) {
         boolean tabPresent = Bukkit.getPluginManager().getPlugin("TAB") != null;
-        boolean active =
-                !tabPresent
-                        && plugin.configManager().module("scoreboard").getBoolean("enabled", true);
+        boolean configuredEnabled =
+                plugin.configManager().module("scoreboard").getBoolean("enabled", true);
+        boolean folia = ServerEnvironment.isFolia();
+        boolean active = shouldStart(folia, tabPresent, configuredEnabled);
+        if (folia && configuredEnabled && !tabPresent) {
+            plugin.getLogger()
+                    .warning(
+                            "Built-in scoreboard disabled: Folia does not support Bukkit's"
+                                    + " scoreboard API yet.");
+        }
         ScoreboardServiceImpl service = new ScoreboardServiceImpl(active);
         plugin.getServer()
                 .getServicesManager()
@@ -25,5 +33,9 @@ public final class ScoreboardModule {
             new ScoreboardRenderer(plugin, service).start();
         }
         return service;
+    }
+
+    static boolean shouldStart(boolean folia, boolean tabPresent, boolean configuredEnabled) {
+        return !folia && !tabPresent && configuredEnabled;
     }
 }

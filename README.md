@@ -40,6 +40,8 @@ reference and configuration guide.
 - Java 21+
 - Paper (recommended), Spigot, Purpur, Folia, or a compatible fork (Leaf, Leaves) — Minecraft 26.2,
   with 26.3 supported as soon as it's stable.
+- On Folia, the built-in sidebar scoreboard is disabled because Folia does not support Bukkit's
+  scoreboard API yet. Use a Folia-compatible scoreboard plugin if you need a sidebar there.
 
 ## Installation
 

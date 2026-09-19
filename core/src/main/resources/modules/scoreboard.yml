@@ -1,5 +1,6 @@
 # Built-in sidebar scoreboard. Automatically disabled while the TAB plugin is installed and
-# managing its own scoreboard, to avoid two plugins fighting over the sidebar.
+# managing its own scoreboard, to avoid two plugins fighting over the sidebar. Folia does not
+# support Bukkit's scoreboard API yet, so this feature is also disabled automatically there.
 enabled: true
 refresh-interval-ticks: 20
 # Default animation speed (in ticks) for any title/line that doesn't set its own interval-ticks.

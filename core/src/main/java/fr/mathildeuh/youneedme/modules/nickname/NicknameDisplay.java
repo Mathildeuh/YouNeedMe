@@ -1,5 +1,6 @@
 package fr.mathildeuh.youneedme.modules.nickname;
 
+import fr.mathildeuh.youneedme.scheduler.ServerEnvironment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -33,17 +34,29 @@ public final class NicknameDisplay {
     private NicknameDisplay() {}
 
     public static void apply(Player player, @Nullable String nickname) {
-        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.getTeam(TEAM_PREFIX + player.getUniqueId());
         if (nickname == null) {
             player.playerListName(null);
-            if (team != null) {
-                team.unregister();
+            if (!ServerEnvironment.isFolia()) {
+                Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+                Team team = board.getTeam(TEAM_PREFIX + player.getUniqueId());
+                if (team != null) {
+                    team.unregister();
+                }
             }
             return;
         }
         Component rendered = MINI_MESSAGE.deserialize(nickname);
         player.playerListName(rendered);
+
+        // Folia currently throws from every Bukkit scoreboard operation. The tab-list nickname
+        // remains supported, but hiding the above-head name requires a scoreboard team and is
+        // therefore unavailable on Folia.
+        if (ServerEnvironment.isFolia()) {
+            return;
+        }
+
+        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+        Team team = board.getTeam(TEAM_PREFIX + player.getUniqueId());
         if (team == null) {
             team = board.registerNewTeam(TEAM_PREFIX + player.getUniqueId());
         }

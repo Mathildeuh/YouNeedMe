@@ -19,7 +19,7 @@ public interface ScoreboardService {
 
     /**
      * Whether YouNeedMe is actively rendering its own scoreboard right now (false while TAB owns
-     * the display).
+     * the display or while the server environment does not support Bukkit scoreboards).
      */
     boolean isActive();
 }
