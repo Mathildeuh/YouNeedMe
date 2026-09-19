@@ -79,4 +79,21 @@ class ScoreboardAnimationTest {
         assertEquals("Hi", animation.frameAt(0, 20));
         assertEquals("Hi", animation.frameAt(500, 20));
     }
+
+    @Test
+    void bounceWithOneFrameDoesNotOverflow() {
+        Map<String, Object> map = Map.of("frames", List.of("only"), "mode", "bounce");
+        ScoreboardAnimation animation = ScoreboardAnimation.parse(map, 20);
+        assertEquals("only", animation.frameAt(0, 20));
+        assertEquals("only", animation.frameAt(Long.MAX_VALUE, 20));
+    }
+
+    @Test
+    void unknownModeFallsBackToLoop() {
+        Map<String, Object> map = Map.of("frames", List.of("a", "b"), "mode", "invalid");
+        ScoreboardAnimation animation = ScoreboardAnimation.parse(map, 20);
+        assertEquals("a", animation.frameAt(0, 20));
+        assertEquals("b", animation.frameAt(1, 20));
+        assertEquals("a", animation.frameAt(2, 20));
+    }
 }
