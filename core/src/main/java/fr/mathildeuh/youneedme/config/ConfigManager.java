@@ -21,6 +21,7 @@ public final class ConfigManager {
         "shop",
         "auctionhouse",
         "playershop",
+        "tickets",
         "homes",
         "warps",
         "rtp",

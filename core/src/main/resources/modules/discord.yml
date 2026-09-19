@@ -10,3 +10,4 @@ notify:
   warns: false
   joins: false
   quits: false
+  tickets: true

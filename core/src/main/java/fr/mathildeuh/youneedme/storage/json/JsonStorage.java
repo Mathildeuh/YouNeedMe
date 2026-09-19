@@ -63,7 +63,8 @@ public final class JsonStorage
                 PunishmentRepository,
                 AuctionRepository,
                 ShopRepository,
-                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository {
+                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository,
+                fr.mathildeuh.youneedme.api.storage.TicketRepository {
 
     private static final TypeAdapter<UUID> UUID_ADAPTER =
             new TypeAdapter<>() {
@@ -113,9 +114,14 @@ public final class JsonStorage
     private final Map<String, Map<String, Integer>> shopStock = new ConcurrentHashMap<>();
     private final List<fr.mathildeuh.youneedme.api.playershop.PlayerShop> playerShops =
             new ArrayList<>();
+    private final List<fr.mathildeuh.youneedme.api.tickets.Ticket> tickets = new ArrayList<>();
+    private final List<fr.mathildeuh.youneedme.api.tickets.TicketMessage> ticketMessages =
+            new ArrayList<>();
     private final AtomicLong punishmentIdSeq = new AtomicLong();
     private final AtomicLong auctionIdSeq = new AtomicLong();
     private final AtomicLong playerShopIdSeq = new AtomicLong();
+    private final AtomicLong ticketIdSeq = new AtomicLong();
+    private final AtomicLong ticketMessageIdSeq = new AtomicLong();
 
     public JsonStorage(Path root) {
         this.root = root;
@@ -175,6 +181,9 @@ public final class JsonStorage
                         auctions.addAll(loadList(file("auctions.json"), auctionListType()));
                         playerShops.addAll(
                                 loadList(file("player_shops.json"), playerShopListType()));
+                        tickets.addAll(loadList(file("tickets.json"), ticketListType()));
+                        ticketMessages.addAll(
+                                loadList(file("ticket_messages.json"), ticketMessageListType()));
                         punishments.stream()
                                 .mapToLong(Punishment::id)
                                 .max()
@@ -187,6 +196,14 @@ public final class JsonStorage
                                 .mapToLong(fr.mathildeuh.youneedme.api.playershop.PlayerShop::id)
                                 .max()
                                 .ifPresent(max -> playerShopIdSeq.set(max));
+                        tickets.stream()
+                                .mapToLong(fr.mathildeuh.youneedme.api.tickets.Ticket::id)
+                                .max()
+                                .ifPresent(max -> ticketIdSeq.set(max));
+                        ticketMessages.stream()
+                                .mapToLong(fr.mathildeuh.youneedme.api.tickets.TicketMessage::id)
+                                .max()
+                                .ifPresent(max -> ticketMessageIdSeq.set(max));
                     } catch (IOException e) {
                         throw new StorageException("Failed to load JSON storage from " + root, e);
                     }
@@ -230,6 +247,11 @@ public final class JsonStorage
 
     @Override
     public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
+        return this;
+    }
+
+    @Override
+    public fr.mathildeuh.youneedme.api.storage.TicketRepository tickets() {
         return this;
     }
 
@@ -948,6 +970,131 @@ public final class JsonStorage
     private static Type playerShopListType() {
         return com.google.gson.reflect.TypeToken.getParameterized(
                         List.class, fr.mathildeuh.youneedme.api.playershop.PlayerShop.class)
+                .getType();
+    }
+
+    // --- TicketRepository ------------------------------------------------------------------
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.tickets.Ticket> save(
+            fr.mathildeuh.youneedme.api.tickets.Ticket ticket) {
+        return supplyAsync(
+                () -> {
+                    var assigned = withId(ticket, ticketIdSeq.incrementAndGet());
+                    tickets.add(assigned);
+                    saveList(file("tickets.json"), tickets);
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<Void> update(fr.mathildeuh.youneedme.api.tickets.Ticket ticket) {
+        return runAsync(
+                () -> {
+                    for (int i = 0; i < tickets.size(); i++) {
+                        if (tickets.get(i).id() == ticket.id()) {
+                            tickets.set(i, ticket);
+                            break;
+                        }
+                    }
+                    saveList(file("tickets.json"), tickets);
+                });
+    }
+
+    @Override
+    public CompletableFuture<Optional<fr.mathildeuh.youneedme.api.tickets.Ticket>> findTicket(
+            long id) {
+        return supplyAsync(() -> tickets.stream().filter(t -> t.id() == id).findFirst());
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.Ticket>> findByStatuses(
+            List<fr.mathildeuh.youneedme.api.tickets.Ticket.Status> statuses) {
+        return supplyAsync(
+                () ->
+                        tickets.stream()
+                                .filter(t -> statuses.contains(t.status()))
+                                .sorted(
+                                        java.util.Comparator.comparingLong(
+                                                fr.mathildeuh.youneedme.api.tickets.Ticket
+                                                        ::createdAt))
+                                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.Ticket>> findByPlayer(
+            UUID player) {
+        return supplyAsync(
+                () ->
+                        tickets.stream()
+                                .filter(t -> t.player().equals(player))
+                                .sorted(
+                                        java.util.Comparator.comparingLong(
+                                                        fr.mathildeuh.youneedme.api.tickets.Ticket
+                                                                ::createdAt)
+                                                .reversed())
+                                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.tickets.TicketMessage> addMessage(
+            fr.mathildeuh.youneedme.api.tickets.TicketMessage message) {
+        return supplyAsync(
+                () -> {
+                    var assigned =
+                            new fr.mathildeuh.youneedme.api.tickets.TicketMessage(
+                                    ticketMessageIdSeq.incrementAndGet(),
+                                    message.ticketId(),
+                                    message.author(),
+                                    message.authorUsername(),
+                                    message.staffMessage(),
+                                    message.message(),
+                                    message.sentAt());
+                    ticketMessages.add(assigned);
+                    saveList(file("ticket_messages.json"), ticketMessages);
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.TicketMessage>> messages(
+            long ticketId) {
+        return supplyAsync(
+                () ->
+                        ticketMessages.stream()
+                                .filter(m -> m.ticketId() == ticketId)
+                                .sorted(
+                                        java.util.Comparator.comparingLong(
+                                                fr.mathildeuh.youneedme.api.tickets.TicketMessage
+                                                        ::sentAt))
+                                .collect(Collectors.toList()));
+    }
+
+    private static fr.mathildeuh.youneedme.api.tickets.Ticket withId(
+            fr.mathildeuh.youneedme.api.tickets.Ticket ticket, long id) {
+        return new fr.mathildeuh.youneedme.api.tickets.Ticket(
+                id,
+                ticket.player(),
+                ticket.playerLastKnownUsername(),
+                ticket.category(),
+                ticket.status(),
+                ticket.claimedBy(),
+                ticket.claimedByUsername(),
+                ticket.createdAt(),
+                ticket.closedAt(),
+                ticket.closedBy(),
+                ticket.closedByUsername());
+    }
+
+    private static Type ticketListType() {
+        return com.google.gson.reflect.TypeToken.getParameterized(
+                        List.class, fr.mathildeuh.youneedme.api.tickets.Ticket.class)
+                .getType();
+    }
+
+    private static Type ticketMessageListType() {
+        return com.google.gson.reflect.TypeToken.getParameterized(
+                        List.class, fr.mathildeuh.youneedme.api.tickets.TicketMessage.class)
                 .getType();
     }
 }

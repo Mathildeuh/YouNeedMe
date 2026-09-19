@@ -2,6 +2,7 @@ package fr.mathildeuh.youneedme.modules.discord;
 
 import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.api.event.PunishmentIssuedEvent;
+import fr.mathildeuh.youneedme.api.event.TicketCreateEvent;
 import fr.mathildeuh.youneedme.api.moderation.PunishmentType;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -66,6 +67,21 @@ public final class DiscordNotifier implements Listener {
                         + who
                         + "` - "
                         + punishment.reason());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onTicketCreate(TicketCreateEvent event) {
+        if (!config().getBoolean("notify.tickets", true)) {
+            return;
+        }
+        var ticket = event.getTicket();
+        send(
+                ":ticket: **New ticket #"
+                        + ticket.id()
+                        + "** from `"
+                        + ticket.playerLastKnownUsername()
+                        + "`"
+                        + (ticket.category() == null ? "" : " [" + ticket.category() + "]"));
     }
 
     @EventHandler

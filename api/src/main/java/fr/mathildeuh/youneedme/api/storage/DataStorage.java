@@ -42,4 +42,6 @@ public interface DataStorage {
     ShopRepository shop();
 
     PlayerShopRepository playerShops();
+
+    TicketRepository tickets();
 }

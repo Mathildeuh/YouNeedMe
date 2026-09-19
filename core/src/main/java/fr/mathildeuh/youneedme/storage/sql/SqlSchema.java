@@ -178,7 +178,41 @@ final class SqlSchema {
                 """
                         .formatted(id),
                 "CREATE INDEX IF NOT EXISTS idx_ynm_player_shops_owner ON ynm_player_shops"
-                        + " (owner)");
+                        + " (owner)",
+                """
+                CREATE TABLE IF NOT EXISTS ynm_tickets (
+                    id %s,
+                    player VARCHAR(36) NOT NULL,
+                    player_username VARCHAR(16) NOT NULL,
+                    category VARCHAR(32),
+                    status VARCHAR(16) NOT NULL,
+                    claimed_by VARCHAR(36),
+                    claimed_by_username VARCHAR(16),
+                    created_at BIGINT NOT NULL,
+                    closed_at BIGINT,
+                    closed_by VARCHAR(36),
+                    closed_by_username VARCHAR(16)
+                )
+                """
+                        .formatted(id),
+                "CREATE INDEX IF NOT EXISTS idx_ynm_tickets_status ON ynm_tickets (status,"
+                        + " created_at)",
+                "CREATE INDEX IF NOT EXISTS idx_ynm_tickets_player ON ynm_tickets (player,"
+                        + " status)",
+                """
+                CREATE TABLE IF NOT EXISTS ynm_ticket_messages (
+                    id %s,
+                    ticket_id BIGINT NOT NULL,
+                    author VARCHAR(36),
+                    author_username VARCHAR(16) NOT NULL,
+                    staff_message %s NOT NULL DEFAULT %s,
+                    message VARCHAR(1024) NOT NULL,
+                    sent_at BIGINT NOT NULL
+                )
+                """
+                        .formatted(id, bool, dialect.isMySqlFamily() ? "0" : "FALSE"),
+                "CREATE INDEX IF NOT EXISTS idx_ynm_ticket_messages_ticket ON ynm_ticket_messages"
+                        + " (ticket_id, sent_at)");
     }
 
     /**

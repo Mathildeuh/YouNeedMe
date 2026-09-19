@@ -28,6 +28,7 @@ import fr.mathildeuh.youneedme.api.storage.PlayerProfileRepository;
 import fr.mathildeuh.youneedme.api.storage.PunishmentRepository;
 import fr.mathildeuh.youneedme.api.storage.ShopRepository;
 import fr.mathildeuh.youneedme.api.storage.StorageType;
+import fr.mathildeuh.youneedme.api.storage.TicketRepository;
 import fr.mathildeuh.youneedme.api.storage.WarpRepository;
 import fr.mathildeuh.youneedme.storage.util.ItemStackCodec;
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public final class MongoStorage
                 PunishmentRepository,
                 AuctionRepository,
                 ShopRepository,
-                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository {
+                fr.mathildeuh.youneedme.api.storage.PlayerShopRepository,
+                TicketRepository {
 
     private final String connectionString;
     private final String databaseName;
@@ -73,6 +75,8 @@ public final class MongoStorage
     private MongoCollection<Document> auctions;
     private MongoCollection<Document> shopStock;
     private MongoCollection<Document> playerShops;
+    private MongoCollection<Document> tickets;
+    private MongoCollection<Document> ticketMessages;
     private MongoCollection<Document> counters;
 
     public MongoStorage(String connectionString, String databaseName, int poolSize) {
@@ -110,6 +114,8 @@ public final class MongoStorage
                     auctions = database.getCollection("auctions");
                     shopStock = database.getCollection("shop_stock");
                     playerShops = database.getCollection("player_shops");
+                    tickets = database.getCollection("tickets");
+                    ticketMessages = database.getCollection("ticket_messages");
                     counters = database.getCollection("counters");
                 });
     }
@@ -152,6 +158,9 @@ public final class MongoStorage
                             Indexes.ascending("categoryId", "itemId"),
                             new IndexOptions().unique(true));
                     playerShops.createIndex(Indexes.ascending("owner"));
+                    tickets.createIndex(Indexes.ascending("status", "createdAt"));
+                    tickets.createIndex(Indexes.ascending("player", "status"));
+                    ticketMessages.createIndex(Indexes.ascending("ticketId", "sentAt"));
                 },
                 executor);
     }
@@ -213,6 +222,11 @@ public final class MongoStorage
 
     @Override
     public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
+        return this;
+    }
+
+    @Override
+    public TicketRepository tickets() {
         return this;
     }
 
@@ -1167,5 +1181,180 @@ public final class MongoStorage
                 shop.item(),
                 shop.buyPrice(),
                 shop.sellPrice());
+    }
+
+    // --- TicketRepository ---------------------------------------------------------------------
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.tickets.Ticket> save(
+            fr.mathildeuh.youneedme.api.tickets.Ticket ticket) {
+        return supplyAsync(
+                () -> {
+                    long id = nextSequence("tickets");
+                    var assigned = withId(ticket, id);
+                    tickets.insertOne(toDocument(assigned));
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<Void> update(fr.mathildeuh.youneedme.api.tickets.Ticket ticket) {
+        return runAsync(
+                () ->
+                        tickets.replaceOne(
+                                com.mongodb.client.model.Filters.eq("_id", ticket.id()),
+                                toDocument(ticket)));
+    }
+
+    @Override
+    public CompletableFuture<Optional<fr.mathildeuh.youneedme.api.tickets.Ticket>> findTicket(
+            long id) {
+        return supplyAsync(
+                () -> {
+                    Document doc =
+                            tickets.find(com.mongodb.client.model.Filters.eq("_id", id)).first();
+                    return doc == null ? Optional.empty() : Optional.of(mapTicket(doc));
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.Ticket>> findByStatuses(
+            List<fr.mathildeuh.youneedme.api.tickets.Ticket.Status> statuses) {
+        return supplyAsync(
+                () -> {
+                    List<String> names = statuses.stream().map(Enum::name).toList();
+                    List<fr.mathildeuh.youneedme.api.tickets.Ticket> result = new ArrayList<>();
+                    for (Document doc :
+                            tickets.find(com.mongodb.client.model.Filters.in("status", names))
+                                    .sort(Indexes.ascending("createdAt"))) {
+                        result.add(mapTicket(doc));
+                    }
+                    return result;
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.Ticket>> findByPlayer(
+            UUID player) {
+        return supplyAsync(
+                () -> {
+                    List<fr.mathildeuh.youneedme.api.tickets.Ticket> result = new ArrayList<>();
+                    for (Document doc :
+                            tickets.find(
+                                            com.mongodb.client.model.Filters.eq(
+                                                    "player", player.toString()))
+                                    .sort(Indexes.descending("createdAt"))) {
+                        result.add(mapTicket(doc));
+                    }
+                    return result;
+                });
+    }
+
+    @Override
+    public CompletableFuture<fr.mathildeuh.youneedme.api.tickets.TicketMessage> addMessage(
+            fr.mathildeuh.youneedme.api.tickets.TicketMessage message) {
+        return supplyAsync(
+                () -> {
+                    long id = nextSequence("ticket_messages");
+                    var assigned =
+                            new fr.mathildeuh.youneedme.api.tickets.TicketMessage(
+                                    id,
+                                    message.ticketId(),
+                                    message.author(),
+                                    message.authorUsername(),
+                                    message.staffMessage(),
+                                    message.message(),
+                                    message.sentAt());
+                    ticketMessages.insertOne(toDocument(assigned));
+                    return assigned;
+                });
+    }
+
+    @Override
+    public CompletableFuture<List<fr.mathildeuh.youneedme.api.tickets.TicketMessage>> messages(
+            long ticketId) {
+        return supplyAsync(
+                () -> {
+                    List<fr.mathildeuh.youneedme.api.tickets.TicketMessage> result =
+                            new ArrayList<>();
+                    for (Document doc :
+                            ticketMessages
+                                    .find(com.mongodb.client.model.Filters.eq("ticketId", ticketId))
+                                    .sort(Indexes.ascending("sentAt"))) {
+                        result.add(mapMessage(doc));
+                    }
+                    return result;
+                });
+    }
+
+    private static Document toDocument(fr.mathildeuh.youneedme.api.tickets.Ticket ticket) {
+        return new Document("_id", ticket.id())
+                .append("player", ticket.player().toString())
+                .append("playerUsername", ticket.playerLastKnownUsername())
+                .append("category", ticket.category())
+                .append("status", ticket.status().name())
+                .append(
+                        "claimedBy",
+                        ticket.claimedBy() == null ? null : ticket.claimedBy().toString())
+                .append("claimedByUsername", ticket.claimedByUsername())
+                .append("createdAt", ticket.createdAt())
+                .append("closedAt", ticket.closedAt())
+                .append("closedBy", ticket.closedBy() == null ? null : ticket.closedBy().toString())
+                .append("closedByUsername", ticket.closedByUsername());
+    }
+
+    private static fr.mathildeuh.youneedme.api.tickets.Ticket mapTicket(Document doc) {
+        String claimedBy = doc.getString("claimedBy");
+        String closedBy = doc.getString("closedBy");
+        return new fr.mathildeuh.youneedme.api.tickets.Ticket(
+                doc.getLong("_id"),
+                UUID.fromString(doc.getString("player")),
+                doc.getString("playerUsername"),
+                doc.getString("category"),
+                fr.mathildeuh.youneedme.api.tickets.Ticket.Status.valueOf(doc.getString("status")),
+                claimedBy == null ? null : UUID.fromString(claimedBy),
+                doc.getString("claimedByUsername"),
+                doc.getLong("createdAt"),
+                doc.getLong("closedAt"),
+                closedBy == null ? null : UUID.fromString(closedBy),
+                doc.getString("closedByUsername"));
+    }
+
+    private static Document toDocument(fr.mathildeuh.youneedme.api.tickets.TicketMessage message) {
+        return new Document("_id", message.id())
+                .append("ticketId", message.ticketId())
+                .append("author", message.author() == null ? null : message.author().toString())
+                .append("authorUsername", message.authorUsername())
+                .append("staffMessage", message.staffMessage())
+                .append("message", message.message())
+                .append("sentAt", message.sentAt());
+    }
+
+    private static fr.mathildeuh.youneedme.api.tickets.TicketMessage mapMessage(Document doc) {
+        String author = doc.getString("author");
+        return new fr.mathildeuh.youneedme.api.tickets.TicketMessage(
+                doc.getLong("_id"),
+                doc.getLong("ticketId"),
+                author == null ? null : UUID.fromString(author),
+                doc.getString("authorUsername"),
+                doc.getBoolean("staffMessage"),
+                doc.getString("message"),
+                doc.getLong("sentAt"));
+    }
+
+    private static fr.mathildeuh.youneedme.api.tickets.Ticket withId(
+            fr.mathildeuh.youneedme.api.tickets.Ticket ticket, long id) {
+        return new fr.mathildeuh.youneedme.api.tickets.Ticket(
+                id,
+                ticket.player(),
+                ticket.playerLastKnownUsername(),
+                ticket.category(),
+                ticket.status(),
+                ticket.claimedBy(),
+                ticket.claimedByUsername(),
+                ticket.createdAt(),
+                ticket.closedAt(),
+                ticket.closedBy(),
+                ticket.closedByUsername());
     }
 }

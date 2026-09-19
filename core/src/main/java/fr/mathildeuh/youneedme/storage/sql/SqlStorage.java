@@ -11,6 +11,7 @@ import fr.mathildeuh.youneedme.api.storage.PlayerProfileRepository;
 import fr.mathildeuh.youneedme.api.storage.PunishmentRepository;
 import fr.mathildeuh.youneedme.api.storage.ShopRepository;
 import fr.mathildeuh.youneedme.api.storage.StorageType;
+import fr.mathildeuh.youneedme.api.storage.TicketRepository;
 import fr.mathildeuh.youneedme.api.storage.WarpRepository;
 import java.sql.Statement;
 import java.util.concurrent.CompletableFuture;
@@ -37,6 +38,7 @@ public final class SqlStorage implements DataStorage {
     private AuctionRepository auctions;
     private ShopRepository shop;
     private fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops;
+    private TicketRepository tickets;
 
     public SqlStorage(SqlDialect dialect, SqlConnectionConfig config) {
         this.dialect = dialect;
@@ -89,6 +91,7 @@ public final class SqlStorage implements DataStorage {
                     this.auctions = new SqlAuctionRepository(sql);
                     this.shop = new SqlShopRepository(sql, dialect);
                     this.playerShops = new SqlPlayerShopRepository(sql);
+                    this.tickets = new SqlTicketRepository(sql);
                 });
     }
 
@@ -199,6 +202,11 @@ public final class SqlStorage implements DataStorage {
     @Override
     public fr.mathildeuh.youneedme.api.storage.PlayerShopRepository playerShops() {
         return playerShops;
+    }
+
+    @Override
+    public TicketRepository tickets() {
+        return tickets;
     }
 
     public int activeConnections() {
