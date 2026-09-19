@@ -99,6 +99,10 @@ jobs:
       # Hangar requires the URL to target the version asset directly, rather than the releases page.
       - name: Publish to Hangar
         uses: milkdrinkers/Hangar-Publish@v2
+        # Hangar accepts the upload, but this action can keep its Node process alive after
+        # reporting success. Do not let that open connection block the whole release forever.
+        timeout-minutes: 2
+        continue-on-error: true
         with:
           api_token: ${{ secrets.HANGAR_API_KEY }}
           slug: YouNeedMe
@@ -117,6 +121,29 @@ jobs:
             {
               "PAPER": [">=1.21"]
             }
+
+      - name: Verify Hangar publication
+        if: ${{ always() }}
+        env:
+          HANGAR_VERSION: ${{ steps.hangar_version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          url="https://hangar.papermc.io/api/v1/projects/YouNeedMe/versions/${HANGAR_VERSION}"
+          for attempt in {1..12}; do
+            if response=$(curl --fail-with-body --silent --show-error "$url"); then
+              published_version=$(printf '%s' "$response" | jq -r '.name // empty')
+              if [ "$published_version" = "$HANGAR_VERSION" ]; then
+                echo "Verified Hangar publication: $url"
+                exit 0
+              fi
+            fi
+            echo "Hangar version $HANGAR_VERSION is not visible yet (attempt $attempt/12)."
+            sleep 5
+          done
+
+          echo "Hangar version $HANGAR_VERSION was not found after publication." >&2
+          exit 1
 
   javadoc:
     needs: release-please
