@@ -14,6 +14,7 @@ import fr.mathildeuh.youneedme.modules.scoreboard.ScoreboardServiceImpl;
 import fr.mathildeuh.youneedme.modules.shop.ShopServiceImpl;
 import fr.mathildeuh.youneedme.modules.tickets.TicketServiceImpl;
 import fr.mathildeuh.youneedme.modules.tpa.TpaModule;
+import fr.mathildeuh.youneedme.modules.trade.TradeManager;
 import fr.mathildeuh.youneedme.modules.warps.WarpServiceImpl;
 import fr.mathildeuh.youneedme.util.Cooldowns;
 import fr.mathildeuh.youneedme.util.TeleportWarmup;
@@ -39,6 +40,7 @@ public final class Services {
     public ScoreboardServiceImpl scoreboard;
     public NicknameServiceImpl nicknames;
     public TpaModule tpa;
+    public TradeManager trade;
 
     /** Null when LuckPerms isn't installed - callers fall back to plain usernames. */
     public LuckPermsHook luckPerms;

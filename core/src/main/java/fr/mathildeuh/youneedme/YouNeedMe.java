@@ -25,6 +25,7 @@ import fr.mathildeuh.youneedme.modules.scoreboard.ScoreboardModule;
 import fr.mathildeuh.youneedme.modules.shop.ShopModule;
 import fr.mathildeuh.youneedme.modules.tickets.TicketModule;
 import fr.mathildeuh.youneedme.modules.tpa.TpaModule;
+import fr.mathildeuh.youneedme.modules.trade.TradeModule;
 import fr.mathildeuh.youneedme.modules.utility.UtilityModule;
 import fr.mathildeuh.youneedme.modules.warps.WarpsModule;
 import fr.mathildeuh.youneedme.scheduler.ServerEnvironment;
@@ -108,6 +109,7 @@ public final class YouNeedMe extends JavaPlugin {
                     services.scoreboard = ScoreboardModule.enable(this);
                     services.nicknames = NicknameModule.enable(this, storage.playerProfiles());
                     services.tpa = TpaModule.enable(this);
+                    services.trade = TradeModule.enable(this);
                     services.luckPerms = LuckPermsIntegration.enable(this);
                     services.networkVanish =
                             fr.mathildeuh.youneedme.integrations.network.NetworkVanishSync.enable(

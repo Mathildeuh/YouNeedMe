@@ -175,6 +175,7 @@ public final class PlayerLifecycleListener implements Listener {
         plugin.services().godMode.remove(id);
         plugin.services().vanished.remove(id);
         plugin.services().tpa.forgetPlayer(id);
+        plugin.services().trade.forgetIncomingRequest(id);
         plugin.services().joinedAt.remove(id);
         plugin.services().lastActivity.remove(id);
     }

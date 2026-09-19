@@ -1,0 +1,3 @@
+# Player-to-player trade module.
+enabled: true
+request-expiry-seconds: 60

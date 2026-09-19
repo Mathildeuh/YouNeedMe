@@ -90,6 +90,9 @@ commands:
   ticket: { description: "Player support tickets", usage: "/ticket <message> (or list|history|view|reply|close|claim)", permission: youneedme.tickets }
   tickets: { description: Open the staff ticket queue, usage: /tickets, permission: youneedme.tickets.staff }
   top: { description: Teleport to highest block, usage: /top, permission: youneedme.top }
+  trade: { description: Request a trade with another player, usage: "/trade <player>", permission: youneedme.trade }
+  tradeaccept: { description: Accept an incoming trade request, usage: /tradeaccept, permission: youneedme.trade }
+  tradedeny: { description: Decline an incoming trade request, usage: /tradedeny, permission: youneedme.trade }
   tpa: { description: Request teleport to player, usage: "/tpa <player>", permission: youneedme.tpa }
   tpaccept: { description: Accept teleport request, usage: "/tpaccept [player]", permission: youneedme.tpaccept }
   tpahere: { description: Request player teleport to you, usage: "/tpahere <player>", permission: youneedme.tpahere }
@@ -188,3 +191,4 @@ permissions:
   youneedme.playershop.remove.others: { default: op }
   youneedme.tickets: { default: true }
   youneedme.tickets.staff: { default: op }
+  youneedme.trade: { default: true }
