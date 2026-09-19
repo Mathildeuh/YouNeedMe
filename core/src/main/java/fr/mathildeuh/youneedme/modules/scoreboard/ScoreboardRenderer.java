@@ -13,7 +13,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Renders the YAML-configured sidebar scoreboard on a repeating timer. Yields entirely to TAB when
@@ -62,23 +61,32 @@ public final class ScoreboardRenderer {
         }
         renderTick++;
         long refreshIntervalTicks = Math.max(1, config.getLong("refresh-interval-ticks", 20));
-        long animationIntervalTicks =
+        long defaultAnimationIntervalTicks =
                 Math.max(1, config.getLong("animation-interval-ticks", refreshIntervalTicks));
-        long framesPerAdvance = Math.max(1, animationIntervalTicks / refreshIntervalTicks);
-        int frame = (int) ((renderTick / framesPerAdvance) % Integer.MAX_VALUE);
 
-        Object titleRaw = config.get("title", "<gold><bold>YouNeedMe");
-        List<?> linesRaw = config.getList("lines", List.of());
+        ScoreboardAnimation title =
+                ScoreboardAnimation.parse(
+                        config.get("title", "<gold><bold>YouNeedMe"),
+                        defaultAnimationIntervalTicks);
+        List<ScoreboardAnimation> lines =
+                config.getList("lines", List.of()).stream()
+                        .map(raw -> ScoreboardAnimation.parse(raw, defaultAnimationIntervalTicks))
+                        .toList();
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (service.isEnabledFor(player.getUniqueId())) {
-                render(player, titleRaw, linesRaw, frame);
+                render(player, title, lines, refreshIntervalTicks);
             } else {
                 clear(player);
             }
         }
     }
 
-    private void render(Player player, Object titleRaw, List<?> linesRaw, int frame) {
+    private void render(
+            Player player,
+            ScoreboardAnimation title,
+            List<ScoreboardAnimation> lines,
+            long refreshIntervalTicks) {
         Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard.equals(Bukkit.getScoreboardManager().getMainScoreboard())) {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -91,9 +99,9 @@ public final class ScoreboardRenderer {
                             OBJECTIVE_ID, Criteria.DUMMY, Component.empty());
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
-        objective.displayName(resolve(player, currentFrame(titleRaw, frame)));
+        objective.displayName(resolve(player, title.frameAt(renderTick, refreshIntervalTicks)));
 
-        int lineCount = Math.min(linesRaw.size(), LINE_TOKENS.length);
+        int lineCount = Math.min(lines.size(), LINE_TOKENS.length);
         for (int i = 0; i < lineCount; i++) {
             String entry = LINE_TOKENS[i];
             Team team = scoreboard.getTeam("ynm_l" + i);
@@ -101,7 +109,7 @@ public final class ScoreboardRenderer {
                 team = scoreboard.registerNewTeam("ynm_l" + i);
                 team.addEntry(entry);
             }
-            team.prefix(resolve(player, currentFrame(linesRaw.get(i), frame)));
+            team.prefix(resolve(player, lines.get(i).frameAt(renderTick, refreshIntervalTicks)));
             objective.getScore(entry).setScore(lineCount - i);
         }
         for (String entry : List.copyOf(scoreboard.getEntries())) {
@@ -116,18 +124,6 @@ public final class ScoreboardRenderer {
                 scoreboard.resetScores(entry);
             }
         }
-    }
-
-    /**
-     * A title or line entry is either a single static string, or a YAML list of strings to cycle
-     * through as animation frames - {@code frame} picks which one is currently shown.
-     */
-    private static String currentFrame(@Nullable Object raw, int frame) {
-        if (raw instanceof List<?> frames && !frames.isEmpty()) {
-            Object selected = frames.get(Math.floorMod(frame, frames.size()));
-            return selected == null ? "" : selected.toString();
-        }
-        return raw == null ? "" : raw.toString();
     }
 
     private Component resolve(Player player, String raw) {

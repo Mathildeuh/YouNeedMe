@@ -2,23 +2,40 @@
 # managing its own scoreboard, to avoid two plugins fighting over the sidebar.
 enabled: true
 refresh-interval-ticks: 20
-# How often an animated title/line advances to its next frame, in ticks. Rounded down to the
-# nearest multiple of refresh-interval-ticks (the scoreboard can never visually update faster than
-# it refreshes) - defaults to refresh-interval-ticks, i.e. advance one frame every refresh.
+# Default animation speed (in ticks) for any title/line that doesn't set its own interval-ticks.
+# Rounded down to the nearest multiple of refresh-interval-ticks - the scoreboard can never
+# visually update faster than it refreshes, so lower refresh-interval-ticks for smoother/faster
+# animations.
 animation-interval-ticks: 20
 
-# `title` and any entry in `lines` can be either a single string (static) or a YAML list of
-# strings, cycled through in order as animation frames. Example animated title:
+# `title` and any entry in `lines` accept four forms:
+#   1. a plain string                     -> static, never changes.
+#   2. a YAML list of strings              -> cycled in order, at the default animation speed.
+#   3. a map with `frames: [...]`          -> like #2, but can override `interval-ticks`/`mode`.
+#   4. a map with `scroll: "..."`          -> auto-generates a scrolling marquee, see below.
+#
+# `mode` (forms #3/#4) is one of:
+#   loop   (default) - restarts from the first frame once the last is reached.
+#   bounce            - plays forward then backward, back and forth, forever.
+#   once              - plays through once, then freezes on the last frame for the rest of the
+#                        server's uptime (it does not replay per player).
+#
+# Examples:
 # title:
-#   - "<gold><bold>YouNeedMe"
-#   - "<yellow><bold>YouNeedMe"
+#   frames: ["<gold><bold>YouNeedMe", "<yellow><bold>YouNeedMe"]
+#   interval-ticks: 10
+#   mode: bounce
+#
+# A scrolling line - `style` is a constant MiniMessage prefix kept outside the scrolled text so a
+# tag is never cut mid-window; `width` is the visible character count:
+# - scroll: "Welcome to play.example.com! Enjoy your stay~"
+#   style: "<yellow>"
+#   width: 20
+#   interval-ticks: 4
 title: "<gold><bold>YouNeedMe"
 lines:
   - ""
   - "<gray>Player: <white>{player}"
   - "<gray>Online: <white>{online}/{max}"
   - ""
-  # Example animated line - a simple scrolling/blinking effect:
-  # - - "<yellow>play.example.com"
-  #   - "<gold>play.example.com"
   - "<yellow>play.example.com"
