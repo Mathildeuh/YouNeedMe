@@ -8,6 +8,19 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.7.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.4...v1.7.0) (2026-09-19)
+
+
+### Features
+
+* player support tickets (categories, staff queue GUI, Discord notifications, transcripts) ([0eef808](https://github.com/Mathildeuh/YouNeedMe/commit/0eef808c72e30e45cf288ca74be7af28d4640576))
+* secure player-to-player trading (/trade, items + money + XP levels) ([e70b0cf](https://github.com/Mathildeuh/YouNeedMe/commit/e70b0cfbdd55145cba0a7fa8256bc773ddb40702))
+
+
+### Bug Fixes
+
+* drop the /ticket new subcommand - create directly from the message ([a224caf](https://github.com/Mathildeuh/YouNeedMe/commit/a224caf2645d38f7ad1539a8107d24e053982b53))
+
 ## [1.6.4](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.3...v1.6.4) (2026-09-19)
 
 
