@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.8.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.0...v1.8.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* resolve 2 more Qodana findings, document the remaining 5 as known ([f5f7b8d](https://github.com/Mathildeuh/YouNeedMe/commit/f5f7b8dabdfe2cd1e9cfd89ee7f9135cf8867265))
+
 ## [1.8.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.7.1...v1.8.0) (2026-09-19)
 
 
