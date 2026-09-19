@@ -1051,5 +1051,6 @@
   "discord.not_configured": "<prefix> <color:#FF0000>Es wurde noch keine Discord-Einladung konfiguriert.</color>",
   "command.usage.kit": "<prefix> <color:#FF0000>Verwendung: /kit <claim|cooldown|notifications|debug> <kit></color>",
   "command.usage.kits": "<prefix> <color:#FF0000>Verwendung: /kits <list|reload></color>",
-  "command.usage.scoreboard": "<prefix> <color:#FF0000>Verwendung: /scoreboard <toggle|reload></color>"
+  "command.usage.scoreboard": "<prefix> <color:#FF0000>Verwendung: /scoreboard <toggle|reload></color>",
+  "update.available": "<prefix> <color:#FFF200>Update verfügbar: <color:#FFFFFF><version></color> (aktuell <color:#FFFFFF><current></color>) - <click:open_url:'https://github.com/Mathildeuh/YouNeedMe/releases/latest'><color:#57F527><underlined>Herunterladen</underlined></color></click></color>"
 }

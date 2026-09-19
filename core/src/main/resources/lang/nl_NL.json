@@ -1051,5 +1051,6 @@
   "discord.not_configured": "<prefix> <color:#FF0000>Er is nog geen Discord-uitnodiging geconfigureerd.</color>",
   "command.usage.kit": "<prefix> <color:#FF0000>Gebruik: /kit <claim|cooldown|notifications|debug> <kit></color>",
   "command.usage.kits": "<prefix> <color:#FF0000>Gebruik: /kits <list|reload></color>",
-  "command.usage.scoreboard": "<prefix> <color:#FF0000>Gebruik: /scoreboard <toggle|reload></color>"
+  "command.usage.scoreboard": "<prefix> <color:#FF0000>Gebruik: /scoreboard <toggle|reload></color>",
+  "update.available": "<prefix> <color:#FFF200>Update beschikbaar: <color:#FFFFFF><version></color> (huidig <color:#FFFFFF><current></color>) - <click:open_url:'https://github.com/Mathildeuh/YouNeedMe/releases/latest'><color:#57F527><underlined>Downloaden</underlined></color></click></color>"
 }

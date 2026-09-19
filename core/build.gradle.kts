@@ -92,6 +92,12 @@ tasks.named("build") {
 }
 
 tasks.named<ProcessResources>("processResources") {
+    // Copy/ProcessResources' expand() filtering runs through an opaque closure that Gradle can't
+    // introspect, so a plain `expand(props)` is invisible to up-to-date checking - project.version
+    // bumping (e.g. release-please) would leave a stale plugin.yml cached from a previous build
+    // instead of regenerating it. inputs.property() makes the version part of the task's actual
+    // fingerprint so a change correctly invalidates the cache.
+    inputs.property("version", project.version)
     val props = mapOf("version" to project.version)
     filesMatching("plugin.yml") {
         expand(props)

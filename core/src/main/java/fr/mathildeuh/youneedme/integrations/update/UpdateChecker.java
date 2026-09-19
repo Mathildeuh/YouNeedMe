@@ -9,8 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.logging.Level;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -122,13 +121,13 @@ public final class UpdateChecker implements Listener {
         CommandSender player = event.getPlayer();
         if (version != null && player.hasPermission("youneedme.admin")) {
             player.sendMessage(
-                    Component.text(
-                            "[YouNeedMe] Update available: "
-                                    + version
-                                    + " (running "
-                                    + plugin.getPluginMeta().getVersion()
-                                    + ")",
-                            NamedTextColor.YELLOW));
+                    plugin.lang()
+                            .render(
+                                    player,
+                                    "update.available",
+                                    Placeholder.unparsed("version", version),
+                                    Placeholder.unparsed(
+                                            "current", plugin.getPluginMeta().getVersion())));
         }
     }
 }

@@ -1,6 +1,7 @@
 # YouNeedMe
 
 [![CI](https://github.com/Mathildeuh/YouNeedMe/actions/workflows/ci.yml/badge.svg)](https://github.com/Mathildeuh/YouNeedMe/actions/workflows/ci.yml)
+[![Qodana](https://github.com/Mathildeuh/YouNeedMe/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/Mathildeuh/YouNeedMe/actions/workflows/qodana_code_quality.yml)
 [![Release](https://img.shields.io/github/v/release/Mathildeuh/YouNeedMe?label=release)](https://github.com/Mathildeuh/YouNeedMe/releases/latest)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Paper API](https://img.shields.io/badge/paper--api-26.2%2F26.3-orange)](https://papermc.io)
