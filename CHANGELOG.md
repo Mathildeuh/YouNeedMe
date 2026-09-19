@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.6.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.0...v1.6.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* Modrinth version changelog showed every past release, not just this one ([ca40864](https://github.com/Mathildeuh/YouNeedMe/commit/ca408648262927c89b893fe5d0fbd719752a3ab6))
+
 ## [1.6.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.5.1...v1.6.0) (2026-09-19)
 
 
