@@ -191,7 +191,7 @@ final class RepairCommand extends YnmCommand {
             return;
         }
         damageable.setDamage(0);
-        hand.setItemMeta((ItemMeta) damageable);
+        hand.setItemMeta(damageable);
         boolean self = target.getUniqueId().equals(player.getUniqueId());
         if (self) {
             send(sender, "repair.success", Placeholder.unparsed("item", hand.getType().name()));

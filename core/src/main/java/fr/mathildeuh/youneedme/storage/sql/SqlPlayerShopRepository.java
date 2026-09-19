@@ -102,7 +102,7 @@ public final class SqlPlayerShopRepository implements PlayerShopRepository {
             ps.setDouble(i++, shop.buyPrice());
         }
         if (shop.sellPrice() == null) {
-            ps.setNull(i++, java.sql.Types.DOUBLE);
+            ps.setNull(i, java.sql.Types.DOUBLE);
         } else {
             ps.setDouble(i, shop.sellPrice());
         }

@@ -47,22 +47,26 @@ public final class NicknameServiceImpl implements NicknameService {
         return repository
                 .find(player)
                 .thenCompose(
-                        opt -> {
-                            if (opt.isEmpty()) {
-                                return CompletableFuture.completedFuture(false);
-                            }
-                            return repository
-                                    .save(opt.get().withNickname(nickname))
-                                    .thenApply(
-                                            v -> {
-                                                if (nickname == null) {
-                                                    cache.remove(player);
-                                                } else {
-                                                    cache.put(player, nickname);
-                                                }
-                                                return true;
-                                            });
-                        });
+                        opt ->
+                                opt.map(
+                                                profile ->
+                                                        repository
+                                                                .save(
+                                                                        profile.withNickname(
+                                                                                nickname))
+                                                                .thenApply(
+                                                                        v -> {
+                                                                            if (nickname == null) {
+                                                                                cache.remove(
+                                                                                        player);
+                                                                            } else {
+                                                                                cache.put(
+                                                                                        player,
+                                                                                        nickname);
+                                                                            }
+                                                                            return true;
+                                                                        }))
+                                        .orElseGet(() -> CompletableFuture.completedFuture(false)));
     }
 
     @Override

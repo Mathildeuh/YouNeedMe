@@ -70,9 +70,7 @@ public final class SqlAuctionRepository implements AuctionRepository {
                                     "SELECT * FROM ynm_auctions WHERE id = ?")) {
                         ps.setLong(1, id);
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next()
-                                    ? Optional.of(mapRow(rs))
-                                    : Optional.<AuctionListing>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });

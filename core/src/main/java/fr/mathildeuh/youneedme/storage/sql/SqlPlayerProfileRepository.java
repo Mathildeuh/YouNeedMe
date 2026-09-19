@@ -68,9 +68,7 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
                                     "SELECT * FROM ynm_player_profiles WHERE uuid = ?")) {
                         ps.setString(1, uuid.toString());
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next()
-                                    ? Optional.of(mapRow(rs))
-                                    : Optional.<PlayerProfile>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });
@@ -88,7 +86,7 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
                         try (ResultSet rs = ps.executeQuery()) {
                             return rs.next()
                                     ? Optional.of(UUID.fromString(rs.getString(1)))
-                                    : Optional.<UUID>empty();
+                                    : Optional.empty();
                         }
                     }
                 });
@@ -106,7 +104,7 @@ public final class SqlPlayerProfileRepository implements PlayerProfileRepository
                         try (ResultSet rs = ps.executeQuery()) {
                             return rs.next()
                                     ? Optional.of(UUID.fromString(rs.getString(1)))
-                                    : Optional.<UUID>empty();
+                                    : Optional.empty();
                         }
                     }
                 });

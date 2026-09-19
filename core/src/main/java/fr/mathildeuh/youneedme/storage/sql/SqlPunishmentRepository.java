@@ -118,9 +118,7 @@ public final class SqlPunishmentRepository implements PunishmentRepository {
                         ps.setString(1, target.toString());
                         ps.setString(2, type.name());
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next()
-                                    ? Optional.of(mapRow(rs))
-                                    : Optional.<Punishment>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });
@@ -140,9 +138,7 @@ public final class SqlPunishmentRepository implements PunishmentRepository {
                                             .formatted(trueLiteral(connection)))) {
                         ps.setString(1, ip);
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next()
-                                    ? Optional.of(mapRow(rs))
-                                    : Optional.<Punishment>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });

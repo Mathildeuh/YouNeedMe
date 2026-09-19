@@ -29,7 +29,7 @@ public interface HomeService {
 
     /** Thrown by {@link #set} when creating a new home would exceed {@link #limitFor}. */
     class HomeLimitExceededException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
+        @java.io.Serial private static final long serialVersionUID = 1L;
 
         public final int limit;
 

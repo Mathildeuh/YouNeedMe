@@ -325,10 +325,7 @@ final class TpOfflineCommand extends YnmCommand {
                         uuid ->
                                 uuid.isEmpty()
                                         ? java.util.concurrent.CompletableFuture.completedFuture(
-                                                java.util.Optional
-                                                        .<fr.mathildeuh.youneedme.api.model
-                                                                        .PlayerProfile>
-                                                                empty())
+                                                java.util.Optional.empty())
                                         : services().storage.playerProfiles().find(uuid.get()))
                 .thenAccept(
                         profileOpt -> {

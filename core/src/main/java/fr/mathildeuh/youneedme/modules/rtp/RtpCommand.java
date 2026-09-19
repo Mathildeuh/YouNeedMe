@@ -2,7 +2,6 @@ package fr.mathildeuh.youneedme.modules.rtp;
 
 import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.command.YnmCommand;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -139,10 +138,5 @@ public final class RtpCommand extends YnmCommand {
             return new Location(world, x + 0.5, y + 1, z + 0.5);
         }
         return null;
-    }
-
-    @Override
-    protected List<String> tabComplete(CommandSender sender, String[] args) {
-        return List.of();
     }
 }

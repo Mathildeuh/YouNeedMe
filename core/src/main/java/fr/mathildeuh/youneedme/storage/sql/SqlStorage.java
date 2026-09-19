@@ -59,13 +59,12 @@ public final class SqlStorage implements DataStorage {
                         hikariConfig.setUsername(config.username());
                         hikariConfig.setPassword(config.password());
                     }
-                    hikariConfig.setMaximumPoolSize(
-                            dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize()));
+                    int threads = dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize());
+                    hikariConfig.setMaximumPoolSize(threads);
                     hikariConfig.setPoolName("YouNeedMe-" + dialect.name());
                     hikariConfig.setMinimumIdle(1);
 
                     this.dataSource = new HikariDataSource(hikariConfig);
-                    int threads = dialect == SqlDialect.SQLITE ? 1 : Math.max(2, config.poolSize());
                     AtomicInteger counter = new AtomicInteger();
                     this.executor =
                             Executors.newFixedThreadPool(

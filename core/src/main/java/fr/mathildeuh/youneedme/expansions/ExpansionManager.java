@@ -108,7 +108,14 @@ public final class ExpansionManager {
 
         File dataFolder =
                 new File(new File(plugin.getDataFolder(), "expansions/data"), description.id());
-        dataFolder.mkdirs();
+        if (!dataFolder.mkdirs() && !dataFolder.isDirectory()) {
+            plugin.getLogger()
+                    .warning(
+                            "Could not create data folder for expansion '"
+                                    + description.id()
+                                    + "' at "
+                                    + dataFolder);
+        }
         Logger expansionLogger =
                 Logger.getLogger(plugin.getLogger().getName() + "." + description.id());
         ExpansionContext context =

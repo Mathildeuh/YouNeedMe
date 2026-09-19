@@ -63,7 +63,7 @@ public final class SqlWarpRepository implements WarpRepository {
                             connection.prepareStatement("SELECT * FROM ynm_warps WHERE name = ?")) {
                         ps.setString(1, name);
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.<Warp>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });

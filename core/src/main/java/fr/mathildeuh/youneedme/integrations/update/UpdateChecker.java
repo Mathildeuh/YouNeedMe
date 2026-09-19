@@ -48,8 +48,7 @@ public final class UpdateChecker implements Listener {
     }
 
     private void fetchLatestVersion() {
-        try {
-            HttpClient client = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
+        try (HttpClient client = HttpClient.newBuilder().connectTimeout(TIMEOUT).build()) {
             HttpRequest request =
                     HttpRequest.newBuilder(URI.create(RELEASES_URL))
                             .timeout(TIMEOUT)

@@ -152,10 +152,10 @@ public final class YnmAdminCommand extends YnmCommand {
             case "list" -> {
                 try {
                     Files.createDirectories(backupsDir);
-                    var backups =
-                            Files.list(backupsDir)
-                                    .filter(p -> p.toString().endsWith(".zip"))
-                                    .toList();
+                    List<Path> backups;
+                    try (var stream = Files.list(backupsDir)) {
+                        backups = stream.filter(p -> p.toString().endsWith(".zip")).toList();
+                    }
                     if (backups.isEmpty()) {
                         send(sender, "ynm.backup.list.empty");
                         return;

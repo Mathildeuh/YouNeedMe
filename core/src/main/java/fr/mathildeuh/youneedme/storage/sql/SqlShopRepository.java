@@ -27,9 +27,7 @@ public final class SqlShopRepository implements ShopRepository {
                         ps.setString(1, categoryId);
                         ps.setString(2, itemId);
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next()
-                                    ? Optional.of(rs.getInt(1))
-                                    : Optional.<Integer>empty();
+                            return rs.next() ? Optional.of(rs.getInt(1)) : Optional.empty();
                         }
                     }
                 });

@@ -80,7 +80,7 @@ public enum SqlDialect {
         if (isMySqlFamily()) {
             StringBuilder update = new StringBuilder();
             for (String column : updateColumns) {
-                if (update.length() > 0) {
+                if (!update.isEmpty()) {
                     update.append(", ");
                 }
                 update.append(column).append(" = VALUES(").append(column).append(")");
@@ -90,7 +90,7 @@ public enum SqlDialect {
 
         StringBuilder update = new StringBuilder();
         for (String column : updateColumns) {
-            if (update.length() > 0) {
+            if (!update.isEmpty()) {
                 update.append(", ");
             }
             update.append(column).append(" = excluded.").append(column);

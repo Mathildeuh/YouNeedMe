@@ -54,7 +54,7 @@ public final class SqlHomeRepository implements HomeRepository {
                         ps.setString(1, owner.toString());
                         ps.setString(2, name);
                         try (ResultSet rs = ps.executeQuery()) {
-                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.<Home>empty();
+                            return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
                         }
                     }
                 });

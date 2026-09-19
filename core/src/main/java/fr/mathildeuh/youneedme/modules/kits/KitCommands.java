@@ -53,7 +53,6 @@ final class KitCommand extends YnmCommand {
                                                         TimeParser.format(remaining * 1000)));
                                     }
                                 });
-                return;
             }
             case "claim" -> {
                 if (args.length < 2) {
@@ -61,12 +60,10 @@ final class KitCommand extends YnmCommand {
                     return;
                 }
                 claim(sender, player, kits, args[1]);
-                return;
             }
             case "notifications" -> {
                 boolean enabled = services().kits.toggleCooldownNotifications(player.getUniqueId());
                 send(sender, enabled ? "kit.notifications.enabled" : "kit.notifications.disabled");
-                return;
             }
             case "debug" -> {
                 if (args.length < 2) {
@@ -74,7 +71,6 @@ final class KitCommand extends YnmCommand {
                     return;
                 }
                 debug(sender, kits, args[1]);
-                return;
             }
             default -> claim(sender, player, kits, sub);
         }

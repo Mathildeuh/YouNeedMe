@@ -32,8 +32,7 @@ public final class DiscordSrvBridge {
     private void initialize() {
         try {
             Class<?> discordSrvClass = Class.forName("github.scarsz.discordsrv.DiscordSRV");
-            Object plugin = discordSrvClass.getMethod("getPlugin").invoke(null);
-            this.discordSrvInstance = plugin;
+            this.discordSrvInstance = discordSrvClass.getMethod("getPlugin").invoke(null);
             this.getMainTextChannelMethod = discordSrvClass.getMethod("getMainTextChannel");
         } catch (ReflectiveOperationException e) {
             logger.info(

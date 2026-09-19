@@ -163,25 +163,13 @@ public final class JsonStorage
                 () -> {
                     try {
                         Files.createDirectories(root);
-                        profiles.putAll(
-                                this.<UUID, PlayerProfile>loadMap(
-                                        file("profiles.json"), profileMapType()));
-                        warps.putAll(this.<String, Warp>loadMap(file("warps.json"), warpMapType()));
-                        balances.putAll(
-                                this.<UUID, Map<String, Double>>loadMap(
-                                        file("balances.json"), balanceMapType()));
-                        kitClaims.putAll(
-                                this.<UUID, Map<String, KitClaimState>>loadMap(
-                                        file("kit_claims.json"), kitClaimMapType()));
-                        shopStock.putAll(
-                                this.<String, Map<String, Integer>>loadMap(
-                                        file("shop_stock.json"), shopStockMapType()));
-                        homes.putAll(
-                                this.<UUID, Map<String, Home>>loadMap(
-                                        file("homes.json"), homeMapType()));
-                        economyLog.putAll(
-                                this.<UUID, List<EconomyTransactionLog>>loadMap(
-                                        file("economy_log.json"), economyLogMapType()));
+                        profiles.putAll(loadMap(file("profiles.json"), profileMapType()));
+                        warps.putAll(loadMap(file("warps.json"), warpMapType()));
+                        balances.putAll(loadMap(file("balances.json"), balanceMapType()));
+                        kitClaims.putAll(loadMap(file("kit_claims.json"), kitClaimMapType()));
+                        shopStock.putAll(loadMap(file("shop_stock.json"), shopStockMapType()));
+                        homes.putAll(loadMap(file("homes.json"), homeMapType()));
+                        economyLog.putAll(loadMap(file("economy_log.json"), economyLogMapType()));
                         punishments.addAll(
                                 loadList(file("punishments.json"), punishmentListType()));
                         auctions.addAll(loadList(file("auctions.json"), auctionListType()));

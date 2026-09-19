@@ -25,25 +25,23 @@ public final class KeyedMutex<K> {
                             previousTail == null
                                     ? CompletableFuture.completedFuture(null)
                                     : previousTail.handle((r, ex) -> null);
-                    CompletableFuture<Void> newTail =
-                            previous.thenCompose(ignored -> action.get())
-                                    .handle(
-                                            (value, ex) -> {
-                                                if (ex != null) {
-                                                    result.completeExceptionally(
-                                                            ex
-                                                                            instanceof
-                                                                            java.util.concurrent
-                                                                                            .CompletionException
-                                                                                    ce
-                                                                    ? ce.getCause()
-                                                                    : ex);
-                                                } else {
-                                                    result.complete(value);
-                                                }
-                                                return null;
-                                            });
-                    return newTail;
+                    return previous.thenCompose(ignored -> action.get())
+                            .handle(
+                                    (value, ex) -> {
+                                        if (ex != null) {
+                                            result.completeExceptionally(
+                                                    ex
+                                                                    instanceof
+                                                                    java.util.concurrent
+                                                                                    .CompletionException
+                                                                            ce
+                                                            ? ce.getCause()
+                                                            : ex);
+                                        } else {
+                                            result.complete(value);
+                                        }
+                                        return null;
+                                    });
                 });
         tails.computeIfPresent(
                 key,
