@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.8.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.1...v1.8.2) (2026-09-19)
+
+
+### Bug Fixes
+
+* plugin.yml version going stale on incremental builds; add Qodana badge and a clickable update link ([9cc255d](https://github.com/Mathildeuh/YouNeedMe/commit/9cc255d9438721b693c4aa9ff0c0a8b581d49c02))
+
 ## [1.8.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.0...v1.8.1) (2026-09-19)
 
 
