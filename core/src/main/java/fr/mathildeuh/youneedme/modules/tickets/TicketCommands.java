@@ -31,14 +31,13 @@ final class TicketCommand extends YnmCommand {
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
         switch (sub) {
-            case "new", "create" -> create(player, args);
             case "list" -> list(player);
             case "history" -> history(player);
             case "view" -> view(player, args);
             case "reply" -> reply(player, args);
             case "close" -> close(player, args);
             case "claim" -> claim(player, args);
-            default -> send(sender, "ticket.usage");
+            default -> create(player, args);
         }
     }
 
@@ -47,19 +46,15 @@ final class TicketCommand extends YnmCommand {
             send(player, "ticket.disabled");
             return;
         }
-        if (args.length < 2) {
-            send(player, "ticket.usage");
-            return;
-        }
         TicketService tickets = services().tickets;
         List<String> categories = tickets.categories();
         String category = null;
-        int messageStart = 1;
-        if (!categories.isEmpty() && args.length > 2) {
+        int messageStart = 0;
+        if (!categories.isEmpty() && args.length > 1) {
             for (String candidate : categories) {
-                if (candidate.equalsIgnoreCase(args[1])) {
+                if (candidate.equalsIgnoreCase(args[0])) {
                     category = candidate;
-                    messageStart = 2;
+                    messageStart = 1;
                     break;
                 }
             }
@@ -427,10 +422,10 @@ final class TicketCommand extends YnmCommand {
     @Override
     protected List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return List.of("new", "list", "history", "view", "reply", "close", "claim");
-        }
-        if (args.length == 2 && "new".equalsIgnoreCase(args[0])) {
-            return services().tickets.categories();
+            List<String> options = new java.util.ArrayList<>();
+            options.addAll(List.of("list", "history", "view", "reply", "close", "claim"));
+            options.addAll(services().tickets.categories());
+            return options;
         }
         return List.of();
     }

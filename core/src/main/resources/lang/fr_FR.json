@@ -189,7 +189,7 @@
   "playershop.trade.shop_not_found": "<prefix> <color:#FF0000>Cette boutique n'existe plus.</color>",
   "playershop.trade.buy_success": "<prefix> <color:#FFF200>Acheté <color:#FFFFFF><amount>x <item></color> pour <color:#FFFFFF><price></color> !</color>",
   "playershop.trade.sell_success": "<prefix> <color:#FFF200>Vendu <color:#FFFFFF><amount>x <item></color> pour <color:#FFFFFF><price></color> !</color>",
-  "ticket.usage": "<prefix> <color:#FF0000>Utilisation : /ticket <new|list|history|view|reply|close|claim> ...</color>",
+  "ticket.usage": "<prefix> <color:#FF0000>Utilisation : /ticket <message> (ou /ticket <list|history|view|reply|close|claim> ...)</color>",
   "ticket.disabled": "<prefix> <color:#FF0000>Les tickets sont actuellement désactivés.</color>",
   "ticket.create.success": "<prefix> <color:#FFF200>Ticket <color:#FFFFFF>#<id></color> créé - le staff va répondre bientôt.</color>",
   "ticket.list.empty": "<prefix> <color:#FF0000>Tu n'as aucun ticket ouvert.</color>",

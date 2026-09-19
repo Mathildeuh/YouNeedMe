@@ -1,6 +1,6 @@
 # Player support tickets module.
 enabled: true
-# Optional categories offered on ticket creation via `/ticket new <category> <message>` - leave
+# Optional categories offered on ticket creation via `/ticket <category> <message>` - leave
 # empty to skip categorization entirely.
 categories:
   - bug

@@ -87,7 +87,7 @@ commands:
   stonecutter: { description: Open virtual stonecutter, usage: /stonecutter, permission: youneedme.stonecutter, aliases: [ sc ] }
   sudo: { description: Force a command/message, usage: "/sudo <player> <command/message>", permission: youneedme.sudo }
   suicide: { description: Kill yourself, usage: /suicide, permission: youneedme.suicide }
-  ticket: { description: "Player support tickets", usage: "/ticket <new|list|history|view|reply|close|claim> ...", permission: youneedme.tickets }
+  ticket: { description: "Player support tickets", usage: "/ticket <message> (or list|history|view|reply|close|claim)", permission: youneedme.tickets }
   tickets: { description: Open the staff ticket queue, usage: /tickets, permission: youneedme.tickets.staff }
   top: { description: Teleport to highest block, usage: /top, permission: youneedme.top }
   tpa: { description: Request teleport to player, usage: "/tpa <player>", permission: youneedme.tpa }
