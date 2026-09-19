@@ -8,6 +8,14 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.2...v1.9.0) (2026-09-19)
+
+
+### Features
+
+* animated scoreboard titles and lines ([1876724](https://github.com/Mathildeuh/YouNeedMe/commit/187672485766b41cb3d4403b1606592373628196))
+* per-element scoreboard animation speed, scrolling marquees, and playback modes ([6df8b04](https://github.com/Mathildeuh/YouNeedMe/commit/6df8b047b678d17ee4bb9fbdf0593e71eb758f88))
+
 ## [1.8.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.8.1...v1.8.2) (2026-09-19)
 
 
