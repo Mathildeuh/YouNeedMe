@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.6.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.5.1...v1.6.0) (2026-09-19)
+
+
+### Features
+
+* player-run shops (chest + sign, ChestShop-style) ([3f6191f](https://github.com/Mathildeuh/YouNeedMe/commit/3f6191f12762f8f5c4b4c7e3131df13fd79d1a60))
+
 ## [1.5.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.5.0...v1.5.1) (2026-09-18)
 
 
