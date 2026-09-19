@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
 
@@ -47,7 +47,7 @@ jobs:
           java-version: "25"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build shaded plugin jar
         run: ./gradlew build --console=plain
@@ -56,6 +56,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "${{ needs.release-please.outputs.tag_name }}" build/libs/YouNeedMe.jar --clobber
+
+      - name: Normalize Hangar version
+        id: hangar_version
+        env:
+          RELEASE_TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: echo "version=${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
 
       # JitPack builds the `api` module on demand straight from this tag - nothing to publish here,
       # a consumer just needs `com.github.Mathildeuh.YouNeedMe:api:<tag>` to trigger the first build.
@@ -96,7 +102,7 @@ jobs:
         with:
           api_token: ${{ secrets.HANGAR_API_KEY }}
           slug: YouNeedMe
-          version: ${{ needs.release-please.outputs.tag_name }}
+          version: ${{ steps.hangar_version.outputs.version }}
           channel: Release
           description: ${{ needs.release-please.outputs.body }}
           files: |
@@ -107,6 +113,10 @@ jobs:
                 "externalUrl": "https://github.com/Mathildeuh/YouNeedMe/releases/download/${{ needs.release-please.outputs.tag_name }}/YouNeedMe.jar"
               }
             ]
+          platform_dependencies: |
+            {
+              "PAPER": [">=1.21"]
+            }
 
   javadoc:
     needs: release-please
@@ -114,7 +124,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
 
@@ -125,15 +135,15 @@ jobs:
           java-version: "25"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build API javadoc
         run: ./gradlew :api:javadoc --console=plain
 
       - name: Upload Javadoc to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: api/build/docs/javadoc
 
       - name: Deploy Javadoc
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
