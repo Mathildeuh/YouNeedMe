@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.4](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.3...v1.9.4) (2026-09-19)
+
+
+### Bug Fixes
+
+* disable unsupported Folia scoreboards ([05d7779](https://github.com/Mathildeuh/YouNeedMe/commit/05d7779333d81af8326d4770af7ba672d62cfa8f))
+
 ## [1.9.3](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.2...v1.9.3) (2026-09-19)
 
 
