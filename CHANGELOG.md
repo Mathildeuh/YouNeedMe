@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.3](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.2...v1.9.3) (2026-09-19)
+
+
+### Bug Fixes
+
+* repair Hangar release publishing ([7262a91](https://github.com/Mathildeuh/YouNeedMe/commit/7262a917d88dcf97f9b9424d93588d897c0b44c5))
+
 ## [1.9.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.1...v1.9.2) (2026-09-19)
 
 
