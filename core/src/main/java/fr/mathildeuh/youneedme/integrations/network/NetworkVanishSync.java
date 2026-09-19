@@ -7,9 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.UnifiedJedis;
+import redis.clients.jedis.providers.PooledConnectionProvider;
 
 /**
  * Syncs vanish state across every server in a network sharing the same Redis instance: a player
@@ -30,7 +32,7 @@ public final class NetworkVanishSync {
     private static final String VANISH_CHANNEL = "youneedme:vanish";
 
     private final YouNeedMe plugin;
-    private @Nullable JedisPool pool;
+    private @Nullable UnifiedJedis client;
     private @Nullable JedisPubSub subscription;
     private volatile boolean enabled;
 
@@ -52,10 +54,14 @@ public final class NetworkVanishSync {
         int port = config.getInt("redis.port", 6379);
         String password = config.getString("redis.password", "");
         try {
-            this.pool =
-                    password.isBlank()
-                            ? new JedisPool(host, port)
-                            : new JedisPool(host, port, null, password);
+            var configBuilder = DefaultJedisClientConfig.builder();
+            if (!password.isBlank()) {
+                configBuilder.password(password);
+            }
+            var provider =
+                    new PooledConnectionProvider(
+                            new HostAndPort(host, port), configBuilder.build());
+            this.client = new UnifiedJedis(provider, 3, java.time.Duration.ofSeconds(5));
             seedExistingVanished();
             this.subscription =
                     new JedisPubSub() {
@@ -82,27 +88,25 @@ public final class NetworkVanishSync {
     }
 
     private void seedExistingVanished() {
-        if (pool == null) {
+        if (client == null) {
             return;
         }
-        try (Jedis jedis = pool.getResource()) {
-            for (String raw : jedis.smembers(VANISH_SET_KEY)) {
-                try {
-                    plugin.services().vanished.add(UUID.fromString(raw));
-                } catch (IllegalArgumentException ignored) {
-                    // Stale/corrupt entry from an incompatible publisher - skip rather than fail
-                    // the whole sync over one bad row.
-                }
+        for (String raw : client.smembers(VANISH_SET_KEY)) {
+            try {
+                plugin.services().vanished.add(UUID.fromString(raw));
+            } catch (IllegalArgumentException ignored) {
+                // Stale/corrupt entry from an incompatible publisher - skip rather than fail
+                // the whole sync over one bad row.
             }
         }
     }
 
     private void runSubscriber() {
-        if (pool == null) {
+        if (client == null) {
             return;
         }
-        try (Jedis jedis = pool.getResource()) {
-            jedis.subscribe(subscription, VANISH_CHANNEL);
+        try {
+            client.subscribe(subscription, VANISH_CHANNEL);
         } catch (RuntimeException e) {
             if (enabled) {
                 plugin.getLogger()
@@ -153,16 +157,16 @@ public final class NetworkVanishSync {
 
     /** Publishes a local vanish toggle to the network. A no-op if Redis isn't configured. */
     public void publish(UUID player, boolean vanished) {
-        if (!enabled || pool == null) {
+        if (!enabled || client == null) {
             return;
         }
-        try (Jedis jedis = pool.getResource()) {
+        try {
             if (vanished) {
-                jedis.sadd(VANISH_SET_KEY, player.toString());
+                client.sadd(VANISH_SET_KEY, player.toString());
             } else {
-                jedis.srem(VANISH_SET_KEY, player.toString());
+                client.srem(VANISH_SET_KEY, player.toString());
             }
-            jedis.publish(VANISH_CHANNEL, player + ":" + vanished);
+            client.publish(VANISH_CHANNEL, player + ":" + vanished);
         } catch (RuntimeException e) {
             plugin.getLogger().log(Level.WARNING, "Could not publish vanish state to Redis.", e);
         }
@@ -178,8 +182,8 @@ public final class NetworkVanishSync {
         if (subscription != null && subscription.isSubscribed()) {
             subscription.unsubscribe();
         }
-        if (pool != null) {
-            pool.close();
+        if (client != null) {
+            client.close();
         }
     }
 }

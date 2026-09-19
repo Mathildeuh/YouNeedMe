@@ -53,7 +53,9 @@ public final class ItemConfigCodec {
                     section.getStringList("lore").stream().map(MINI_MESSAGE::deserialize).toList());
         }
         if (section.contains("custom-model-data")) {
-            meta.setCustomModelData(section.getInt("custom-model-data"));
+            var component = meta.getCustomModelDataComponent();
+            component.setFloats(List.of((float) section.getInt("custom-model-data")));
+            meta.setCustomModelDataComponent(component);
         }
         meta.setUnbreakable(section.getBoolean("unbreakable", false));
 
@@ -131,8 +133,11 @@ public final class ItemConfigCodec {
         if (lore != null) {
             map.put("lore", lore.stream().map(MINI_MESSAGE::serialize).toList());
         }
-        if (meta.hasCustomModelData()) {
-            map.put("custom-model-data", meta.getCustomModelData());
+        if (meta.hasCustomModelDataComponent()) {
+            List<Float> floats = meta.getCustomModelDataComponent().getFloats();
+            if (!floats.isEmpty()) {
+                map.put("custom-model-data", Math.round(floats.get(0)));
+            }
         }
         if (meta.isUnbreakable()) {
             map.put("unbreakable", true);

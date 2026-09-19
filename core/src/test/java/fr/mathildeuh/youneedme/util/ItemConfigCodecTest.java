@@ -58,7 +58,7 @@ class ItemConfigCodecTest {
         assertTrue(meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS));
         assertTrue(meta.hasItemFlag(ItemFlag.HIDE_ATTRIBUTES));
         assertTrue(meta.isUnbreakable());
-        assertEquals(1001, meta.getCustomModelData());
+        assertEquals(1001f, meta.getCustomModelDataComponent().getFloats().get(0));
     }
 
     @Test
