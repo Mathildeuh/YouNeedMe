@@ -6,6 +6,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Paper API](https://img.shields.io/badge/paper--api-26.2%2F26.3-orange)](https://papermc.io)
 [![Modrinth](https://img.shields.io/badge/modrinth-YouNeedMe-1bd96a?logo=modrinth&logoColor=white)](https://modrinth.com/plugin/youneedme)
+[![Hangar](https://img.shields.io/badge/hangar-YouNeedMe-26b3c6)](https://hangar.papermc.io/Mathildeuh/youneedme)
 
 **YouNeedMe** is an all-in-one, Essentials-style administration and utility plugin for
 Paper/Spigot/Purpur/**Folia** servers — homes, warps, kits, an economy with a native Vault
@@ -44,7 +45,8 @@ reference and configuration guide.
 
 1. Download the latest `YouNeedMe-<version>.jar` from
    [Releases](https://github.com/Mathildeuh/YouNeedMe/releases/latest) or
-   [Modrinth](https://modrinth.com/plugin/youneedme).
+   [Modrinth](https://modrinth.com/plugin/youneedme) or
+   [Hangar](https://hangar.papermc.io/Mathildeuh/youneedme).
 2. Drop it into your server's `plugins/` folder and restart.
 3. Edit `plugins/YouNeedMe/config.yml` and `plugins/YouNeedMe/modules/*.yml` to taste, then
    `/ynm reload`.

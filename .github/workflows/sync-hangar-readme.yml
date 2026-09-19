@@ -1,0 +1,58 @@
+name: sync-hangar-readme
+
+# Hangar stores the project README as its main page. Keep it synchronized with the repository
+# README so the project page stays current without manual edits on the Hangar website.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Push README to Hangar
+        env:
+          HANGAR_API_KEY: ${{ secrets.HANGAR_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${HANGAR_API_KEY:-}" ]; then
+            echo "HANGAR_API_KEY secret is not set - skipping Hangar README sync." >&2
+            exit 1
+          fi
+
+          auth_response=$(curl -sS -X POST \
+            --get "https://hangar.papermc.io/api/v1/authenticate" \
+            --data-urlencode "apiKey=${HANGAR_API_KEY}" \
+            -H "User-Agent: YouNeedMe-readme-sync")
+          token=$(printf '%s' "$auth_response" | jq -r '.token // empty')
+
+          if [ -z "$token" ]; then
+            echo "Hangar authentication did not return a token." >&2
+            printf '%s\n' "$auth_response" >&2
+            exit 1
+          fi
+
+          payload=$(jq -n --rawfile content README.md '{content: $content}')
+          http_status=$(curl -sS -o response.json -w "%{http_code}" \
+            -X PATCH "https://hangar.papermc.io/api/v1/pages/editmain/youneedme" \
+            -H "Authorization: ${token}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: YouNeedMe-readme-sync" \
+            -d "$payload")
+          cat response.json
+
+          if [ "$http_status" -ge 300 ]; then
+            echo "Hangar API returned HTTP $http_status" >&2
+            exit 1
+          fi
