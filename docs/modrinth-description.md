@@ -31,6 +31,16 @@ nothing breaks on a regionised server.
 - **Built for extension** — a versioned, documented `api` module and a dynamic expansion loader
   (drop a jar in `plugins/YouNeedMe/expansions/`) so third-party add-ons are isolated and can't
   take the whole server down if something goes wrong.
+- **Migration tools** — dry-run-by-default importers for EssentialsX, CMI and EssentialsC, with
+  an explicit `--apply` step when you are ready to migrate data.
+
+## Requirements
+
+- Java 21 or newer.
+- Paper is recommended; Spigot, Purpur, Folia and compatible forks such as Leaf and Leaves are
+  supported.
+- Minecraft 26.2 and newer; Folia is supported through the same scheduler abstraction used by
+  the rest of the plugin.
 
 ## Why YouNeedMe over a stack of separate plugins
 
@@ -42,8 +52,11 @@ usually end up hand-editing YAML for (shop, kits, auction house).
 
 ## Installation
 
-1. Drop the jar into your server's `plugins/` folder and restart.
-2. Edit `plugins/YouNeedMe/config.yml` and `plugins/YouNeedMe/modules/*.yml` to taste, then run
+1. Download the latest `YouNeedMe.jar` from [GitHub Releases](https://github.com/Mathildeuh/YouNeedMe/releases/latest),
+   [Modrinth](https://modrinth.com/plugin/youneedme) or
+   [Hangar](https://hangar.papermc.io/Mathildeuh/youneedme).
+2. Drop the jar into your server's `plugins/` folder and restart.
+3. Edit `plugins/YouNeedMe/config.yml` and `plugins/YouNeedMe/modules/*.yml` to taste, then run
    `/ynm reload`.
 
 No database setup required to get started — YouNeedMe runs on an embedded SQLite database by
@@ -55,6 +68,8 @@ default. For a multi-server network, point `storage.type` at `mysql`, `mariadb`,
 - [Source & issue tracker](https://github.com/Mathildeuh/YouNeedMe)
 - [Wiki — full command/permission reference & configuration guide](https://github.com/Mathildeuh/YouNeedMe/wiki)
 - [API docs (Javadoc)](https://mathildeuh.github.io/YouNeedMe/) for expansion authors
+- [Modrinth project](https://modrinth.com/plugin/youneedme)
+- [Hangar project](https://hangar.papermc.io/Mathildeuh/youneedme)
 
 Licensed under Apache-2.0 — build on it, fork it, or ship your own expansion against its `api`
 module without friction.

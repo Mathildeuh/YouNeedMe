@@ -43,7 +43,7 @@ reference and configuration guide.
 
 ## Installation
 
-1. Download the latest `YouNeedMe-<version>.jar` from
+1. Download the latest `YouNeedMe.jar` from
    [Releases](https://github.com/Mathildeuh/YouNeedMe/releases/latest) or
    [Modrinth](https://modrinth.com/plugin/youneedme) or
    [Hangar](https://hangar.papermc.io/Mathildeuh/youneedme).
@@ -62,7 +62,7 @@ cd YouNeedMe
 ./gradlew build
 ```
 
-The finished plugin jar is written to `build/libs/YouNeedMe-<version>.jar`.
+The finished plugin jar is written to `build/libs/YouNeedMe.jar`.
 
 ## Developing against the API
 
