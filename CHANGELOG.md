@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.6](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.5...v1.9.6) (2026-09-19)
+
+
+### Bug Fixes
+
+* enforce patched transitive dependencies ([8fb140a](https://github.com/Mathildeuh/YouNeedMe/commit/8fb140ae11e52c250a8f93bf4817a5222f50c811))
+
 ## [1.9.5](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.4...v1.9.5) (2026-09-19)
 
 
