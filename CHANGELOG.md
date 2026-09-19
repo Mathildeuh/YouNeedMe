@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.7.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.7.0...v1.7.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* resolve the 6 remaining fixable Qodana deprecation findings ([bcd034c](https://github.com/Mathildeuh/YouNeedMe/commit/bcd034cad270c3a1ea3eba23be0ad549845c9cd6))
+
 ## [1.7.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.4...v1.7.0) (2026-09-19)
 
 
