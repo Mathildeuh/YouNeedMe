@@ -8,6 +8,14 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.9.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.1...v1.9.2) (2026-09-19)
+
+
+### Bug Fixes
+
+* publish Hangar releases externally ([76e6350](https://github.com/Mathildeuh/YouNeedMe/commit/76e6350464c4d0cc6d14d9b18064b224a6ae6b56))
+* use Node 24 for release automation ([b7ad1b3](https://github.com/Mathildeuh/YouNeedMe/commit/b7ad1b385be0ef94fb52790b6624d86e4fe60438))
+
 ## [1.9.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.9.0...v1.9.1) (2026-09-19)
 
 
