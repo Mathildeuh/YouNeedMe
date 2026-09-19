@@ -9,7 +9,6 @@ import fr.mathildeuh.youneedme.gui.GuiSize;
 import fr.mathildeuh.youneedme.util.ItemConfigCodec;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -196,7 +195,7 @@ public final class ShopGui implements Listener {
     }
 
     private static String formatNumber(Currency currency, double amount) {
-        return String.format(Locale.ROOT, "%,." + currency.decimalPlaces() + "f", amount);
+        return currency.formatNumber(amount);
     }
 
     private static Component noItalic(Component component) {

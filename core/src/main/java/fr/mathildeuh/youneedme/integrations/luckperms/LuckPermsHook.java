@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.event.EventSubscription;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import org.bukkit.event.EventHandler;
@@ -28,12 +29,21 @@ public final class LuckPermsHook implements Listener {
 
     private final LuckPerms api;
     private final Map<UUID, Display> cache = new ConcurrentHashMap<>();
+    private final EventSubscription<UserDataRecalculateEvent> subscription;
 
     public LuckPermsHook(Plugin plugin) {
         this.api = LuckPermsProvider.get();
-        api.getEventBus()
-                .subscribe(
-                        plugin, UserDataRecalculateEvent.class, event -> refresh(event.getUser()));
+        this.subscription =
+                api.getEventBus()
+                        .subscribe(
+                                plugin,
+                                UserDataRecalculateEvent.class,
+                                event -> refresh(event.getUser()));
+    }
+
+    /** Unsubscribes from LuckPerms events - called from {@code onDisable}. */
+    public void close() {
+        subscription.close();
     }
 
     public void warm(UUID player) {

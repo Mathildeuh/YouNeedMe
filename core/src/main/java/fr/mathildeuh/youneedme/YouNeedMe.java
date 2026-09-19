@@ -147,6 +147,9 @@ public final class YouNeedMe extends JavaPlugin {
         if (services.networkVanish != null) {
             services.networkVanish.disable();
         }
+        if (services.luckPerms != null) {
+            services.luckPerms.close();
+        }
         if (storageManager != null) {
             storageManager.shutdown().join();
         }
