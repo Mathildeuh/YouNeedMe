@@ -15,14 +15,14 @@
 #     mysql: { host: mariadb, port: 3306, database: youneedme, username: youneedme, password: youneedme }
 
 services:
-  paper:
+  server:
     image: itzg/minecraft-server:latest
     environment:
       EULA: "TRUE"
-      TYPE: FOLIA
-      VERSION: "26.2"
+      TYPE: PAPER
+      VERSION: "26.3"
       MEMORY: "2G"
-      ONLINE_MODE: "FALSE"
+      ONLINE_MODE: "TRUE"
     ports:
       - "25565:25565"
     volumes:

@@ -57,7 +57,9 @@ public final class AhGui implements Listener {
                 icon(
                         Material.EMERALD,
                         "<green><bold>Sell an Item",
-                        List.of("Click to list an item for sale")));
+                        List.of(
+                                "Create a fixed-price listing or auction",
+                                "Click to choose how to sell your item")));
         inventory.setItem(
                 14,
                 icon(
@@ -125,28 +127,54 @@ public final class AhGui implements Listener {
     public void openSell(Player player) {
         Inventory inventory =
                 Bukkit.createInventory(
-                        new SellHolder(), 27, Component.text("Sell on the Auction House"));
+                        new SellHolder(), 27, Component.text("Auction House | Create Listing"));
+        fillSellChrome(inventory);
+        inventory.setItem(
+                4,
+                icon(
+                        Material.BOOK,
+                        "<aqua><bold>How to sell an item",
+                        List.of(
+                                "1. Place one item in the empty slot below",
+                                "2. Choose a sale method",
+                                "3. Enter your price in the next dialog",
+                                "",
+                                "The item is returned if you cancel")));
         inventory.setItem(
                 18,
                 icon(
                         Material.BARRIER,
-                        "<gray>Cancel",
-                        List.of("Returns the item to your inventory")));
+                        "<red><bold>Cancel",
+                        List.of("Close this menu", "Your item will be returned")));
         inventory.setItem(
                 21,
                 icon(
                         Material.EMERALD,
-                        "<green><bold>List for Sale",
-                        List.of("Place an item above, then click here", "Fixed price")));
+                        "<green><bold>Sell at Fixed Price",
+                        List.of(
+                                "The first buyer gets the item",
+                                "Click to enter the sale price",
+                                "Best for common items")));
         inventory.setItem(
                 23,
                 icon(
                         Material.GOLD_INGOT,
-                        "<gold><bold>Start Auction",
+                        "<gold><bold>Start an Auction",
                         List.of(
-                                "Place an item above, then click here",
-                                "Players bid until the listing expires")));
+                                "Players compete with bids",
+                                "Click to enter the starting bid",
+                                "Best for rare items")));
         player.openInventory(inventory);
+    }
+
+    private void fillSellChrome(Inventory inventory) {
+        ItemStack pane = icon(Material.GRAY_STAINED_GLASS_PANE, " ", List.of());
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            inventory.setItem(slot, pane.clone());
+        }
+        // Keep this slot empty so players can place an item there or shift-click one from their
+        // inventory. All other slots are occupied by the visual frame or action buttons.
+        inventory.setItem(13, null);
     }
 
     // --- My listings -----------------------------------------------------------------------------

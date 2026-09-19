@@ -1,0 +1,2 @@
+# Keep Java sources consistent with Spotless on every platform.
+*.java text eol=lf

@@ -10,6 +10,7 @@ package fr.mathildeuh.youneedme.expansion;
  * <p>An exception thrown from any of these three methods is caught and logged by the
  * ExpansionManager and disables only that expansion - it can never take the core plugin down.
  */
+@FunctionalInterface
 public interface Expansion {
 
     void onLoad(ExpansionContext context);
