@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The {@code /kit} browser: every kit the player can see, sized to how many there are (or
@@ -328,7 +329,7 @@ public final class KitGui implements Listener {
                         });
     }
 
-    private void sendMaxClaimsMessage(Player player, String kitId, int maxClaims) {
+    private void sendMaxClaimsMessage(Player player, String kitId, @Nullable Integer maxClaims) {
         player.sendMessage(
                 plugin.lang()
                         .render(
