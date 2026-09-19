@@ -8,6 +8,14 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.6.3](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.2...v1.6.3) (2026-09-19)
+
+
+### Bug Fixes
+
+* resolve 4 more Qodana deprecation findings with verified drop-in replacements ([dce8b44](https://github.com/Mathildeuh/YouNeedMe/commit/dce8b447d418e2807173bdf6320f0a5fd8cf5381))
+* revert a regression + resolve Qodana's remaining style findings ([81c14bd](https://github.com/Mathildeuh/YouNeedMe/commit/81c14bd5dcd8bb2c2fa22f5022d33d83f8166d16))
+
 ## [1.6.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.1...v1.6.2) (2026-09-19)
 
 
