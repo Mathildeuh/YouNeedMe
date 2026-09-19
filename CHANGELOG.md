@@ -8,6 +8,13 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.6.2](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.1...v1.6.2) (2026-09-19)
+
+
+### Bug Fixes
+
+* resolve Qodana's 62 nullability findings (DataFlowIssue, NullableProblems, ConstantValue) ([66015d0](https://github.com/Mathildeuh/YouNeedMe/commit/66015d0d68ac8e13713b8616d49be234ddd2e8ec))
+
 ## [1.6.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.6.0...v1.6.1) (2026-09-19)
 
 
