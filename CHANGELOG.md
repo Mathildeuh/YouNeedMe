@@ -8,6 +8,18 @@ Releases after this point are generated automatically from
 [Conventional Commits](https://www.conventionalcommits.org/) by the `release.yml` workflow — this
 initial entry was written by hand to seed the file.
 
+## [1.8.0](https://github.com/Mathildeuh/YouNeedMe/compare/v1.7.1...v1.8.0) (2026-09-19)
+
+
+### Features
+
+* complete translations for 10 more locales ([a28f1da](https://github.com/Mathildeuh/YouNeedMe/commit/a28f1dadc15b335d56d0f6e422f325ec6030b8e6))
+
+
+### Bug Fixes
+
+* resolve remaining Qodana/PMD/checkstyle findings, docker jar mount, and in-game bugs ([df8e55f](https://github.com/Mathildeuh/YouNeedMe/commit/df8e55f170bf97283e86a5e37dddbfab191d84c2))
+
 ## [1.7.1](https://github.com/Mathildeuh/YouNeedMe/compare/v1.7.0...v1.7.1) (2026-09-19)
 
 
