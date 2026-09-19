@@ -20,6 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The entire auction house experience as a GUI - browsing, selling, viewing your own listings, and
@@ -624,35 +625,35 @@ public final class AhGui implements Listener {
 
     private record MenuHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record BrowseHolder(int page) implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record SellHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record MyListingsHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record ExpiredHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }

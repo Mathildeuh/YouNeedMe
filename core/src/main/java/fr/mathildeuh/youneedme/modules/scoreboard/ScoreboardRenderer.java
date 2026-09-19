@@ -60,7 +60,7 @@ public final class ScoreboardRenderer {
 
     private void render(Player player, String title, List<String> lines) {
         Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard == null || scoreboard == Bukkit.getScoreboardManager().getMainScoreboard()) {
+        if (scoreboard == Bukkit.getScoreboardManager().getMainScoreboard()) {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(scoreboard);
         }
@@ -82,7 +82,7 @@ public final class ScoreboardRenderer {
             team.prefix(resolve(player, lines.get(i)));
             objective.getScore(entry).setScore(lineCount - i);
         }
-        for (String entry : List.copyOf(objective.getScoreboard().getEntries())) {
+        for (String entry : List.copyOf(scoreboard.getEntries())) {
             boolean stillUsed = false;
             for (int i = 0; i < lineCount; i++) {
                 if (entry.equals(ChatColor.values()[i].toString())) {
@@ -109,7 +109,7 @@ public final class ScoreboardRenderer {
 
     private void clear(Player player) {
         Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard != null && scoreboard.getObjective(OBJECTIVE_ID) != null) {
+        if (scoreboard.getObjective(OBJECTIVE_ID) != null) {
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         }
     }

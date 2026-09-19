@@ -26,6 +26,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The {@code /kit} browser: every kit the player can see, sized to how many there are (or
@@ -360,7 +361,7 @@ public final class KitGui implements Listener {
 
     private record Holder(int page) implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }

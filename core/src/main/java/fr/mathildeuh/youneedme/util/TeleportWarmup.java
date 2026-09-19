@@ -65,7 +65,7 @@ public final class TeleportWarmup implements Listener {
         }
         Location from = pt.start();
         Location to = event.getTo();
-        if (to == null || !from.getWorld().equals(to.getWorld())) {
+        if (!from.getWorld().equals(to.getWorld())) {
             return;
         }
         if (from.distanceSquared(to) > 0.09) {

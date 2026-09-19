@@ -307,12 +307,14 @@ final class WarpsCommand extends YnmCommand {
                                                     w -> w.category() == null ? "" : w.category()))
                                     .forEach(
                                             (category, list) -> {
-                                                if (!category.isEmpty()) {
+                                                String categoryLabel =
+                                                        category == null ? "" : category;
+                                                if (!categoryLabel.isEmpty()) {
                                                     send(
                                                             sender,
                                                             "warp.category_header",
                                                             Placeholder.unparsed(
-                                                                    "category", category));
+                                                                    "category", categoryLabel));
                                                 }
                                                 list.forEach(
                                                         w ->

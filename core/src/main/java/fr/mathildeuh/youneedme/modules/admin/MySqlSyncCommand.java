@@ -208,10 +208,7 @@ public final class MySqlSyncCommand extends YnmCommand {
     private String helpText(String cmd) {
         return plugin.lang()
                 .renderPlain(
-                        plugin.lang()
-                                .resolveLocale(
-                                        java.util.Objects.requireNonNullElse(
-                                                null, plugin.getServer().getConsoleSender())),
+                        plugin.lang().resolveLocale(plugin.getServer().getConsoleSender()),
                         "mysql.help." + cmd);
     }
 

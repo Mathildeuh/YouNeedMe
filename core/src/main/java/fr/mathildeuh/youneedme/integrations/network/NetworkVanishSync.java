@@ -53,7 +53,7 @@ public final class NetworkVanishSync {
         String password = config.getString("redis.password", "");
         try {
             this.pool =
-                    password == null || password.isBlank()
+                    password.isBlank()
                             ? new JedisPool(host, port)
                             : new JedisPool(host, port, null, password);
             seedExistingVanished();
@@ -82,6 +82,9 @@ public final class NetworkVanishSync {
     }
 
     private void seedExistingVanished() {
+        if (pool == null) {
+            return;
+        }
         try (Jedis jedis = pool.getResource()) {
             for (String raw : jedis.smembers(VANISH_SET_KEY)) {
                 try {
@@ -95,6 +98,9 @@ public final class NetworkVanishSync {
     }
 
     private void runSubscriber() {
+        if (pool == null) {
+            return;
+        }
         try (Jedis jedis = pool.getResource()) {
             jedis.subscribe(subscription, VANISH_CHANNEL);
         } catch (RuntimeException e) {

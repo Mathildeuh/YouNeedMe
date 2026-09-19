@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
@@ -122,11 +123,13 @@ public final class ItemConfigCodec {
         if (meta == null) {
             return map;
         }
-        if (meta.hasDisplayName()) {
-            map.put("display-name", MINI_MESSAGE.serialize(meta.displayName()));
+        Component displayName = meta.displayName();
+        if (displayName != null) {
+            map.put("display-name", MINI_MESSAGE.serialize(displayName));
         }
-        if (meta.hasLore() && meta.lore() != null) {
-            map.put("lore", meta.lore().stream().map(MINI_MESSAGE::serialize).toList());
+        List<Component> lore = meta.lore();
+        if (lore != null) {
+            map.put("lore", lore.stream().map(MINI_MESSAGE::serialize).toList());
         }
         if (meta.hasCustomModelData()) {
             map.put("custom-model-data", meta.getCustomModelData());
@@ -152,8 +155,9 @@ public final class ItemConfigCodec {
     /** Plain-text (tag-stripped) summary of an item's display name, for chat/GUI listings. */
     public static String plainName(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        if (meta != null && meta.hasDisplayName() && meta.displayName() != null) {
-            return PlainTextComponentSerializer.plainText().serialize(meta.displayName());
+        Component displayName = meta == null ? null : meta.displayName();
+        if (displayName != null) {
+            return PlainTextComponentSerializer.plainText().serialize(displayName);
         }
         return item.getType().name();
     }

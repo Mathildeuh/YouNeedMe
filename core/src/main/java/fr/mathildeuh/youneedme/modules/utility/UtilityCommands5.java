@@ -311,6 +311,7 @@ final class UserCommand extends YnmCommand {
                                                     if (ban == null) {
                                                         send(sender, "user.punishments.not_banned");
                                                     } else {
+                                                        Long expiresAt = ban.expiresAt();
                                                         send(
                                                                 sender,
                                                                 "user.punishments.banned",
@@ -329,12 +330,11 @@ final class UserCommand extends YnmCommand {
                                                                                 .toString()),
                                                                 Placeholder.unparsed(
                                                                         "expires",
-                                                                        ban.isPermanent()
+                                                                        expiresAt == null
                                                                                 ? "never"
                                                                                 : java.time.Instant
                                                                                         .ofEpochMilli(
-                                                                                                ban
-                                                                                                        .expiresAt())
+                                                                                                expiresAt)
                                                                                         .toString()));
                                                     }
                                                 });

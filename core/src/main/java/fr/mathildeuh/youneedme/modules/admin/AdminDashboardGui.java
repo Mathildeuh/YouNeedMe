@@ -24,6 +24,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A one-screen staff overview ({@code /ynm panel}): who's online, top balances, active bans/mutes,
@@ -214,7 +215,7 @@ public final class AdminDashboardGui implements Listener {
 
     private record Holder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }

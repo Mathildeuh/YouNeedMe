@@ -60,10 +60,7 @@ final class BanCommand extends YnmCommand {
             OfflinePlayer target,
             Punishment punishment,
             Player onlineTarget) {
-        String duration =
-                punishment.isPermanent()
-                        ? "permanent"
-                        : TimeParser.format(punishment.expiresAt() - punishment.issuedAt());
+        String duration = totalDurationLabel(punishment);
         send(
                 sender,
                 "ban.success",
@@ -87,6 +84,22 @@ final class BanCommand extends YnmCommand {
                                     Placeholder.unparsed("id", String.valueOf(punishment.id())),
                                     Placeholder.unparsed("reason", punishment.reason())));
         }
+    }
+
+    /** "permanent" or the punishment's total configured duration, formatted. */
+    static String totalDurationLabel(Punishment punishment) {
+        Long expiresAt = punishment.expiresAt();
+        return expiresAt == null
+                ? "permanent"
+                : TimeParser.format(expiresAt - punishment.issuedAt());
+    }
+
+    /** {@code permanentLabel} or the time remaining until the punishment expires, formatted. */
+    static String remainingDurationLabel(Punishment punishment, String permanentLabel) {
+        Long expiresAt = punishment.expiresAt();
+        return expiresAt == null
+                ? permanentLabel
+                : TimeParser.format(expiresAt - System.currentTimeMillis());
     }
 }
 
@@ -165,11 +178,7 @@ final class BanIpCommand extends YnmCommand {
                                     "banip.success",
                                     Placeholder.unparsed("ip", finalIp),
                                     Placeholder.unparsed("count", String.valueOf(kicked)));
-                            String durationLabel =
-                                    punishment.isPermanent()
-                                            ? "permanent"
-                                            : TimeParser.format(
-                                                    punishment.expiresAt() - punishment.issuedAt());
+                            String durationLabel = BanCommand.totalDurationLabel(punishment);
                             broadcast(
                                     punishment.isPermanent()
                                             ? "banip.broadcast"
@@ -299,11 +308,7 @@ final class MuteCommand extends YnmCommand {
                 .mute(target.getUniqueId(), issuedBy, parsed.reason(), parsed.durationMillis())
                 .thenAccept(
                         punishment -> {
-                            String duration =
-                                    punishment.isPermanent()
-                                            ? "permanent"
-                                            : TimeParser.format(
-                                                    punishment.expiresAt() - punishment.issuedAt());
+                            String duration = BanCommand.totalDurationLabel(punishment);
                             send(
                                     sender,
                                     "mute.success",
@@ -491,12 +496,7 @@ final class CheckPunishCommand extends YnmCommand {
                                                                 - ban.issuedAt())),
                                         Placeholder.unparsed(
                                                 "expires",
-                                                ban.isPermanent()
-                                                        ? "never"
-                                                        : TimeParser.format(
-                                                                ban.expiresAt()
-                                                                        - System
-                                                                                .currentTimeMillis())));
+                                                BanCommand.remainingDurationLabel(ban, "never")));
                             } else {
                                 send(sender, "checkpunish.ban.none");
                             }
@@ -514,12 +514,7 @@ final class CheckPunishCommand extends YnmCommand {
                                                                 - mute.issuedAt())),
                                         Placeholder.unparsed(
                                                 "expires",
-                                                mute.isPermanent()
-                                                        ? "never"
-                                                        : TimeParser.format(
-                                                                mute.expiresAt()
-                                                                        - System
-                                                                                .currentTimeMillis())));
+                                                BanCommand.remainingDurationLabel(mute, "never")));
                             } else {
                                 send(sender, "checkpunish.mute.none");
                             }
@@ -576,11 +571,14 @@ final class BanListCommand extends YnmCommand {
                                     Placeholder.unparsed("total", String.valueOf(page)));
                             int index = (page - 1) * 10 + 1;
                             for (Punishment punishment : list) {
+                                UUID targetId = punishment.target();
                                 String who =
                                         punishment.type() == PunishmentType.IP_BAN
                                                 ? punishment.targetIp()
-                                                : Bukkit.getOfflinePlayer(punishment.target())
-                                                        .getName();
+                                                : targetId == null
+                                                        ? null
+                                                        : Bukkit.getOfflinePlayer(targetId)
+                                                                .getName();
                                 if (punishment.isPermanent()) {
                                     send(
                                             sender,
@@ -614,9 +612,8 @@ final class BanListCommand extends YnmCommand {
                                             Placeholder.unparsed("reason", punishment.reason()),
                                             Placeholder.unparsed(
                                                     "expires",
-                                                    TimeParser.format(
-                                                            punishment.expiresAt()
-                                                                    - System.currentTimeMillis())));
+                                                    BanCommand.remainingDurationLabel(
+                                                            punishment, "never")));
                                 }
                             }
                             send(

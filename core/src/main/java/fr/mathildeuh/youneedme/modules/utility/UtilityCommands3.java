@@ -3,6 +3,7 @@ package fr.mathildeuh.youneedme.modules.utility;
 import fr.mathildeuh.youneedme.YouNeedMe;
 import fr.mathildeuh.youneedme.command.YnmCommand;
 import java.util.List;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 final class CraftingTableCommand extends YnmCommand {
 
@@ -146,11 +148,10 @@ final class ItemIdCommand extends YnmCommand {
                 Placeholder.unparsed("id", hand.getType().getKey().toString()),
                 Placeholder.unparsed("amount", String.valueOf(hand.getAmount())),
                 Placeholder.unparsed("max_stack", String.valueOf(hand.getMaxStackSize())));
-        if (hand.getItemMeta() != null && hand.getItemMeta().hasDisplayName()) {
-            send(
-                    sender,
-                    "itemid.display_name",
-                    Placeholder.component("name", hand.getItemMeta().displayName()));
+        ItemMeta meta = hand.getItemMeta();
+        Component displayName = meta == null ? null : meta.displayName();
+        if (displayName != null) {
+            send(sender, "itemid.display_name", Placeholder.component("name", displayName));
         }
         if (!hand.getEnchantments().isEmpty()) {
             String enchants =

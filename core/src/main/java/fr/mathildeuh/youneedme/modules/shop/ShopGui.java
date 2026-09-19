@@ -28,6 +28,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The {@code /shop} chest GUI: browse categories (sized to how many exist), buy with left-click,
@@ -324,7 +325,7 @@ public final class ShopGui implements Listener {
 
     private record ShopHolder(String categoryId) implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }

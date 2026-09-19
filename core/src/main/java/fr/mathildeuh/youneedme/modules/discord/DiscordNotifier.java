@@ -52,10 +52,13 @@ public final class DiscordNotifier implements Listener {
         if (!config().getBoolean(key, true)) {
             return;
         }
+        var targetId = punishment.target();
         String who =
                 punishment.type() == PunishmentType.IP_BAN
                         ? punishment.targetIp()
-                        : org.bukkit.Bukkit.getOfflinePlayer(punishment.target()).getName();
+                        : targetId == null
+                                ? null
+                                : org.bukkit.Bukkit.getOfflinePlayer(targetId).getName();
         send(
                 ":hammer: **"
                         + punishment.type().name()

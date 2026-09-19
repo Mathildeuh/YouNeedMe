@@ -75,8 +75,12 @@ public final class YouNeedMe extends JavaPlugin {
                 configManager.main().getString("language.default", "en_US"));
 
         this.storageManager = new StorageManager(getLogger(), getDataFolder().toPath());
+        var storageSection = configManager.main().getConfigurationSection("storage");
         storageManager
-                .initialize(configManager.main().getConfigurationSection("storage"))
+                .initialize(
+                        storageSection == null
+                                ? new org.bukkit.configuration.MemoryConfiguration()
+                                : storageSection)
                 .thenAccept(this::onStorageReady)
                 .exceptionally(this::onStorageFailed);
     }

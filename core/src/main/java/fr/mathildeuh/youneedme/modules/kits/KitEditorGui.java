@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -54,14 +55,14 @@ public final class KitEditorGui implements Listener {
 
     private record ListHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record EditorHolder(String kitId) implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }

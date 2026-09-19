@@ -76,7 +76,11 @@ public final class StorageManager {
                     jdbcStorage(
                             SqlDialect.POSTGRESQL, config.getConfigurationSection("postgresql"));
             case MONGODB -> {
-                ConfigurationSection mongo = config.getConfigurationSection("mongodb");
+                ConfigurationSection section = config.getConfigurationSection("mongodb");
+                ConfigurationSection mongo =
+                        section == null
+                                ? new org.bukkit.configuration.MemoryConfiguration()
+                                : section;
                 yield new MongoStorage(
                         mongo.getString("connection-string", "mongodb://localhost:27017"),
                         mongo.getString("database", "youneedme"),

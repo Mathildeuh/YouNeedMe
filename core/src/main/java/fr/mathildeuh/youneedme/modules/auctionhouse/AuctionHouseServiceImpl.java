@@ -281,11 +281,13 @@ public final class AuctionHouseServiceImpl implements AuctionHouseService {
                                             AuctionListing listing = opt.get();
                                             // A bid already committed a bidder's money - refund it
                                             // rather than let a cancel strand that payment.
+                                            UUID currentBidder = listing.currentBidder();
+                                            Double currentBid = listing.currentBid();
                                             CompletableFuture<Void> refund =
-                                                    listing.currentBidder() != null
+                                                    currentBidder != null && currentBid != null
                                                             ? economy.deposit(
-                                                                            listing.currentBidder(),
-                                                                            listing.currentBid())
+                                                                            currentBidder,
+                                                                            currentBid)
                                                                     .thenAccept(r -> {})
                                                             : CompletableFuture.completedFuture(
                                                                     null);
@@ -430,14 +432,16 @@ public final class AuctionHouseServiceImpl implements AuctionHouseService {
      * and never complete.
      */
     private CompletableFuture<Void> applyExpiry(AuctionListing current) {
-        if (current.auction() && current.currentBidder() != null) {
-            return economy.deposit(current.seller(), current.currentBid())
+        UUID currentBidder = current.currentBidder();
+        Double currentBid = current.currentBid();
+        if (current.auction() && currentBidder != null && currentBid != null) {
+            return economy.deposit(current.seller(), currentBid)
                     .thenCompose(
                             r ->
                                     repository.update(
                                             withBuyer(
                                                     withStatus(current, AuctionListing.Status.WON),
-                                                    current.currentBidder())));
+                                                    currentBidder)));
         }
         return repository.update(withStatus(current, AuctionListing.Status.EXPIRED));
     }

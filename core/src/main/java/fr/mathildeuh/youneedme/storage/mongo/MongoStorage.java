@@ -164,6 +164,10 @@ public final class MongoStorage
                         new FindOneAndUpdateOptions()
                                 .upsert(true)
                                 .returnDocument(ReturnDocument.AFTER));
+        if (result == null) {
+            throw new IllegalStateException(
+                    "findOneAndUpdate with upsert=true returned no document for counter " + name);
+        }
         return result.getLong("seq");
     }
 
@@ -530,6 +534,11 @@ public final class MongoStorage
                                     new FindOneAndUpdateOptions()
                                             .upsert(true)
                                             .returnDocument(ReturnDocument.AFTER));
+                    if (result == null) {
+                        throw new IllegalStateException(
+                                "findOneAndUpdate with upsert=true returned no document for"
+                                        + " balance");
+                    }
                     return result.getDouble("balance");
                 });
     }
@@ -1032,6 +1041,10 @@ public final class MongoStorage
                                     new FindOneAndUpdateOptions()
                                             .upsert(true)
                                             .returnDocument(ReturnDocument.AFTER));
+                    if (result == null) {
+                        throw new IllegalStateException(
+                                "findOneAndUpdate with upsert=true returned no document for stock");
+                    }
                     return result.getInteger("stock");
                 });
     }

@@ -35,7 +35,7 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
             @NotNull CommandSender sender,
             @NotNull Command command,
             @NotNull String label,
-            String[] args) {
+            @NotNull String[] args) {
         if (playerOnly && !(sender instanceof Player)) {
             send(sender, "error.player_only");
             return true;
@@ -53,14 +53,15 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    protected abstract void execute(CommandSender sender, String label, String[] args);
+    protected abstract void execute(
+            @NotNull CommandSender sender, @NotNull String label, @NotNull String[] args);
 
     @Override
     public final List<String> onTabComplete(
             @NotNull CommandSender sender,
             @NotNull Command command,
             @NotNull String alias,
-            String[] args) {
+            @NotNull String[] args) {
         if (permission != null && !sender.hasPermission(permission)) {
             return List.of();
         }
@@ -71,7 +72,7 @@ public abstract class YnmCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    protected List<String> tabComplete(CommandSender sender, String[] args) {
+    protected List<String> tabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         return List.of();
     }
 

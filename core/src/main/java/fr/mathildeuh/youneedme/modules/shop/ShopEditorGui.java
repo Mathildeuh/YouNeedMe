@@ -27,6 +27,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -53,14 +54,14 @@ public final class ShopEditorGui implements Listener {
 
     private record ListHolder() implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
 
     private record CategoryHolder(String categoryId) implements InventoryHolder {
         @Override
-        public Inventory getInventory() {
+        public @NotNull Inventory getInventory() {
             throw new UnsupportedOperationException("marker holder only");
         }
     }
@@ -219,10 +220,9 @@ public final class ShopEditorGui implements Listener {
             pdc.set(sellPriceKey, PersistentDataType.DOUBLE, sellPrice);
         }
         pdc.set(stockKey, PersistentDataType.INTEGER, stock);
+        List<Component> existingLore = meta.lore();
         List<Component> lore =
-                meta.hasLore() && meta.lore() != null
-                        ? new ArrayList<>(meta.lore())
-                        : new ArrayList<>();
+                existingLore != null ? new ArrayList<>(existingLore) : new ArrayList<>();
         lore.add(
                 Component.text(
                         "Buy: "
@@ -383,7 +383,7 @@ public final class ShopEditorGui implements Listener {
 
     private void onIconSlotClick(InventoryClickEvent event, Player player, String categoryId) {
         ItemStack cursor = event.getCursor();
-        if (cursor == null || cursor.getType().isAir()) {
+        if (cursor.getType().isAir()) {
             event.setCancelled(true);
             return;
         }
@@ -402,7 +402,7 @@ public final class ShopEditorGui implements Listener {
             InventoryClickEvent event, Player player, String categoryId, int slot) {
         ItemStack cursor = event.getCursor();
         ItemStack clicked = event.getCurrentItem();
-        boolean cursorEmpty = cursor == null || cursor.getType().isAir();
+        boolean cursorEmpty = cursor.getType().isAir();
         boolean slotOccupied = clicked != null && !clicked.getType().isAir();
         if (!cursorEmpty || !slotOccupied) {
             return; // normal placement/pickup/swap - let Bukkit handle it uncancelled

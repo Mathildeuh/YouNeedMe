@@ -207,14 +207,16 @@ public final class PlayerShopListener implements Listener {
 
     private static String priceLine(PlayerShop shop) {
         StringBuilder line = new StringBuilder();
-        if (shop.isBuyable()) {
-            line.append("B:").append(formatPrice(shop.buyPrice()));
+        Double buyPrice = shop.buyPrice();
+        if (buyPrice != null) {
+            line.append("B:").append(formatPrice(buyPrice));
         }
-        if (shop.isSellable()) {
+        Double sellPrice = shop.sellPrice();
+        if (sellPrice != null) {
             if (!line.isEmpty()) {
                 line.append(' ');
             }
-            line.append("S:").append(formatPrice(shop.sellPrice()));
+            line.append("S:").append(formatPrice(sellPrice));
         }
         return line.toString();
     }
@@ -224,9 +226,11 @@ public final class PlayerShopListener implements Listener {
     }
 
     private static String itemLabel(ItemStack item) {
-        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-            return PlainTextComponentSerializer.plainText()
-                    .serialize(item.getItemMeta().displayName());
+        if (item.hasItemMeta()) {
+            Component displayName = item.getItemMeta().displayName();
+            if (displayName != null) {
+                return PlainTextComponentSerializer.plainText().serialize(displayName);
+            }
         }
         String name = item.getType().name().toLowerCase(Locale.ROOT).replace('_', ' ');
         return name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
@@ -280,7 +284,11 @@ public final class PlayerShopListener implements Listener {
     private void handleTradeResult(
             Player player, PlayerShop shop, boolean buying, int amount, TradeResult result) {
         if (result == TradeResult.SUCCESS) {
-            double total = (buying ? shop.buyPrice() : shop.sellPrice()) * amount;
+            Double price = buying ? shop.buyPrice() : shop.sellPrice();
+            if (price == null) {
+                return; // SUCCESS implies the service already verified a non-null price
+            }
+            double total = price * amount;
             player.sendMessage(
                     plugin.lang()
                             .render(

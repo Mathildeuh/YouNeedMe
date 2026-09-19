@@ -112,12 +112,9 @@ final class HatCommand extends YnmCommand {
             return;
         }
         ItemStack currentHelmet = player.getInventory().getHelmet();
-        if (currentHelmet != null) {
-            ItemMeta meta = currentHelmet.getItemMeta();
-            if (meta != null && meta.hasEnchant(Enchantment.BINDING_CURSE)) {
-                send(sender, "hat.binding_curse");
-                return;
-            }
+        if (currentHelmet.getItemMeta().hasEnchant(Enchantment.BINDING_CURSE)) {
+            send(sender, "hat.binding_curse");
+            return;
         }
         player.getInventory().setHelmet(hand.clone());
         player.getInventory().setItemInMainHand(currentHelmet);

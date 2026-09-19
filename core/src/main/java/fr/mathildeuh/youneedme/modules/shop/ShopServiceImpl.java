@@ -66,11 +66,15 @@ public final class ShopServiceImpl implements ShopService {
         if (!shopItem.isBuyable()) {
             return CompletableFuture.completedFuture(TradeResult.NOT_BUYABLE);
         }
+        Double buyPrice = shopItem.buyPrice();
+        if (buyPrice == null) {
+            return CompletableFuture.completedFuture(TradeResult.NOT_BUYABLE);
+        }
         Player online = Bukkit.getPlayer(player);
         if (online != null && countFreeSlots(online) < 1) {
             return CompletableFuture.completedFuture(TradeResult.INVENTORY_FULL);
         }
-        double total = shopItem.buyPrice() * amount;
+        double total = buyPrice * amount;
         CompletableFuture<Optional<Integer>> stockCheck =
                 shopItem.stock() == null
                         ? CompletableFuture.completedFuture(Optional.empty())
@@ -135,7 +139,11 @@ public final class ShopServiceImpl implements ShopService {
         if (!removeItems(online, shopItem.display(), amount)) {
             return CompletableFuture.completedFuture(TradeResult.INSUFFICIENT_ITEMS);
         }
-        double total = shopItem.sellPrice() * amount;
+        Double sellPrice = shopItem.sellPrice();
+        if (sellPrice == null) {
+            return CompletableFuture.completedFuture(TradeResult.NOT_SELLABLE);
+        }
+        double total = sellPrice * amount;
         return economy.deposit(player, total)
                 .thenCompose(
                         result -> {

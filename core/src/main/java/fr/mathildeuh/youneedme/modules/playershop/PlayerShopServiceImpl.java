@@ -133,7 +133,8 @@ public final class PlayerShopServiceImpl implements PlayerShopService {
         if (shop == null) {
             return CompletableFuture.completedFuture(TradeResult.SHOP_NOT_FOUND);
         }
-        if (!shop.isBuyable()) {
+        Double buyPrice = shop.buyPrice();
+        if (buyPrice == null) {
             return CompletableFuture.completedFuture(TradeResult.NOT_BUYABLE);
         }
         if (shop.owner().equals(buyer)) {
@@ -153,7 +154,7 @@ public final class PlayerShopServiceImpl implements PlayerShopService {
         if (countFreeSlots(player.getInventory()) < 1) {
             return CompletableFuture.completedFuture(TradeResult.INVENTORY_FULL);
         }
-        double total = shop.buyPrice() * amount;
+        double total = buyPrice * amount;
         return economy.withdraw(buyer, total)
                 .thenCompose(
                         withdrawResult -> {
@@ -181,7 +182,8 @@ public final class PlayerShopServiceImpl implements PlayerShopService {
         if (shop == null) {
             return CompletableFuture.completedFuture(TradeResult.SHOP_NOT_FOUND);
         }
-        if (!shop.isSellable()) {
+        Double sellPrice = shop.sellPrice();
+        if (sellPrice == null) {
             return CompletableFuture.completedFuture(TradeResult.NOT_SELLABLE);
         }
         if (shop.owner().equals(seller)) {
@@ -201,7 +203,7 @@ public final class PlayerShopServiceImpl implements PlayerShopService {
         if (countFreeSlots(chestInventory) < 1) {
             return CompletableFuture.completedFuture(TradeResult.CHEST_FULL);
         }
-        double total = shop.sellPrice() * amount;
+        double total = sellPrice * amount;
         return economy.withdraw(shop.owner(), total)
                 .thenCompose(
                         withdrawResult -> {

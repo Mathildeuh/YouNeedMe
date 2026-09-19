@@ -20,10 +20,11 @@ final class NickCommand extends YnmCommand {
         Player self = player(sender);
         Player target = self;
         String nicknameArg;
+        Player otherTarget = args.length >= 2 ? Bukkit.getPlayerExact(args[0]) : null;
         if (args.length >= 2
                 && sender.hasPermission("youneedme.nick.others")
-                && Bukkit.getPlayerExact(args[0]) != null) {
-            target = Bukkit.getPlayerExact(args[0]);
+                && otherTarget != null) {
+            target = otherTarget;
             nicknameArg = args[1];
         } else if (args.length >= 1) {
             nicknameArg = args[0];

@@ -181,9 +181,7 @@ public final class PlayerLifecycleListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
-        if (event.getFrom() != null) {
-            plugin.services().lastLocation.put(event.getPlayer().getUniqueId(), event.getFrom());
-        }
+        plugin.services().lastLocation.put(event.getPlayer().getUniqueId(), event.getFrom());
     }
 
     @EventHandler
@@ -300,10 +298,9 @@ public final class PlayerLifecycleListener implements Listener {
     public void onMove(PlayerMoveEvent event) {
         var to = event.getTo();
         var from = event.getFrom();
-        if (to != null
-                && (from.getBlockX() != to.getBlockX()
-                        || from.getBlockY() != to.getBlockY()
-                        || from.getBlockZ() != to.getBlockZ())) {
+        if (from.getBlockX() != to.getBlockX()
+                || from.getBlockY() != to.getBlockY()
+                || from.getBlockZ() != to.getBlockZ()) {
             markActive(event.getPlayer());
         }
     }
